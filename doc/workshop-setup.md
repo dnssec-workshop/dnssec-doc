@@ -57,11 +57,12 @@
   * 1x Resolver für DNSSEC Validierung
 
 1. IP-Forwarding deaktivieren
-
+	```
 	echo 0 > /proc/sys/net/ipv4/ip_forward
+	```
 
 2. Netzwerk konfigurieren: Teilnehmer erhalten mehrere IPs in einem Subnetz
-
+	```
 	set -e
 	[ $UID -ne 0 ] && echo "ERROR: You need to be root for this." && false
 
@@ -87,9 +88,10 @@
 	echo "Your network configuration:"
 	ip addr show dev ${NSIFACE}
 	route -n
+	```
 	
 3. Verzeichnisse und Dateien für BIND-Nameserver einrichten
-
+	```
 	echo "Setting up your named configurations..."
 	NAMED_INSTANCES="master slave resolver"
 	
@@ -101,3 +103,4 @@
 		mkdir -p ${NAMED_BASEDIR}/var/log/named.${nsinstance}
 		chown bind: ${NAMED_BASEDIR}/var/log/named.${nsinstance} || chown named: ${NAMED_BASEDIR}/var/log/named.${nsinstance}
 	done
+	```
