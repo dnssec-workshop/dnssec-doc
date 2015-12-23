@@ -57,6 +57,7 @@
   * 1x Resolver für DNSSEC Validierung
 
 1. IP-Forwarding deaktivieren
+
 	echo 0 > /proc/sys/net/ipv4/ip_forward
 
 2. Netzwerk konfigurieren: Teilnehmer erhalten mehrere IPs in einem Subnetz
