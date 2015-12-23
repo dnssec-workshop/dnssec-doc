@@ -58,7 +58,8 @@
 
 1. IP-Forwarding deaktivieren
 	echo 0 > /proc/sys/net/ipv4/ip_forward
-# Netzwerk konfigurieren: Teilnehmer erhalten mehrere IPs in einem Subnetz
+
+2. Netzwerk konfigurieren: Teilnehmer erhalten mehrere IPs in einem Subnetz
 	set -e
 	[ $UID -ne 0 ] && echo "ERROR: You need to be root for this." && false
 
@@ -85,6 +86,7 @@
 	ip addr show dev ${NSIFACE}
 	route -n
 	
+3. Verzeichnisse und Dateien für BIND-Nameserver einrichten
 	echo "Setting up your named configurations..."
 	NAMED_INSTANCES="master slave resolver"
 	
