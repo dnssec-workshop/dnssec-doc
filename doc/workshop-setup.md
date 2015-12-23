@@ -21,33 +21,41 @@
 
 1. Interface Konfiguration KVM Host mit Infrastruktur Systemen
 `/etc/conf.d/net`
+	```
 	config_br0="null"
 	brctl_br0="setfd 0
 	sethello 10
 	stp off"
 	bridge_br0="eth0"
+	```
 
 2. Netzwerk Setup
+	```
 	/etc/init.d/net.br0 start
 	ip addr flush dev br0
 	ip addr add local 10.20.0.1/16 dev br0 scope link
 	route add -net 10.20.0.0/16 dev br0
+	```
 
 3. Startup der Systeme für die DNS Infrastruktur
+	```
 	/etc/init.d/libvirtd start
 	virsh start dnssec-rootns
 	virsh start dnssec-tldns
 	virsh start dnssec-sldns
 	virsh start dnssec-resolver
+	```
 
 
 ### Konfiguration der Nameserver-Instanzen
+	```
 	ln -s /etc/init.d/bind9 /etc/init.d/bind9.slave
 	cp -aH /etc/default/bind9 /etc/default/bind9.slave
 	# TODO: Init Setup
 	sed -i -e 's@OPTIONS=.*@OPTIONS="-u bind -c /etc/bind9.slave/named.conf"@' /etc/default/bind9.slave
 	cp -aH /var/lib/bind /var/lib/bind.slave
 	cp -aH /var/cache/bind /var/cache/bind.slave
+	```
 
 ## Konfiguration von Systemen der Teilnehmer
 
