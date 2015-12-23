@@ -37,6 +37,7 @@
 	/etc/init.d/libvirtd start
 	virsh start dnssec-rootns
 	virsh start dnssec-tldns
+	virsh start dnssec-sldns
 	virsh start dnssec-resolver
 
 
