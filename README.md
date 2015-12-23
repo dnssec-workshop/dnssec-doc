@@ -13,10 +13,16 @@ Die Workshop-Umgebung besteht aus folgenden Systemen:
   * BIND Master- und Slave-Instanz
   * whois Service
   * Domain Registrar Interface
+* dnssec-sldns
+  * Nameserver für das beispielhafte Setup von DNSSEC Zonen
+  * BIND Master- und Slave-Instanz
 * dnssec-resolver
   * BIND Nameserver als Resolver für Workshop-Umgebung
   * dnsviz Analyse-Tool
   * Git-Repository mit den Workshop-Informationen und Dateien
+
+Als Netzwerk-Umgebung wird ein Class A Net 10.20.0.0/16 verwenden.
+Hier kann jeder Teilnehmer ein /24 Subnetz erhalten und mehrere IPs für seine Services konfigurieren.
 
 ## Rahmenbedingungen
 * Jeder Teilnehmer bringt sein eigenes Notebook inkl. installiertem BIND Nameserver mit.
