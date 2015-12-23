@@ -30,4 +30,5 @@ Hier kann jeder Teilnehmer ein /24 Subnetz erhalten und mehrere IPs für seine S
 * Internet-Zugang ist über WLAN möglich.
 
 ## Referenzen
+* https://talk.babiel.com/1/dnssec
 * http://ftp.isc.org/isc/bind9/cur/9.9/doc/arm/Bv9ARM.html
