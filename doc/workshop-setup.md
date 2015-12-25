@@ -33,7 +33,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 2. Installation spezifischer Software auf den VMs
    * dnssec-tldns
      ```
-     apt-get install apache2 mysql-server
+     apt-get install apache2 mysql-server golang-go
      ```
    * dnssec-resolver
      ```
@@ -46,6 +46,19 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 #### Konfiguration der Nameserver-Instanzen
 1. Konfiguration der Master Nameserver
    siehe (dnssec-<instance>/)
+
+1. Einrichtung der Software-Komponenten auf den Nameserver VMs
+   * dnssec-tldns
+     * MySQL-Datenbank für SLDs
+       ```
+       mysql -uroot -proot -e 'create database sld charset utf8;'
+       mysql -uroot -proot sld < dnssec-tldns/root/mysql-schema-sld-registry.sql
+       ```
+     * whoisd
+       ```
+       go get github.com/openprovider/whoisd
+       whoisd -t -config=/etc/whoisd/dnssec-workshop.conf -mapping=/etc/whoisd/dnssec-workshop-sld.json
+       ```
 
 2. Konfiguration der Slave Nameserver
 	```
