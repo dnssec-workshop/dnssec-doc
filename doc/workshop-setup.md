@@ -17,7 +17,50 @@
 
 ## Vorbreitungen der Umgebung
 
-### Setup der DNS-Infrastruktur
+### Setup virtueller Maschinen für die DNS-Infrastruktur
+
+Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer DNS-Infrastruktur als Workshop-Umgebung eingerichtet.
+
+1. Grundinstallation
+   * Debian 8 mit Basissystem
+   * Software Setup
+     ```
+     apt-get purge exim4 rpcbind portmap at avahi-daemon
+     apt-get install nmap tcpdump traceroute chkconfig curl git less screen bsd-mailx vim
+     apt-get install bind9
+     ```
+
+2. Installation spezifischer Software auf den VMs
+   * dnssec-tldns
+     ```
+     apt-get install apache2 mysql-server
+     ```
+   * dnssec-resolver
+     ```
+     apt-get install apache2
+     ```
+
+
+### Software-Konfiguration der Nameserver VMs
+
+#### Konfiguration der Nameserver-Instanzen
+1. Konfiguration der Master Nameserver
+   siehe (dnssec-<instance>/)
+
+2. Konfiguration der Slave Nameserver
+	```
+	ln -s /etc/init.d/bind9 /etc/init.d/bind9.slave
+	cp -aH /etc/default/bind9 /etc/default/bind9.slave
+	# TODO: Init Setup
+	sed -i -e 's@OPTIONS=.*@OPTIONS="-u bind -c /etc/bind9.slave/named.conf"@' /etc/default/bind9.slave
+	cp -aH /var/lib/bind /var/lib/bind.slave
+	cp -aH /var/cache/bind /var/cache/bind.slave
+	```
+
+
+### Startup der DNS-Infrastruktur
+
+Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Workshop-Infrastruktur konfiguriert und die VMs bereitgestellt. Die VMs wurden zuvor installiert.
 
 1. Interface Konfiguration KVM Host mit Infrastruktur Systemen
 `/etc/conf.d/net`
@@ -46,16 +89,17 @@
 	virsh start dnssec-resolver
 	```
 
+4. Traffic der virtuellen Systeme über Interface mit Internet-Anbindungen maskieren
+	```
+	echo 1 > /proc/sys/net/ipv4/ip_forward
+	iptables -t nat -A POSTROUTING -o br0 -j SNAT --to $KVM_IP
+	```
 
-### Konfiguration der Nameserver-Instanzen
+5. Default Route in VMs via KVM-Wirt setzen
 	```
-	ln -s /etc/init.d/bind9 /etc/init.d/bind9.slave
-	cp -aH /etc/default/bind9 /etc/default/bind9.slave
-	# TODO: Init Setup
-	sed -i -e 's@OPTIONS=.*@OPTIONS="-u bind -c /etc/bind9.slave/named.conf"@' /etc/default/bind9.slave
-	cp -aH /var/lib/bind /var/lib/bind.slave
-	cp -aH /var/cache/bind /var/cache/bind.slave
+	route add -net default gw $KVM_IP
 	```
+
 
 ## Konfiguration von Systemen der Teilnehmer
 
