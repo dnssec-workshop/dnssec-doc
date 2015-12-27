@@ -56,8 +56,18 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
        ```
      * whoisd
        ```
-       go get github.com/openprovider/whoisd
-       whoisd -t -config=/etc/whoisd/dnssec-workshop.conf -mapping=/etc/whoisd/dnssec-workshop-sld.json
+cat <<EOF >>/root/.bashrc
+
+# DNSSEC Testing
+export GOPATH=/root/gocode
+export PATH=$PATH:$GO_PATH/bin
+EOF
+
+       #go get github.com/openprovider/whoisd
+       go get github.com/pecharmin/whoisd
+       go get github.com/go-sql-driver/mysql
+
+       whoisd -config=/etc/whoisd/dnssec-workshop.conf -mapping=/etc/whoisd/dnssec-workshop-sld.json
        ```
 
 2. Konfiguration der Slave Nameserver
