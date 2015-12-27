@@ -105,12 +105,12 @@ Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Wo
 4. Traffic der virtuellen Systeme über Interface mit Internet-Anbindungen maskieren
 	```
 	echo 1 > /proc/sys/net/ipv4/ip_forward
-	iptables -t nat -A POSTROUTING -o br0 -j SNAT --to $KVM_IP
+	iptables -t nat -A POSTROUTING -o br0 -j MASQUERADE
 	```
 
 5. Default Route in VMs via KVM-Wirt setzen
 	```
-	route add -net default gw $KVM_IP
+	route add -net default gw 10.20.0.1
 	```
 
 
