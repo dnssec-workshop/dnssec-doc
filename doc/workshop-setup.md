@@ -24,21 +24,21 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 1. Grundinstallation
    * Debian 8 mit Basissystem
    * Software Setup
-     ```
-     apt-get purge exim4 rpcbind portmap at avahi-daemon
-     apt-get install nmap tcpdump traceroute chkconfig curl git less screen bsd-mailx vim
-     apt-get install bind9
-     ```
+	```
+	apt-get purge exim4 rpcbind portmap at avahi-daemon
+	apt-get install nmap tcpdump traceroute chkconfig curl git less screen bsd-mailx vim
+	apt-get install bind9
+	```
 
 2. Installation spezifischer Software auf den VMs
    * dnssec-tldns
-     ```
-     apt-get install apache2 mysql-server golang-go
-     ```
+	```
+	apt-get install apache2 mysql-server golang-go
+	```
    * dnssec-resolver
-     ```
-     apt-get install apache2
-     ```
+	```
+	apt-get install apache2
+	```
 
 
 ### Software-Konfiguration der Nameserver VMs
@@ -50,12 +50,12 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 1. Einrichtung der Software-Komponenten auf den Nameserver VMs
    * dnssec-tldns
      * MySQL-Datenbank für SLDs
-       ```
-       mysql -uroot -proot -e 'create database sld charset utf8;'
-       mysql -uroot -proot sld < dnssec-tldns/etc/whoisd/sld.mysql
-       ```
+	```
+	mysql -uroot -proot -e 'create database sld charset utf8;'
+	mysql -uroot -proot sld < dnssec-tldns/etc/whoisd/sld.mysql
+	```
      * whoisd
-       ```
+	```
 cat <<EOF >>/root/.bashrc
 
 # DNSSEC Testing
@@ -63,12 +63,12 @@ export GOPATH=/root/gocode
 export PATH=$PATH:$GO_PATH/bin
 EOF
 
-       #go get github.com/openprovider/whoisd
-       go get github.com/pecharmin/whoisd
-       go get github.com/go-sql-driver/mysql
-
-       whoisd -config=/etc/whoisd/dnssec-workshop.conf -mapping=/etc/whoisd/dnssec-workshop-sld.json
-       ```
+	#go get github.com/openprovider/whoisd
+	go get github.com/pecharmin/whoisd
+	go get github.com/go-sql-driver/mysql
+	
+	whoisd -config=/etc/whoisd/dnssec-workshop.conf -mapping=/etc/whoisd/dnssec-workshop-sld.json
+	```
 
 2. Konfiguration der Slave Nameserver
 	```
@@ -85,8 +85,7 @@ EOF
 
 Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Workshop-Infrastruktur konfiguriert und die VMs bereitgestellt. Die VMs wurden zuvor installiert.
 
-1. Interface Konfiguration KVM Host mit Infrastruktur Systemen
-`/etc/conf.d/net`
+1. Interface Konfiguration KVM Host mit Infrastruktur Systemen -- `/etc/conf.d/net`
 	```
 	config_br0="null"
 	brctl_br0="setfd 0
