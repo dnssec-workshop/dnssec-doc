@@ -52,7 +52,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
      * MySQL-Datenbank für SLDs
        ```
        mysql -uroot -proot -e 'create database sld charset utf8;'
-       mysql -uroot -proot sld < dnssec-tldns/root/mysql-schema-sld-registry.sql
+       mysql -uroot -proot sld < dnssec-tldns/etc/whoisd/sld.mysql
        ```
      * whoisd
        ```
