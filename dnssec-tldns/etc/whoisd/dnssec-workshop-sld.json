@@ -78,15 +78,41 @@
       },
       "14": {
         "key": "",
-        "value": ["DNSSEC:"]
+        "value": ["Nameserver:"]
       },
       "15": {
+        "key": "Nserver1: ",
+        "name": ["nserver1_name", "nserver1_ip"],
+        "related": "name",
+        "format": "{string} {string}"
+      },
+      "16": {
+        "key": "Nserver1: ",
+        "name": ["nserver1_name", "nserver1_ip"],
+        "related": "name",
+        "format": "{string} {string}"
+      },
+      "17": {
+        "key": "Nserver1: ",
+        "name": ["nserver1_name", "nserver1_ip"],
+        "related": "name",
+        "format": "{string} {string}"
+      },
+      "18": {
+        "key": "",
+        "value": [""]
+      },
+      "19": {
+        "key": "",
+        "value": ["DNSSEC:"]
+      },
+      "20": {
         "key": "Key 1: ",
         "name": ["dnskey1_flags", "dnskey1_algo", "dnskey1_key"],
         "related": "name",
         "format": "flags:{string}, algorithm_id:{string}, key_data:{string}"
       },
-      "16": {
+      "21": {
         "key": "Key 2: ",
         "name": ["dnskey2_flags", "dnskey2_algo", "dnskey2_key"],
         "related": "name",
