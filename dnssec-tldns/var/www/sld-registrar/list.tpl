@@ -1,5 +1,5 @@
 <h1>{{.Title}}</h1>
-<b>{{.Status}}{{.Message}}</b>
+<p><b>{{.Status}}{{.Message}}</b></p>
 {{range .NameList}}
-<a href="/show?name={{.}}">{{.}}</a><br />
+<a href="/show?name={{.}}">{{.}}</a> - <a href="/edit?name={{.}}">edit</a><br />
 {{end}}

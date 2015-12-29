@@ -31,36 +31,6 @@ var mysqlTable string = "domains"
 var mysqlField string = "name"
 
 
-// TODO
-func editDomain(w http.ResponseWriter, r *http.Request) {
-	stdlog.Println(r.Method + " " + r.RequestURI)
-
-	template_file := programDir + "/list.tpl"
-
-	type data_template struct {
-		Name string
-	}
-
-	data := data_template {
-		"test",
-	}
-
-	t, err := template.ParseFiles(template_file)
-	if err != nil {
-		w.WriteHeader(http.StatusServiceUnavailable)
-		errlog.Println("Parsing template file '" + template_file + "' returned:", err)
-		return
-	}
-
-	err = t.Execute(w, data)
-	if err != nil {
-		errlog.Println("Template execution failed:", err)
-
-		w.WriteHeader(http.StatusServiceUnavailable)
-		return
-	}
-}
-
 func listDomains(w http.ResponseWriter, r *http.Request) {
 	stdlog.Println(r.Method + " " + r.RequestURI)
 
@@ -74,10 +44,7 @@ func listDomains(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := data_template {
-		"Registered Domains",
-		"",
-		"",
-		[]string{},
+		Title: "Registered Domains",
 	}
 
 	t, err := template.ParseFiles(template_file)
@@ -175,10 +142,8 @@ func listDomains(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func showDomain(w http.ResponseWriter, r *http.Request) {
+func showEditDomain(w http.ResponseWriter, r *http.Request) {
 	stdlog.Println(r.Method + " " + r.RequestURI)
-
-	template_file := programDir + "/show.tpl"
 
 	type data_template struct {
 		Title string
@@ -188,8 +153,11 @@ func showDomain(w http.ResponseWriter, r *http.Request) {
 	}
 
 	data := data_template {
-		Title: "Show domain",
 	}
+
+	action := r.RequestURI[1:5]
+
+	template_file := programDir + "/" + action + ".tpl"
 
 	t, err := template.ParseFiles(template_file)
 	if err != nil {
@@ -197,7 +165,6 @@ func showDomain(w http.ResponseWriter, r *http.Request) {
 		errlog.Println("Parsing template file '" + template_file + "' returned:", err)
 		return
 	}
-
 
 	// load user input
 	err = r.ParseForm()
@@ -214,7 +181,35 @@ func showDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(r.Form["name"]) <= 0 {
+	// insert/update domain data
+	errlog.Println(r.Form)
+	if action == "save" {
+		data.Title = "Process Status"
+		if r.Form["save"] != nil {
+			data.Status = "OKAY"
+			data.Message = "Domain data saved"
+		} else {
+			w.WriteHeader(http.StatusBadRequest)
+			data.Status = "ERROR"
+			data.Message = "No domain data supplied"
+		}
+
+		err = t.Execute(w, data)
+		if err != nil {
+			errlog.Println("Template execution failed:", err)
+		}
+		return
+	}
+
+
+	if action == "show" {
+		data.Title = "Show domain"
+	} else if action == "edit" {
+		data.Title = "Edit domain"
+	}
+
+
+	if action == "show" && len(r.Form["name"]) < 1 {
 		errlog.Println("No domain name for query specified")
 		data.Status = "ERROR"
 		data.Message = "Please specify a domain name to search for."
@@ -227,7 +222,12 @@ func showDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	domainName := filterString(r.Form["name"][0], "aabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-")
+	domainName := ""
+	if len(r.Form["name"]) > 0 {
+		domainName = r.Form["name"][0]
+	}
+
+	domainName = filterString(domainName, "aabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.-")
 	stdlog.Println("Querying data for name:", domainName)
 
 	// load domain info from DB
@@ -273,6 +273,13 @@ func showDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	emptyDomain := make(map[string][]string)
+	if action == "edit" {
+		for _, rowName := range columns {
+			emptyDomain[string(rowName)] = []string{""}
+		}
+	}
+
 	// Make a slice for the values
 	values := make([]sql.RawBytes, len(columns))
 
@@ -309,7 +316,7 @@ func showDomain(w http.ResponseWriter, r *http.Request) {
 		for i, col := range values {
 			// Here we can check if the value is nil (NULL value)
 			if col == nil {
-				value = "n/a"
+				value = ""
 			} else {
 				value = string(col)
 			}
@@ -318,21 +325,31 @@ func showDomain(w http.ResponseWriter, r *http.Request) {
 		domainData = append(domainData, element)
 	}
 
-	if len(domainData) < 1 {
-		errlog.Println("No database records for domains: " + domainName)
-		data.Status = "FREE"
-		data.Message = "Domain NOT registered"
+	if action == "show" {
+		if len(domainData) < 1 {
+			errlog.Println("No database records for domains: " + domainName)
+			data.Status = "FREE"
+			data.Message = "Domain NOT registered"
 
-		w.WriteHeader(http.StatusNotFound)
-		err = t.Execute(w, data)
-		if err != nil {
-			errlog.Println("Template execution failed:", err)
+			w.WriteHeader(http.StatusNotFound)
+			err = t.Execute(w, data)
+			if err != nil {
+				errlog.Println("Template execution failed:", err)
+			}
+			return
 		}
-		return
+
+		data.Status = "REGISTERED"
+		data.Message = "Domain registered"
 	}
 
-	data.Status = "REGISTERED"
-	data.Message = "Domain registered"
+	if action == "edit" {
+		data.Status = "NEW"
+		data.Message = "Fill in data to register new domain"
+		emptyDomain["name"][0] = "new domain"
+		domainData = append(domainData, emptyDomain)
+	}
+
 	data.DomainList = domainData
 
 	err = t.Execute(w, data)
@@ -361,8 +378,9 @@ func main() {
 	}
 
 	// Configure HTTP handlers
-	http.HandleFunc("/show", showDomain)
-	http.HandleFunc("/edit", editDomain)
+	http.HandleFunc("/show", showEditDomain)
+	http.HandleFunc("/edit", showEditDomain)
+	http.HandleFunc("/save", showEditDomain)
 	http.HandleFunc("/list", listDomains)
 	http.HandleFunc("/", listDomains)
 
