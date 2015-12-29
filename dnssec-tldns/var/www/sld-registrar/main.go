@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strings"
@@ -32,10 +31,148 @@ var mysqlTable string = "domains"
 var mysqlField string = "name"
 
 
+// TODO
 func editDomain(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("method:", r.Method)
-	t, _ := template.ParseFiles("edit.gtpl")
-	t.Execute(w, nil)
+	stdlog.Println(r.Method + " " + r.RequestURI)
+
+	template_file := programDir + "/list.tpl"
+
+	type data_template struct {
+		Name string
+	}
+
+	data := data_template {
+		"test",
+	}
+
+	t, err := template.ParseFiles(template_file)
+	if err != nil {
+		w.WriteHeader(http.StatusServiceUnavailable)
+		errlog.Println("Parsing template file '" + template_file + "' returned:", err)
+		return
+	}
+
+	err = t.Execute(w, data)
+	if err != nil {
+		errlog.Println("Template execution failed:", err)
+
+		w.WriteHeader(http.StatusServiceUnavailable)
+		return
+	}
+}
+
+func listDomains(w http.ResponseWriter, r *http.Request) {
+	stdlog.Println(r.Method + " " + r.RequestURI)
+
+	template_file := programDir + "/list.tpl"
+
+	type data_template struct {
+		Title string
+		Status string
+		Message string
+		NameList []string
+	}
+
+	data := data_template {
+		"Registered Domains",
+		"",
+		"",
+		[]string{},
+	}
+
+	t, err := template.ParseFiles(template_file)
+	if err != nil {
+		w.WriteHeader(http.StatusServiceUnavailable)
+		errlog.Println("Parsing template file '" + template_file + "' returned:", err)
+		return
+	}
+
+	// load domain list from DB
+	rows, err := db.Query("SELECT name FROM " + mysqlTable)
+	if err != nil {
+		errlog.Println("Mysql query error:", err)
+		data.Status = "ERROR"
+		data.Message = "Failed to query database for domain list."
+
+		w.WriteHeader(http.StatusServiceUnavailable)
+		err = t.Execute(w, data)
+		if err != nil {
+			errlog.Println("Template execution failed:", err)
+		}
+		return
+	}
+
+	if err = rows.Err() ; err != nil {
+		errlog.Println("Missed to read all rows from database:", err)
+		data.Status = "ERROR"
+		data.Message = "Unable to read all row keys from database"
+
+		w.WriteHeader(http.StatusServiceUnavailable)
+		err = t.Execute(w, data)
+		if err != nil {
+			errlog.Println("Template execution failed:", err)
+		}
+		return
+	}
+
+	// Get column names
+	columns, err := rows.Columns()
+	if err != nil {
+		errlog.Println("Mysql column name query error:", err)
+		data.Status = "ERROR"
+		data.Message = "Unable to read data keys from database."
+
+		w.WriteHeader(http.StatusServiceUnavailable)
+		err = t.Execute(w, data)
+		if err != nil {
+			errlog.Println("Template execution failed:", err)
+		}
+		return
+	}
+
+	// Make a slice for the values
+	values := make([]sql.RawBytes, len(columns))
+
+	// rows.Scan wants '[]interface{}' as an argument, so we must copy the
+	// references into such a slice
+	// See http://code.google.com/p/go-wiki/wiki/InterfaceSlice for details
+	scanArgs := make([]interface{}, len(values))
+	for i := range values {
+		scanArgs[i] = &values[i]
+	}
+
+	// Fetch rows
+	var domainList []string
+	for rows.Next() {
+		// get RawBytes from data
+		err = rows.Scan(scanArgs...)
+		if err != nil {
+			errlog.Println("Failed to scan database for domains:", err)
+			data.Status = "ERROR"
+			data.Message = "Unable to read domain list from database"
+
+			w.WriteHeader(http.StatusServiceUnavailable)
+			err = t.Execute(w, data)
+			if err != nil {
+				errlog.Println("Template execution failed:", err)
+			}
+			return
+		}
+
+		for _, val := range values {
+			domainList = append(domainList, string(val))
+		}
+	}
+
+	data.NameList = domainList
+
+	err = t.Execute(w, data)
+	if err != nil {
+		errlog.Println("Template execution failed:", err)
+
+		w.WriteHeader(http.StatusServiceUnavailable)
+		return
+	}
 }
 
 func showDomain(w http.ResponseWriter, r *http.Request) {
@@ -47,7 +184,7 @@ func showDomain(w http.ResponseWriter, r *http.Request) {
 		Title string
 		Status string
 		Message string
-		Domain map[string][]string
+		DomainList []map[string][]string
 	}
 
 	data := data_template {
@@ -108,7 +245,18 @@ func showDomain(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	errlog.Println(rows)
+	if err = rows.Err() ; err != nil {
+		errlog.Println("Missed to read all rows from database:", err)
+		data.Status = "ERROR"
+		data.Message = "Unable to read all row keys from database"
+
+		w.WriteHeader(http.StatusServiceUnavailable)
+		err = t.Execute(w, data)
+		if err != nil {
+			errlog.Println("Template execution failed:", err)
+		}
+		return
+	}
 
 	// Get column names
 	columns, err := rows.Columns()
@@ -170,19 +318,6 @@ func showDomain(w http.ResponseWriter, r *http.Request) {
 		domainData = append(domainData, element)
 	}
 
-	if err = rows.Err(); err != nil {
-		errlog.Println("Missed to read all rows from database:", err)
-		data.Status = "ERROR"
-		data.Message = "Unable to read all row keys from database"
-
-		w.WriteHeader(http.StatusServiceUnavailable)
-		err = t.Execute(w, data)
-		if err != nil {
-			errlog.Println("Template execution failed:", err)
-		}
-		return
-	}
-
 	if len(domainData) < 1 {
 		errlog.Println("No database records for domains: " + domainName)
 		data.Status = "FREE"
@@ -198,7 +333,7 @@ func showDomain(w http.ResponseWriter, r *http.Request) {
 
 	data.Status = "REGISTERED"
 	data.Message = "Domain registered"
-	data.Domain = domainData[0]
+	data.DomainList = domainData
 
 	err = t.Execute(w, data)
 	if err != nil {
@@ -228,6 +363,8 @@ func main() {
 	// Configure HTTP handlers
 	http.HandleFunc("/show", showDomain)
 	http.HandleFunc("/edit", editDomain)
+	http.HandleFunc("/list", listDomains)
+	http.HandleFunc("/", listDomains)
 
 	stdlog.Println("Starting on " + listenAddr + ":" + strconv.Itoa(listenPort))
 
