@@ -63,13 +63,6 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
          ```
      * whoisd
          ```
-cat <<EOF >>/root/.bashrc
-
-# DNSSEC Testing
-export GOPATH=/root/gocode
-export PATH=$PATH:$GO_PATH/bin
-EOF
-
          # go get github.com/openprovider/whoisd
          go get github.com/pecharmin/whoisd
          go get github.com/go-sql-driver/mysql
