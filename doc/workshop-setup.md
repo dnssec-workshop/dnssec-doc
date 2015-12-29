@@ -45,7 +45,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 
 #### Konfiguration der Nameserver-Instanzen
 1. Konfiguration der Master Nameserver
-   siehe (dnssec-<instance>/)
+   siehe (dnssec-instancename/)
 
 1. Git-Repository laden
          ```
