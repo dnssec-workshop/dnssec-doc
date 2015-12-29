@@ -47,6 +47,13 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 1. Konfiguration der Master Nameserver
    siehe (dnssec-<instance>/)
 
+1. Git-Repository laden
+	```
+	cd /root
+	git clone https://github.com/pecharmin/dnssec-workshop.git
+	rsync -av dnssec-workshop/$HOSTNAME/ /
+	```
+
 1. Einrichtung der Software-Komponenten auf den Nameserver VMs
    * dnssec-tldns
      * MySQL-Datenbank für SLDs
