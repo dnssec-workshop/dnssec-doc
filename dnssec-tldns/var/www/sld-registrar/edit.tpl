@@ -4,8 +4,6 @@
 <form action="/save" method="post">
 <table>
 <tr><td>Domain name:</td><td><input type="text" name="name" value="{{index .name 0}}" /></td></tr>
-<tr><td>Created:</td><td><input type="text" name="created" value="{{index .created 0}}" /></td></tr>
-<tr><td>Updated:</td><td><input type="text" name="updated" value="{{index .updated 0}}" /></td></tr>
 <tr><td><br /></td></tr>
 <tr><td>OwnerC Handle:</td><td><input type="text" name="ownerc_fk" value="{{index .ownerc_fk 0}}" /></td></tr>
 <tr><td>AdminC Handle:</td><td><input type="text" name="adminc_fk" value="{{index .adminc_fk 0}}" /></td></tr>
