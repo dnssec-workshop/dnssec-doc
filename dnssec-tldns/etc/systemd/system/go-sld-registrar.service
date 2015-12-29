@@ -1,0 +1,11 @@
+[Unit]
+Description=go service for sld-registrar web-interface
+Documentation=https://github.com/pecharmin/dnssec-workshop/blob/master/doc/workshop-setup.md
+After=mysql.service apache.service
+
+[Service]
+EnvironmentFile=/etc/default/go-sld-registrar
+ExecStart=/usr/bin/go run ${GOMAIN}
+
+[Install]
+WantedBy=multi-user.target
