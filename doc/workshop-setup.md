@@ -77,6 +77,13 @@ EOF
          systemctl enable whoisd.service
          systemctl start whoisd.service
          ```
+     * Setup Apache Webserver als Proxy zum whoisd / Registrar Go-Interface
+         ```
+         a2dissite 000-default
+         a2ensite sld-registrar
+         a2enmod proxy proxy_http
+         systemctl restart apache2
+         ```
 
 2. Konfiguration der Slave Nameserver
 	```
