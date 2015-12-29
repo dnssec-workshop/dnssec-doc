@@ -24,21 +24,21 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 1. Grundinstallation
    * Debian 8 mit Basissystem
    * Software Setup
-	```
-	apt-get purge exim4 rpcbind portmap at avahi-daemon
-	apt-get install nmap tcpdump traceroute chkconfig curl git less screen bsd-mailx vim
-	apt-get install bind9
-	```
+        ```
+        apt-get purge exim4 rpcbind portmap at avahi-daemon
+        apt-get install nmap tcpdump traceroute chkconfig curl git less screen bsd-mailx vim
+        apt-get install bind9
+        ```
 
 2. Installation spezifischer Software auf den VMs
    * dnssec-tldns
-	```
-	apt-get install apache2 mysql-server golang-go
-	```
+        ```
+        apt-get install apache2 mysql-server golang-go
+        ```
    * dnssec-resolver
-	```
-	apt-get install apache2
-	```
+        ```
+        apt-get install apache2
+        ```
 
 
 ### Software-Konfiguration der Nameserver VMs
