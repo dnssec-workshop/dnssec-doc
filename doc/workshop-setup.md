@@ -48,21 +48,21 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
    siehe (dnssec-<instance>/)
 
 1. Git-Repository laden
-	```
-	cd /root
-	git clone https://github.com/pecharmin/dnssec-workshop.git
-	rsync -av dnssec-workshop/$HOSTNAME/ /
-	```
+         ```
+         cd /root
+         git clone https://github.com/pecharmin/dnssec-workshop.git
+         rsync -av dnssec-workshop/$HOSTNAME/ /
+         ```
 
 1. Einrichtung der Software-Komponenten auf den Nameserver VMs
    * dnssec-tldns
      * MySQL-Datenbank für SLDs
-	```
-	mysql -uroot -proot -e 'create database sld charset utf8;'
-	mysql -uroot -proot sld < /etc/whoisd/sld.mysql
-	```
+         ```
+         mysql -uroot -proot -e 'create database sld charset utf8;'
+         mysql -uroot -proot sld < /etc/whoisd/sld.mysql
+         ```
      * whoisd
-	```
+         ```
 cat <<EOF >>/root/.bashrc
 
 # DNSSEC Testing
@@ -70,13 +70,13 @@ export GOPATH=/root/gocode
 export PATH=$PATH:$GO_PATH/bin
 EOF
 
-	# go get github.com/openprovider/whoisd
-	go get github.com/pecharmin/whoisd
-	go get github.com/go-sql-driver/mysql
-	
-	systemctl enable whoisd.service
-	systemctl start whoisd.service
-	```
+         # go get github.com/openprovider/whoisd
+         go get github.com/pecharmin/whoisd
+         go get github.com/go-sql-driver/mysql
+
+         systemctl enable whoisd.service
+         systemctl start whoisd.service
+         ```
 
 2. Konfiguration der Slave Nameserver
 	```
