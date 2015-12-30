@@ -10,12 +10,12 @@ INET_INTERFACE=wlan0
 
 KVM_IFACE=br0
 KVM_NET=10.20.0.0/16
-KVM_IP=10.20.0.1
+KVM_IP=10.20.0.1/16
 
 # Basic confguration of KVM network
 /etc/init.d/net.${KVM_IFACE} start
 ip addr flush dev ${KVM_IFACE}
-ip addr add local ${KVM_NET} dev ${KVM_IFACE} scope link
+ip addr add local ${KVM_IP} dev ${KVM_IFACE} scope link
 route add -net ${KVM_NET} dev ${KVM_IFACE}
 
 # Traffic der virtuellen Systeme über Interface mit Internet-Anbindungen maskieren
