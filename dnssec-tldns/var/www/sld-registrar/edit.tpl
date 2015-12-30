@@ -27,11 +27,11 @@ body { font-family: monospace; }
 <tr><td><br /></td></tr>
 <tr><td>DNSSEC Key 1 flags:</td><td><input type="text" name="dnskey1_flags" value="{{index .dnskey1_flags 0}}" /></td></tr>
 <tr><td>DNSSEC Key 1 algorithm_id:</td><td><input type="text" name="dnskey1_algo" value="{{index .dnskey1_algo 0}}" /></td></tr>
-<tr><td>DNSSEC Key 1 key_data:</td><td><textarea name="dnskey1_key" rows="10" cols="40">{{index .dnskey1_key 0}}</textarea></td></tr>
+<tr><td>DNSSEC Key 1 key_data:</td><td><textarea name="dnskey1_key" rows="10" cols="70">{{index .dnskey1_key 0}}</textarea></td></tr>
 <tr><td><br /></td></tr>
 <tr><td>DNSSEC Key 2 flags:</td><td><input type="text" name="dnskey2_flags" value="{{index .dnskey2_flags 0}}" /></td></tr>
 <tr><td>DNSSEC Key 2 algorithm_id:</td><td><input type="text" name="dnskey2_algo" value="{{index .dnskey2_algo 0}}" /></td></tr>
-<tr><td>DNSSEC Key 2 key_data:</td><td><textarea name="dnskey2_key" rows="10" cols="40">{{index .dnskey2_key 0}}</textarea></td></tr>
+<tr><td>DNSSEC Key 2 key_data:</td><td><textarea name="dnskey2_key" rows="10" cols="70">{{index .dnskey2_key 0}}</textarea></td></tr>
 <tr><td><input type="submit" name="save" value="Submit" /></td><td></td></tr>
 </table>
 <br />
