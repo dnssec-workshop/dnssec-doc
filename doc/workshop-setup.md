@@ -15,6 +15,10 @@
   * DNS Resolver: 10.20.8.1/16
   * Webserver:    10.20.8.8/16
 
+* Verfügbare TLDs:
+  * it: keine Signierung mit DNSSEC
+  * org: DS-Records nicht in Root-Servern eingetragen
+
 ## Vorbreitungen der Umgebung
 
 ### Setup virtueller Maschinen für die DNS-Infrastruktur
@@ -87,11 +91,21 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 	 KEY_DIR=/etc/bind/keys
 	 mkdir $KEY_DIR
 
-	 for tld in at com de it net nl org pl se
+	 for tld in at com de net nl org pl se
 	 do
 	     dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 2400 -P now -A now ${tld}.
 	     dnssec-keygen -K $KEY_DIR -n ZONE -3 -a RSASHA256 -b 1024 -r /dev/urandom -L 2400 -P now -A now ${tld}.
 	 done
+         ```
+
+     * Records und SLD-Referenzen für TLD Zonen generieren und signieren
+         ```
+	/etc/bind/scripts/zone-update.sh
+         ```
+
+     * File mit DS-Records der TLDs auf Root-Nameserver kopieren
+         ```
+	 scp /etc/bind/keys/dsset-* root@dnssec-rootns:/etc/bind/dssets/
          ```
 
 2. Konfiguration der Slave Nameserver
