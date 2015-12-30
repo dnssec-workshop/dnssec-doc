@@ -13,8 +13,10 @@ fi
 ZONES=${1:-"at com de it net nl org pl se"}
 FORCE_SERIAL=$2
 
+echo "[$(date)] Starting $0"
 for tld in $ZONES
 do
+	echo "=== $tld ==="
 	$(dirname $0)/update-zone-from-db.sh $tld $FORCE_SERIAL
 	$(dirname $0)/sign-zone.sh $tld
 	echo
