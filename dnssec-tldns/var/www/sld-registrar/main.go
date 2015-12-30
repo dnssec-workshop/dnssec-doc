@@ -270,18 +270,23 @@ func showEditDomain(w http.ResponseWriter, r *http.Request) {
 			if saveError != true {
 				stmt, err := db.Prepare(
 					"insert into " + mysqlTable +
-					" (name, ownerc_fk, techc_fk, adminc_fk, zonec_fk, created, updated" +
+					" (lower(name), upper(ownerc_fk), upper(techc_fk)" +
+					", upper(adminc_fk), upper(zonec_fk), created, updated" +
 					", dnskey1_flags, dnskey1_algo, dnskey1_key" +
 					", dnskey2_flags, dnskey2_algo, dnskey2_key" +
-					", nserver1_name, nserver1_ip, nserver2_name" +
-					", nserver2_ip, nserver3_name, nserver3_ip" +
+					", lower(nserver1_name), nserver1_ip" +
+					", lower(nserver2_name), nserver2_ip" +
+					", lower(nserver3_name), nserver3_ip" +
 					") values(?, ?, ?, ?, ?, now(), now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?" +
 					") ON DUPLICATE KEY UPDATE" +
-					"  ownerc_fk=?, techc_fk=?, adminc_fk=?, zonec_fk=?" +
-					", updated=now(), dnskey1_flags=?, dnskey1_algo=?, dnskey1_key=?" +
+					"  ownerc_fk=upper(?), techc_fk=upper(?)" +
+					", adminc_fk=upper(?), zonec_fk=upper(?)" +
+					", updated=now()" +
+					", dnskey1_flags=?, dnskey1_algo=?, dnskey1_key=?" +
 					", dnskey2_flags=?, dnskey2_algo=?, dnskey2_key=?" +
-					", nserver1_name=?, nserver1_ip=?, nserver2_name=?" +
-					", nserver2_ip=?, nserver3_name=?, nserver3_ip=?" )
+					", nserver1_name=lower(?), nserver1_ip=?" +
+					", nserver2_name=lower(?), nserver2_ip=?" +
+					", nserver3_name=lower(?), nserver3_ip=?" )
 
 				if err != nil {
 					errlog.Println("DB statement preparation failed:", err)
