@@ -500,6 +500,9 @@ func showEditDomain(w http.ResponseWriter, r *http.Request) {
 
 		data.Status = "REGISTERED"
 		data.Message = "Domain registered"
+
+		domainData[0]["dnskey1_key"] = strings.Split(insertNth(domainData[0]["dnskey1_key"][0], " ", 40), " ")
+		domainData[0]["dnskey2_key"] = strings.Split(insertNth(domainData[0]["dnskey2_key"][0], " ", 40), " ")
 	}
 
 	if action == "edit" && origin_action != "save" {
@@ -568,4 +571,20 @@ func filterString(str, chr string) string {
 		}
 		return -1
 	}, str)
+}
+
+// Based on https://play.golang.org/p/HEGbe7radf
+func insertNth(s string, r string, n int) string {
+	var b string
+	var e int
+	for i := 0; i < len(s); i+=n {
+		e = i + n
+		if e > len(s) {
+			e = len(s) - 1
+			b = b + s[i:e]
+		} else {
+			b = b + s[i:e] + r
+		}
+	}
+	return b
 }
