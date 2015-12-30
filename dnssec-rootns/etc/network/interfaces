@@ -13,6 +13,7 @@ allow-hotplug eth0
 iface eth0 inet static
 address 10.20.1.1
 network 255.255.0.0
+gateway 10.20.0.1
 
 auto eth0:2
 allow-hotplug eth0:2
