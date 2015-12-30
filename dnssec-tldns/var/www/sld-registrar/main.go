@@ -139,6 +139,7 @@ func listDomains(w http.ResponseWriter, r *http.Request) {
 
 	data.NameList = domainList
 
+	w.Header().Set("Content-Type", "text/html")
 	err = t.Execute(w, data)
 	if err != nil {
 		errlog.Println("Template execution failed:", err)
