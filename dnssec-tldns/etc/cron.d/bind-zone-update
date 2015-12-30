@@ -1,0 +1,2 @@
+# Update records in TLD 
+*/5 * * * *	root	/etc/bind/scripts/zone-update.sh >> /var/log/bind-zone-update.log
