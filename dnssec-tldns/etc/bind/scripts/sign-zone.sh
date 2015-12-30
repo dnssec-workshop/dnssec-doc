@@ -16,5 +16,5 @@ then
 	exit 2
 fi
 
-dnssec-signzone -S -K $KEYFILE_DIR -e $RRSIG_VALIDITY -j $RRSIG_JITTER -r /dev/urandom -a -3 $(openssl rand 4 -hex) -H 15 -A -o ${TLD}. $ZONEFILE_DIR/${TLD}.zone
+dnssec-signzone -S -K $KEYFILE_DIR -d $KEYFILE_DIR -e $RRSIG_VALIDITY -j $RRSIG_JITTER -r /dev/urandom -a -3 $(openssl rand 4 -hex) -H 15 -A -o ${TLD}. $ZONEFILE_DIR/${TLD}.zone
 exit $?

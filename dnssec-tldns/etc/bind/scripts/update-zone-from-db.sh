@@ -15,9 +15,10 @@ ZONEFILE_DIR=/etc/bind/zones
 ZONE_TTL=1800
 
 TLD=$1
+FORCE_SERIAL=$2
 
 # get current serial
-ZONE_SERIAL=$(($(dig +noall +answer -t SOA de. @localhost | awk '{print $7}' 2>/dev/null)+1))
+ZONE_SERIAL=${FORCE_SERIAL:-$(($(dig +noall +answer -t SOA de. @localhost | awk '{print $7}' 2>/dev/null)+1))}
 
 # get current records from database
 ZONE_RECORDS=$(mysql --batch --skip-column-names -u$DB_USERNAME -p$DB_PASSWORD $DB_NAME -e "
