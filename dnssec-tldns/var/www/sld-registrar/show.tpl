@@ -33,5 +33,7 @@ body { font-family: monospace; }
 <tr><td>DNSSEC Key 2 key_data: </td><td>{{range .dnskey2_key}}{{.}}<br />{{end}}</td></tr>
 {{end}}
 </table>
+<br />
+<a href="/list">List domains</a>
 </body>
 </html>
