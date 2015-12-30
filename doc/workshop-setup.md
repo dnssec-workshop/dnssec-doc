@@ -92,7 +92,6 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 ### Startup der DNS-Infrastruktur
 
 Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Workshop-Infrastruktur konfiguriert und die VMs bereitgestellt. Die VMs wurden zuvor installiert.
-Die unten genannten Commands können mit dem 
 
 1. Interface Konfiguration KVM Host mit Infrastruktur Systemen - `/etc/conf.d/net`
 	```
