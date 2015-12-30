@@ -38,12 +38,12 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
         ```
 
 2. Installation spezifischer Software auf den VMs
-   * dnssec-tldns
+   * dnssec-tldns: whois + Domain Registrar Service
         ```
-        apt-get install apache2 mysql-server golang-go
+        apt-get install apache2 mysql-server golang-go libnet-dns-sec-perl
         ```
 
-   * dnssec-resolver
+   * dnssec-resolver: DNSSEC debugging Service
         ```
         apt-get install apache2
         ```
