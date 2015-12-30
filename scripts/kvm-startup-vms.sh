@@ -2,6 +2,8 @@
 # scripts/kvm-startup-vms.sh
 # Startup VMs on KVM host
 
+[ $UID -ne 0 ] && echo "ERROR: $0 has to be executed as root." >&2 && exit 1
+
 set -x
 set -e
 

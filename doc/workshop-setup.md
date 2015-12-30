@@ -1,5 +1,7 @@
 # Workshop Setup
 
+Alle im folgenden verwendeten Commands werden zur Vereinfachung unter dem User root ausgeführt.
+
 ## Informationen zur Workshop Umgebung
 * dnssec-rootns
   * DNS Master:   10.20.1.1/16
@@ -134,12 +136,12 @@ Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Wo
 
 2. Netzwerk des KVM Hosts initialisieren
 	```
-	scripts/kvm-init-net.sh
+	bash scripts/kvm-init-net.sh
 	```
 
 3. VMs der DNS Infrastruktur starten
 	```
-	scripts/kvm-startup-vms.sh
+	bash scripts/kvm-startup-vms.sh
 	```
 
 4. In VMs: Default Route via KVM-Wirt setzen - optimalerweise in der Netzwerkkonfiguration persistieren
