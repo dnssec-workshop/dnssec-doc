@@ -252,6 +252,11 @@ func showEditDomain(w http.ResponseWriter, r *http.Request) {
 					editDomain[key][0] = filterString(editDomain[key][0], "0123456789")
 				}
 
+				keyCheck := []string{ "dnskey1_key", "dnskey2_key" }
+				for _, key := range keyCheck {
+					editDomain[key][0] = filterString(editDomain[key][0], "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/=")
+				}
+
 				domainRE, _ := regexp.Compile("[a-z]+\\.(at|com|de|it|net|nl|org|pl|se)$")
 				checkDomainName := []string{ "name", "nserver1_name", "nserver2_name", "nserver3_name" }
 				for _, key := range checkDomainName {
