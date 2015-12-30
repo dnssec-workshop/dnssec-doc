@@ -20,9 +20,9 @@ body { font-family: monospace; }
 <tr><td>ZoneC Handle: </td><td>{{index .zonec_fk 0}}</td></tr>
 <tr><td><br /></td><td></td></tr>
 <tr><td>Nameserver:</td></tr>
-<tr><td>Nserver1: </td><td><p>{{index .nserver1_name 0}}</p><p>Glue-IP: {{index .nserver1_ip 0}}</p></td></tr>
-<tr><td>Nserver2: </td><td><p>{{index .nserver2_name 0}}</p><p>Glue-IP: {{index .nserver2_ip 0}}</p></td></tr>
-<tr><td>Nserver3: </td><td><p>{{index .nserver3_name 0}}</p><p>Glue-IP: {{index .nserver3_ip 0}}</p></td></tr>
+<tr><td>Nserver1: </td><td>{{index .nserver1_name 0}}<br /><p>Glue-IP: {{index .nserver1_ip 0}}</p></td></tr>
+<tr><td>Nserver2: </td><td>{{index .nserver2_name 0}}<br /><p>Glue-IP: {{index .nserver2_ip 0}}</p></td></tr>
+<tr><td>Nserver3: </td><td>{{index .nserver3_name 0}}<br /><p>Glue-IP: {{index .nserver3_ip 0}}</p></td></tr>
 <tr><td><br /></td><td></td></tr>
 <tr><td>DNSSEC Key 1 flags: </td><td>{{index .dnskey1_flags 0}}</td></tr>
 <tr><td>DNSSEC Key 1 algorithm_id: </td><td>{{index .dnskey1_algo 0}}</td></tr>
