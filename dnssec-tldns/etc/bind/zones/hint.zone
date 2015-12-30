@@ -1,0 +1,5 @@
+$TTL 1h
+.			NS	a.root-servers.test.
+.			NS	b.root-servers.test.
+a.root-servers.test.	A	10.20.1.1
+b.root-servers.test.	A	10.20.1.2
