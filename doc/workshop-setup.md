@@ -82,6 +82,18 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
          systemctl restart apache2
          ```
 
+    * Einrichtung des Master Nameservers inkl. Key Files für Zonen
+         ```
+	 KEY_DIR=/etc/bind/keys
+	 mkdir $KEY_DIR
+
+	 for tld in at com de it net nl org pl se
+	 do
+	     dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 2400 -P now -A now ${tld}.
+	     dnssec-keygen -K $KEY_DIR -n ZONE -3 -a RSASHA256 -b 1024 -r /dev/urandom -L 2400 -P now -A now ${tld}.
+	 done
+         ```
+
 2. Konfiguration der Slave Nameserver
 	```
 	ln -s /etc/init.d/bind9 /etc/init.d/bind9.slave
