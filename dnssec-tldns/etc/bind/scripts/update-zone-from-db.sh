@@ -21,7 +21,7 @@ FORCE_SERIAL=$2
 ZONE_SERIAL=${FORCE_SERIAL:-$(($(dig +noall +answer -t SOA de. @localhost | awk '{print $7}' 2>/dev/null)+1))}
 
 # get current records from database
-ZONE_RECORDS=$(mysql --batch --skip-column-names -u$DB_USERNAME -p$DB_PASSWORD $DB_NAME -e "
+DNS_RECORDS="$(mysql --batch --skip-column-names -u$DB_USERNAME -p$DB_PASSWORD $DB_NAME -e "
 -- get authoritative nameservers for registered domains of TLD
 select ifnull(concat(name, '. NS ', nserver1_name, '.'), '') from $DB_TABLE where not nserver1_name = '' and substring_index(name, '.', -1) = '$TLD';
 select ifnull(concat(name, '. NS ', nserver2_name, '.'), '') from $DB_TABLE where not nserver2_name = '' and substring_index(name, '.', -1) = '$TLD';
@@ -30,7 +30,14 @@ select ifnull(concat(name, '. NS ', nserver3_name, '.'), '') from $DB_TABLE wher
 select ifnull(concat(nserver1_name, '. A ', nserver1_ip), '') from $DB_TABLE where not ( nserver1_name = '' or nserver1_name is null ) and not ( nserver1_ip = '' or nserver1_ip is null ) and instr(nserver1_name, name) > 0 and substring_index(name, '.', -1) = '$TLD';
 select ifnull(concat(nserver2_name, '. A ', nserver2_ip), '') from $DB_TABLE where not ( nserver2_name = '' or nserver2_name is null ) and not ( nserver2_ip = '' or nserver2_ip is null ) and instr(nserver2_name, name) > 0 and substring_index(name, '.', -1) = '$TLD';
 select ifnull(concat(nserver3_name, '. A ', nserver3_ip), '') from $DB_TABLE where not ( nserver3_name = '' or nserver3_name is null ) and not ( nserver3_ip = '' or nserver3_ip is null ) and instr(nserver3_name, name) > 0 and substring_index(name, '.', -1) = '$TLD';
-" | grep -v "^\s*$" | sort -k1)
+")"
+
+DNS_DS_RECORDS="$(mysql --batch --skip-column-names -u$DB_USERNAME -p$DB_PASSWORD $DB_NAME -e "
+select ifnull(concat(name, '. IN DNSKEY ', dnskey1_flags, ' 3 ', dnskey1_algo, ' ', dnskey1_key), '') from $DB_TABLE where substring_index(name, '.', -1) = '$TLD' and dnskey1_flags > 0 and dnskey1_algo > 0 and not ( dnskey1_key = '' or dnskey1_key is null );
+select ifnull(concat(name, '. IN DNSKEY ', dnskey1_flags, ' 3 ', dnskey1_algo, ' ', dnskey1_key), '') from $DB_TABLE where substring_index(name, '.', -1) = '$TLD' and dnskey1_flags > 0 and dnskey1_algo > 0 and not ( dnskey1_key = '' or dnskey1_key is null );
+" | $(dirname $0)/dnskey2ds.pl)"
+
+ZONE_RECORDS="$(echo -e "$DNS_RECORDS\n$DNS_DS_RECORDS" | grep -v "^\s*$\|^\s*;")"
 
 if [ ${PIPESTATUS[0]} -ne 0 -o ! "$ZONE_RECORDS" ]
 then
