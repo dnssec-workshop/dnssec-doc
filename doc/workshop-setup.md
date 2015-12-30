@@ -23,6 +23,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 
 1. Grundinstallation
    * Debian 8 mit Basissystem
+
    * Software Setup
         ```
         apt-get purge exim4 rpcbind portmap at avahi-daemon
@@ -35,6 +36,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
         ```
         apt-get install apache2 mysql-server golang-go
         ```
+
    * dnssec-resolver
         ```
         apt-get install apache2
@@ -61,6 +63,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
          mysql -uroot -proot -e 'create database sld charset utf8;'
          mysql -uroot -proot sld < /etc/whoisd/sld.mysql
          ```
+
      * whoisd
          ```
          # go get github.com/openprovider/whoisd
@@ -70,6 +73,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
          systemctl enable whoisd.service
          systemctl start whoisd.service
          ```
+
      * Setup Apache Webserver als Proxy zum whoisd / Registrar Go-Interface
          ```
          a2dissite 000-default
