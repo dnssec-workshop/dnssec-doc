@@ -1,5 +1,6 @@
 <h1>{{.Title}}</h1>
 <p><b>{{.Status}}: {{.Message}}</b></p>
+<p>Allowed TLDs: at, com, de, it, net, nl, org, pl, se</p>
 {{range .DomainList}}
 <form action="/save" method="post">
 <table>
