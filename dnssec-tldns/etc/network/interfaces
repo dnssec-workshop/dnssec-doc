@@ -8,6 +8,7 @@ auto lo
 iface lo inet loopback
 
 # The primary network interface
+# Master Nameserver
 auto eth0
 allow-hotplug eth0
 iface eth0 inet static
@@ -15,8 +16,23 @@ address 10.20.2.1
 network 255.255.0.0
 gateway 10.20.0.1
 
+# Slave Nameserver
 auto eth0:2
 allow-hotplug eth0:2
 iface eth0:2 inet static
 address 10.20.2.2
+network 255.255.0.0
+
+# Whoisd
+auto eth0:22
+allow-hotplug eth0:2w
+iface eth0:2 inet static
+address 10.20.2.22
+network 255.255.0.0
+
+# Webserver
+auto eth0:23
+allow-hotplug eth0:23
+iface eth0:2 inet static
+address 10.20.2.23
 network 255.255.0.0
