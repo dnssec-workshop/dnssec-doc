@@ -276,7 +276,7 @@ func showEditDomain(w http.ResponseWriter, r *http.Request) {
 			if saveError != true {
 				stmt, err := db.Prepare(
 					"insert into " + mysqlTable +
-					"  name, ownerc_fk, techc_fk" +
+					"  (name, ownerc_fk, techc_fk" +
 					", adminc_fk, zonec_fk, created, updated" +
 					", dnskey1_flags, dnskey1_algo, dnskey1_key" +
 					", dnskey2_flags, dnskey2_algo, dnskey2_key" +
