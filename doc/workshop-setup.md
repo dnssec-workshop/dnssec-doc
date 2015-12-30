@@ -92,8 +92,9 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 ### Startup der DNS-Infrastruktur
 
 Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Workshop-Infrastruktur konfiguriert und die VMs bereitgestellt. Die VMs wurden zuvor installiert.
+Die unten genannten Commands können mit dem 
 
-1. Interface Konfiguration KVM Host mit Infrastruktur Systemen -- `/etc/conf.d/net`
+1. Interface Konfiguration KVM Host mit Infrastruktur Systemen - `/etc/conf.d/net`
 	```
 	config_br0="null"
 	brctl_br0="setfd 0
@@ -102,31 +103,17 @@ Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Wo
 	bridge_br0="eth0"
 	```
 
-2. Netzwerk Setup
+2. Netzwerk des KVM Hosts initialisieren
 	```
-	/etc/init.d/net.br0 start
-	ip addr flush dev br0
-	ip addr add local 10.20.0.1/16 dev br0 scope link
-	route add -net 10.20.0.0/16 dev br0
+	scripts/kvm-init-net.sh
 	```
 
-3. Startup der Systeme für die DNS Infrastruktur
+3. VMs der DNS Infrastruktur starten
 	```
-	/etc/init.d/libvirtd start
-	virsh start dnssec-rootns
-	virsh start dnssec-tldns
-	virsh start dnssec-sldns
-	virsh start dnssec-resolver
+	scripts/kvm-startup-vms.sh
 	```
 
-4. Traffic der virtuellen Systeme über Interface mit Internet-Anbindungen maskieren
-	```
-	echo 1 > /proc/sys/net/ipv4/ip_forward
-	INET_INTERFACE=wlan0
-	iptables -t nat -A POSTROUTING -s 10.20.0.0/16 -o $INET_INTERFACE -j MASQUERADE
-	```
-
-5. In VMs: Default Route via KVM-Wirt setzen
+4. In VMs: Default Route via KVM-Wirt setzen - optimalerweise in der Netzwerkkonfiguration persistieren
 	```
 	# route add -net default gw 10.20.0.1
 	```
