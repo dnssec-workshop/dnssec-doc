@@ -55,7 +55,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 1. Konfiguration der Master Nameserver
    siehe (dnssec-instancename/)
 
-1. Git-Repository laden
+1. Git-Repository laden und Konfigurationen übertragen
      ```
      cd /root
      git clone https://github.com/pecharmin/dnssec-workshop.git
@@ -63,6 +63,29 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
      ```
 
 1. Einrichtung der Software-Komponenten auf den Nameserver VMs
+   * dnssec-rootns
+     * Einrichtung des Master Nameservers inkl. Key Files für Zonen
+         ```
+	 KEY_DIR=/etc/bind/keys
+	 mkdir $KEY_DIR
+
+	 for tld in "" test # Root und test. Zone
+	 do
+	     dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 2400 -P now -A now ${tld}.
+	     dnssec-keygen -K $KEY_DIR -n ZONE -3 -a RSASHA256 -b 1024 -r /dev/urandom -L 2400 -P now -A now ${tld}.
+	 done
+         ```
+
+      * DNS-Zonen einmalig mit Keys signieren -- ist aufgrund fehlender Änderungen nicht erneut notwendig
+         ```
+	 /etc/bind/scripts/sign-zone.sh .
+	 /etc/bind/scripts/sign-zone.sh test
+         ```
+      * DNSKEY der Root-Zone auf Resolvern einbinden
+         ```
+	 grep -h -R -A 10 "key-signing.*, for \.$" /etc/bind/keys/ | grep DNSKEY
+         ```
+
    * dnssec-tldns
      * MySQL-Datenbank für SLDs
          ```
@@ -88,7 +111,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
          systemctl restart apache2
          ```
 
-    * Einrichtung des Master Nameservers inkl. Key Files für Zonen
+     * Einrichtung des Master Nameservers inkl. Key Files für Zonen
          ```
 	 KEY_DIR=/etc/bind/keys
 	 mkdir $KEY_DIR
@@ -204,4 +227,10 @@ Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Wo
 		mkdir -p ${NAMED_BASEDIR}/var/log/named.${nsinstance}
 		chown bind: ${NAMED_BASEDIR}/var/log/named.${nsinstance} || chown named: ${NAMED_BASEDIR}/var/log/named.${nsinstance}
 	done
+	```
+
+4. DNSKEY der Root-Nameserver einrichten
+	```
+	dig -t DNSKEY . @10.20.1.1
+	echo ". 2400 IN DNSKEY 257 3 8 AwEAAcV2vdlE/+FeNmH4QNOqkeOx7T0v38prLujAggM4gmkBdj/v1DsE DaTEewoekBcXkhC8gQckDRwvMIZU1sSTGP5DYFAZEClpt0NCEJtlCIrS BHQnj2w9+J/iV3f0JC8oMLu727LiT/+Ro4DCSetithDd2Jqc4dsRnncC gsRzs2uC4h0GCXP/z25ZfweqL05t8rk5GAdTKpBiX/J2b1lqUaHC7UxK g0X/fv+SJ/8mYDSGFVssKlDEER4KwVxN6j2Ge44AOPMwE24hQ71faLYq vYwD+DPIClq/zom3REpFVw2PM77Yl3Hse7m6+CFHrsdMxN5IMm1qkxIq UNR43lKxDs0=" > /etc/trusted-key.key
 	```
