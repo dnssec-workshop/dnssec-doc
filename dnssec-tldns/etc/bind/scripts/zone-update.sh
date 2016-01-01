@@ -24,6 +24,7 @@ done
 
 if [ $RUN_CHECK -eq 1 ]
 then
+	RET=0
 	for tld in $ZONES
 	do
 		if [ -e "${ZONEFILE_DIR}/${tld}.zone.signed" ]
@@ -34,6 +35,12 @@ then
 			named-checkzone ${tld}. ${ZONEFILE_DIR}/${tld}.zone
 		else
 			echo "ERROR: Found no zone file for TLD $tld" >&2
+			err=$?
+			[ $err -gt 0 ] && RET=$err
 		fi
 	done
+
+	[ $RET -ne 0 ] && exit $RET
 fi
+
+rndc reload
