@@ -33,7 +33,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
    * Software Setup
         ```
         apt-get purge exim4 rpcbind portmap at avahi-daemon
-        apt-get install nmap tcpdump traceroute chkconfig curl git less screen bsd-mailx vim ntp
+        apt-get install nmap tcpdump traceroute chkconfig curl git less screen bsd-mailx vim ntp ntpdate
         apt-get install bind9
         ```
 
