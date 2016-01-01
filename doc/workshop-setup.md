@@ -9,13 +9,14 @@ Alle im folgenden verwendeten Commands werden zur Vereinfachung unter dem User r
 * dnssec-tldns
   * DNS Master:   10.20.2.1/16
   * DNS Slave:    10.20.2.2/16
-  * Webserver:    10.20.2.8/16
+  * whois:        10.20.2.22/16
+  * Webserver:    10.20.2.23/16
 * dnssec-sldns
   * DNS Master:   10.20.4.1/16
   * DNS Slave:    10.20.4.2/16
 * dnssec-resolver
   * DNS Resolver: 10.20.8.1/16
-  * Webserver:    10.20.8.8/16
+  * Webserver:    10.20.8.23/16
 
 * Verfügbare TLDs:
   * it: keine Signierung mit DNSSEC
