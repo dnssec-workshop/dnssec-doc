@@ -1,0 +1,26 @@
+# Query DNS records of Zone task1.de
+# Trace DNS query from root servers down to task2.de
+# Get DNSSEC Records from de. domains (DNSKEY, NEC3, DS from Parent)
+# Get whois information about task3.de
+# List domains at SLD registrar
+# Register a new domain (name + nserver1_name)
+# Edit your created domain (add a glue record)
+# Configure a unsigned zone in your nameserver
+## Check if your SLD is delivered by the TLD parent
+## Test your SLD
+# Setup a slave nameserver for your SLD on local system
+## Add the slave NS via SLD registrar to your domain
+## Test the changed setup
+# Create DNSKEYs for your zone and sign it
+## Check your DNSSEC setup locally
+# Publish your DNSSEC KSK to parent via SLD registrar
+## Check the DNSSEC setup
+# Add some new records to your zone and resign it - check the records
+# Roll over your ZSK without parent interaction
+## Check the DNSSEC setup
+# Roll over your KSK with updating DNSKEYs in parent via SLD registrar
+## Check the DNSSEC setup
+# Roll over an alogrithm of your ZSK
+## Check the DNSSEC setup
+# Change from KSK/ZSK to CSK schema
+## Check the DNSSEC setup
