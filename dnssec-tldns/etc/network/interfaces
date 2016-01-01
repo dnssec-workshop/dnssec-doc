@@ -25,14 +25,14 @@ network 255.255.0.0
 
 # Whoisd
 auto eth0:22
-allow-hotplug eth0:2w
-iface eth0:2 inet static
+allow-hotplug eth0:22
+iface eth0:22 inet static
 address 10.20.2.22
 network 255.255.0.0
 
 # Webserver
 auto eth0:23
 allow-hotplug eth0:23
-iface eth0:2 inet static
+iface eth0:23 inet static
 address 10.20.2.23
 network 255.255.0.0
