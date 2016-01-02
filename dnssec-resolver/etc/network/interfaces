@@ -16,9 +16,16 @@ address 10.20.8.1
 network 255.255.0.0
 gateway 10.20.0.1
 
+# IPv6 für DNSViz Resolver
+auto eht0:6
+allow-hotplug eth0:6
+iface eth0:6 inet6 static
+address 10:20:8::6
+netmask 64
+
 # Webserver
 auto eth0:23
 allow-hotplug eth0:23
 iface eth0:23 inet static
-address 10.20.2.23
+address 10.20.8.23
 network 255.255.0.0
