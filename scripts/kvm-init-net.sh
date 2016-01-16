@@ -8,7 +8,16 @@ set -x
 set -e
 
 # Interface name which provides internet access
-INET_INTERFACE=wlan0
+INET_INTERFACE="wlan0 ppp0"
+for i in $INET_INTERFACE
+do
+	if ip link show dev $i | grep -qv DOWN
+	then
+		INET_INTERFACE=$i
+		break
+	fi
+done
+$INET_INTERFACE=${INET_INTERFACE% *}
 
 KVM_IFACE=br0
 KVM_NET=10.20.0.0/16
