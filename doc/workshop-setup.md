@@ -46,7 +46,8 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 
    * dnssec-resolver: DNSSEC debugging Service
         ```
-        apt-get install apache2
+	apt-get install make python-pydot python-dnspython python-pygraphviz python-m2crypto
+        apt-get install apache2 libapache2-mod-wsgi python-django postgresql-9.4 python-psycopg2
         ```
 
 
@@ -132,6 +133,28 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
      * File mit DS-Records der TLDs auf Root-Nameserver kopieren
          ```
 	 scp /etc/bind/keys/dsset-* root@dnssec-rootns:/etc/bind/dssets/
+         ```
+
+   * dnssec-resolver
+     * DNSViz selbst einrichten
+         ```
+	 cd /opt
+	 git clone https://github.com/pecharmin/dnsviz
+	 cd dnsviz
+	 git checkout v0.4.0
+	 python setup.py build
+	 python setup.py install
+         ```
+
+      * Auslieferung von DNSViz per Apache und mod_cgi
+         ```
+	 a2enmod cgid
+	 # Konfiguration des DNSViz VHost in /etc/apache2/sites-available/dnsviz.test.conf
+	 a2dissite 000-default
+	 a2ensite dnsviz.test.conf
+	 mkdir /var/log/apache2/mod_cgi
+	 chown www-data: /var/log/apache2/mod_cgi
+	 systemctl reload apache2.service
          ```
 
 2. Konfiguration der Slave Nameserver
