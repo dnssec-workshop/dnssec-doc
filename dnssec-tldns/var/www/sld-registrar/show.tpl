@@ -5,6 +5,7 @@
 <body>
 <style>
 body { font-family: monospace; }
+tr { vertical-align: top; }
 </style>
 <h1>{{.Title}}</h1>
 <p><b>{{.Status}}: {{.Message}}</b></p>
