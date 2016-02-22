@@ -1,26 +1,8 @@
 # Workshop Setup
 
+Für Informationen zur Workshop-Umgebung siehe (/doc/workshop-environment.md)
+
 Alle im folgenden verwendeten Commands werden zur Vereinfachung unter dem User root ausgeführt.
-
-## Informationen zur Workshop Umgebung
-* dnssec-rootns
-  * DNS Master:   10.20.1.1/16
-  * DNS Slave:    10.20.1.2/16
-* dnssec-tldns
-  * DNS Master:   10.20.2.1/16
-  * DNS Slave:    10.20.2.2/16
-  * whois:        10.20.2.22/16
-  * Webserver:    10.20.2.23/16
-* dnssec-sldns
-  * DNS Master:   10.20.4.1/16
-  * DNS Slave:    10.20.4.2/16
-* dnssec-resolver
-  * DNS Resolver: 10.20.8.1/16
-  * Webserver:    10.20.8.23/16
-
-* Verfügbare TLDs:
-  * it: keine Signierung mit DNSSEC
-  * org: DS-Records nicht in Root-Servern eingetragen
 
 ## Vorbreitungen der Umgebung
 
@@ -103,8 +85,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 
      * whoisd
          ```
-         # go get github.com/openprovider/whoisd
-         go get github.com/pecharmin/whoisd
+         go get github.com/openprovider/whoisd
          go get github.com/go-sql-driver/mysql
 
          systemctl enable whoisd.service
@@ -265,4 +246,4 @@ Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Wo
 	echo ". 2400 IN DNSKEY 257 3 8 AwEAAcV2vdlE/+FeNmH4QNOqkeOx7T0v38prLujAggM4gmkBdj/v1DsE DaTEewoekBcXkhC8gQckDRwvMIZU1sSTGP5DYFAZEClpt0NCEJtlCIrS BHQnj2w9+J/iV3f0JC8oMLu727LiT/+Ro4DCSetithDd2Jqc4dsRnncC gsRzs2uC4h0GCXP/z25ZfweqL05t8rk5GAdTKpBiX/J2b1lqUaHC7UxK g0X/fv+SJ/8mYDSGFVssKlDEER4KwVxN6j2Ge44AOPMwE24hQ71faLYq vYwD+DPIClq/zom3REpFVw2PM77Yl3Hse7m6+CFHrsdMxN5IMm1qkxIq UNR43lKxDs0=" > /etc/trusted-key.key
 	```
 
-# vim: set syntax=markdown tabstop=4 expandtab:
+# vim: set syntax=markdown tabstop=2 expandtab:
