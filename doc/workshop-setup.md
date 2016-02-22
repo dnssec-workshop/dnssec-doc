@@ -64,6 +64,12 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
      rsync -av dnssec-workshop/$HOSTNAME/ /
      ```
 
+1. Bei Bedarf kann die Systemkonfiguration aus dem Github Repo aktualisiert/überschrieben werden
+     ```
+     gup
+     ```
+
+
 1. Einrichtung der Software-Komponenten auf den Nameserver VMs
    * dnssec-rootns
      * Einrichtung des Master Nameservers inkl. Key Files für Zonen
@@ -258,3 +264,5 @@ Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Wo
 	dig -t DNSKEY . @10.20.1.1
 	echo ". 2400 IN DNSKEY 257 3 8 AwEAAcV2vdlE/+FeNmH4QNOqkeOx7T0v38prLujAggM4gmkBdj/v1DsE DaTEewoekBcXkhC8gQckDRwvMIZU1sSTGP5DYFAZEClpt0NCEJtlCIrS BHQnj2w9+J/iV3f0JC8oMLu727LiT/+Ro4DCSetithDd2Jqc4dsRnncC gsRzs2uC4h0GCXP/z25ZfweqL05t8rk5GAdTKpBiX/J2b1lqUaHC7UxK g0X/fv+SJ/8mYDSGFVssKlDEER4KwVxN6j2Ge44AOPMwE24hQ71faLYq vYwD+DPIClq/zom3REpFVw2PM77Yl3Hse7m6+CFHrsdMxN5IMm1qkxIq UNR43lKxDs0=" > /etc/trusted-key.key
 	```
+
+# vim: set syntax=markdown tabstop=4 expandtab:
