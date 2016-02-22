@@ -31,4 +31,6 @@ Hier kann jeder Teilnehmer ein /24 Subnetz erhalten und mehrere IPs für seine S
 
 ## Referenzen
 * https://talk.babiel.com/1/dnssec
-* http://ftp.isc.org/isc/bind9/cur/9.9/doc/arm/Bv9ARM.html
+* https://ftp.isc.org/isc/bind9/cur/9.9/doc/arm/Bv9ARM.html
+* http://dnsviz.net/
+* http://dnsviz.net/demo/dnsviz-demo-v2.zip
