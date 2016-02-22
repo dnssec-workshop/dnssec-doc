@@ -1,5 +1,5 @@
-$TTL 1h
-test.			SOA	a.root-servers.test. dnssec.arminpech.de. ( 2016010103 1800 900 1800 1800 )
+$TTL 5m
+test.			SOA	a.root-servers.test. dnssec.arminpech.de. ( 2016022201 1800 900 1800 1800 )
 
 test.			NS	a.root-servers.test.
 test.			NS	b.root-servers.test.
@@ -7,3 +7,7 @@ a.root-servers.test.	A	10.20.1.1
 b.root-servers.test.	A	10.20.1.2
 
 whois.test.		A	10.20.2.22
+nic.test.		A	10.20.2.23
+
+resolver.test.		A	10.20.8.1
+dnsviz.test.		A	10.20.8.23
