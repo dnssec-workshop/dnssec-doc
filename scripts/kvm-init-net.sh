@@ -8,7 +8,7 @@ set -x
 set -e
 
 # Interface name which provides internet access
-INET_INTERFACE="wlan0 ppp0"
+INET_INTERFACE="${INET_INTERFACE:-"wlan0 ppp0"}"
 for i in $INET_INTERFACE
 do
 	if ip link show dev $i | grep -qv DOWN
