@@ -6,6 +6,13 @@ $TTL 1h
 a.root-servers.test.	A	10.20.1.1
 b.root-servers.test.	A	10.20.1.2
 
+t.                   NS      a.root-servers.test.
+test.                   NS      b.root-servers.test.
+a.root-servers.test.    A       10.20.1.1
+b.root-servers.test.    A       10.20.1.2
+test.	2400	IN	DS	39604 8 2 ( cde983394cb81330d054180953e0f895fdad4536002d5677446ca45816b276b3 )
+test.	2400	IN	DS	39604 8 1 5c2f2ec408b64ec721d11eb818e60bbce5502841
+
 at.			NS	a.ns.at.
 at.			NS	b.ns.at.
 ;$INCLUDE "/etc/bind/dssets/dsset-at."
