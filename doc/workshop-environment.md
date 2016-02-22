@@ -24,7 +24,13 @@
 * Verfügbare Services:
   * Registrierung von Domains: http://nic.test/
   * Whois Service über Domains: whois.test
+    ```
+    whois -h whois.test <domain_name>
+    ```
   * DNS-Resolver mit DNSSEC-Support: resolver.test / 10.20.8.1
+    ```
+    dig -t ANY test. @resolver.test.
+    ```
   * DNSViz Debugging: http://dnsviz.test/
 
 # vim: set syntax=markdown tabstop=2 expandtab:
