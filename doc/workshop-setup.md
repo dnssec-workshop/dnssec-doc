@@ -127,9 +127,9 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
      * DNSViz selbst einrichten
          ```
 	 cd /opt
-	 git clone https://github.com/pecharmin/dnsviz
+   git clone https://github.com/dnsviz/dnsviz
 	 cd dnsviz
-	 git checkout v0.4.0
+	 git checkout v0.5.1
 	 python setup.py build
 	 python setup.py install
          ```
