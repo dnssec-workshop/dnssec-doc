@@ -2,6 +2,7 @@
 # /etc/bind/scripts/sign-zone.sh
 # Resign TLD zone
 
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
 ZONEFILE_DIR=/etc/bind/zones
 KEYFILE_DIR=/etc/bind/keys
 RRSIG_VALIDITY="+2h"
