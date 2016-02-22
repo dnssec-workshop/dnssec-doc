@@ -85,6 +85,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 
      * whoisd
          ```
+         export GOPATH=~/gocode
          go get github.com/openprovider/whoisd
          go get github.com/go-sql-driver/mysql
 
