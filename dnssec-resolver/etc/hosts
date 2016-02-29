@@ -10,6 +10,7 @@ ff02::2 ip6-allrouters
 192.30.252.130	github.com
 137.226.34.46	ftp2.de.debian.org
 212.211.132.250	security.debian.org
+91.237.88.67	0.debian.pool.ntp.org
 212.18.3.19	1.debian.pool.ntp.org
 195.50.171.101	2.debian.pool.ntp.org
 85.236.36.4	3.debian.pool.ntp.org
