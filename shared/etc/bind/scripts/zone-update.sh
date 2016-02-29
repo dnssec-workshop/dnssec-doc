@@ -2,6 +2,8 @@
 # /etc/bind/scripts/zone-update.sh [-c|--check] [<tld1 tld2> [<overwrite_soa_serial>]
 
 ZONEFILE_DIR=/etc/bind/zones
+KEYFILE_DIR=/etc/bind/keys
+DSSETS_TARGET=${DSSETS_TARGET:-"root@10.20.1.1:/etc/bind/keys/"}
 
 RUN_CHECK=0
 if [ "$1" = "-c" -o "$1" = "--check" ]
@@ -19,6 +21,7 @@ do
 	echo "=== $tld ==="
 	$(dirname $0)/update-zone-from-db.sh $tld $FORCE_SERIAL
 	$(dirname $0)/sign-zone.sh $tld
+	scp ${KEYFILE_DIR}/dsset-${tld}. $DSSETS_TARGET
 	echo
 done
 
