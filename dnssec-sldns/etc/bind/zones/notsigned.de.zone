@@ -1,0 +1,8 @@
+$TTL 1800
+notsigned.de.		SOA	ns1.dnsprovi.de. dnssec.arminpech.de. ( 20160229 1800 900 1800 1800 )
+
+notsigned.de.		NS	ns1.dnsprovi.de.
+notsigned.de.		NS	ns2.dnsprovi.de.
+
+notsigned.de.		A	10.20.4.23
+www.notsigned.de.	A	10.20.4.23

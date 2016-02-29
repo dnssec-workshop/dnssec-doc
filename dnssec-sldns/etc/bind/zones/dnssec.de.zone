@@ -1,0 +1,9 @@
+$TTL 1800
+dnssec.de.		SOA	ns1.dnsprovi.de. dnssec.dnssec.de. ( 20160229 1800 900 1800 1800 )
+
+dnssec.de.		NS	ns1.dnsprovi.de.
+dnssec.de.		NS	ns2.dnsprovi.de.
+
+dnssec.de.		A	10.20.4.23
+www.dnssec.de.		CNAME	www.dnsprovi.de.
+armin.dnssec.de.	CNAME	www.arminpech.de.

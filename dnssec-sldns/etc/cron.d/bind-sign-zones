@@ -1,0 +1,1 @@
+*/15 * * * *	root	/etc/bind/scripts/auto-signing.sh /etc/bind/zones 'dnsprovi.de dnssec.de'
