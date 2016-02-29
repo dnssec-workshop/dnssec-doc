@@ -10,21 +10,20 @@ test.                   NS      a.root-servers.test.
 test.                   NS      b.root-servers.test.
 a.root-servers.test.    A       10.20.1.1
 b.root-servers.test.    A       10.20.1.2
-test.	2400	IN	DS	39604 8 2 ( cde983394cb81330d054180953e0f895fdad4536002d5677446ca45816b276b3 )
-test.	2400	IN	DS	39604 8 1 5c2f2ec408b64ec721d11eb818e60bbce5502841
+$INCLUDE "/etc/bind/keys/dsset-test."
 
 at.			NS	a.ns.at.
 at.			NS	b.ns.at.
-;$INCLUDE "/etc/bind/dssets/dsset-at."
+;$INCLUDE "/etc/bind/keys/dsset-at."
 a.ns.at.		A	10.20.2.1
 b.ns.at.		A	10.20.2.2
 
 com.			NS	a.gtld.net.
 com.			NS	b.gtld.net.
-;$INCLUDE "/etc/bind/dssets/dsset-com."
+;$INCLUDE "/etc/bind/keys/dsset-com."
 net.			NS	a.gtld.net.
 net.			NS	b.gtld.net.
-;$INCLUDE "/etc/bind/dssets/dsset-net."
+;$INCLUDE "/etc/bind/keys/dsset-net."
 org.			NS	a.gtld.net.
 org.			NS	b.gtld.net.
 ; DS-Records werden zum Test der Chain of Trust nicht verankert
@@ -33,7 +32,7 @@ b.gtld.net.		A	10.20.2.2
 
 de.			NS	a.nic.de.
 de.			NS	b.denic.de.
-$INCLUDE "/etc/bind/dssets/dsset-de."
+$INCLUDE "/etc/bind/keys/dsset-de."
 a.nic.de.		A	10.20.2.1
 b.denic.de.		A	10.20.2.2
 
@@ -45,18 +44,18 @@ b.dns.it.		A	10.20.2.2
 
 nl.			NS	ns1.dns.nl.
 nl.			NS	ns2.dns.nl.
-;$INCLUDE "/etc/bind/dssets/dsset-nl."
+;$INCLUDE "/etc/bind/keys/dsset-nl."
 ns1.dns.nl.		A	10.20.2.1
 ns2.dns.nl.		A	10.20.2.2
 
 pl.			NS	a-dns.pl.
 pl.			NS	b-dns.pl.
-;$INCLUDE "/etc/bind/dssets/dsset-pl."
+;$INCLUDE "/etc/bind/keys/dsset-pl."
 a-dns.pl.		A	10.20.2.1
 b-dns.pl.		A	10.20.2.2
 
 se.			NS	a.ns.se.
 se.			NS	b.ns.se.
-;$INCLUDE "/etc/bind/dssets/dsset-se."
+;$INCLUDE "/etc/bind/keys/dsset-se."
 a.ns.se.		A	10.20.2.1
 b.ns.se.		A	10.20.2.2
