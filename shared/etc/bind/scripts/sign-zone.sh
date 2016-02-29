@@ -11,7 +11,7 @@ RRSIG_JITTER=${RRSIG_JITTER:-"300"}
 TLD=$1
 [ "${TLD: -1}" != "." ] && TLD=${TLD}.
 TLD_FILE=$TLD
-[ "$TLD" = "." ] && TLD_FILE="root"
+[ "$TLD" = "." ] && TLD_FILE="root."
 
 # Smart zone signing
 if [ ! "$(find $KEYFILE_DIR -name "K${TLD}*" -type f)" ]
