@@ -1,1 +1,1 @@
-shared/root/.bashrc
+../../shared/root/.bashrc

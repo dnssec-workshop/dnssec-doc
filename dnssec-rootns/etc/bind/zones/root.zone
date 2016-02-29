@@ -6,7 +6,7 @@ $TTL 1h
 a.root-servers.test.	A	10.20.1.1
 b.root-servers.test.	A	10.20.1.2
 
-t.                   NS      a.root-servers.test.
+test.                   NS      a.root-servers.test.
 test.                   NS      b.root-servers.test.
 a.root-servers.test.    A       10.20.1.1
 b.root-servers.test.    A       10.20.1.2

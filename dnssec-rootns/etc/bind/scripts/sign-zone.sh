@@ -1,1 +1,1 @@
-shared/etc/bind/scripts/sign-zone.sh
+../../shared/etc/bind/scripts/sign-zone.sh
