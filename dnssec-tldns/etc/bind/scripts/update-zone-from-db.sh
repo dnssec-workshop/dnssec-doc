@@ -1,5 +1,5 @@
 #!/bin/bash
-# /etc/bind/scripts/update-zone-from-db.sh <TLD>
+# /etc/bind/scripts/update-zone-from-db.sh <TLD> <forced_serial>
 # Update SLD zones from database
 
 DB_HOST=localhost
