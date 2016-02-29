@@ -17,13 +17,13 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
         ```
         apt-get purge exim4 rpcbind portmap at avahi-daemon
         apt-get install nmap tcpdump traceroute chkconfig curl git less screen bsd-mailx vim ntp ntpdate
-        apt-get install bind9
+        apt-get install bind9 libnet-dns-sec-perl
         ```
 
 2. Installation spezifischer Software auf den VMs
    * dnssec-tldns: whois + Domain Registrar Service
         ```
-        apt-get install apache2 mysql-server golang-go libnet-dns-sec-perl
+        apt-get install apache2 mysql-server golang-go
         ```
 
    * dnssec-resolver: DNSSEC debugging Service
@@ -121,6 +121,21 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
      * File mit DS-Records der TLDs auf Root-Nameserver kopieren
         ```
         scp /etc/bind/keys/dsset-* root@dnssec-rootns:/etc/bind/dssets/
+        ```
+
+   * dnssec-sldns
+     * DNSSEC Keys für Test-Zonen anlegen
+        ```
+        KEY_DIR=/etc/bind/keys
+        mkdir $KEY_DIR
+        dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 2400 -P now -A now dnsprovi.de.
+        dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 2400 -P now -A now arminpech.de.
+        grep DNSKEY $KEY_DIR/*.key
+        ```
+     * DNSKEY Records der Zonen bei Registrar hinterlegen
+     * Zonen signieren
+        ```
+        /etc/bind/scripts/auto-signing.sh
         ```
 
    * dnssec-resolver

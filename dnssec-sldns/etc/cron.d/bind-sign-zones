@@ -1,1 +1,1 @@
-*/15 * * * *	root	/etc/bind/scripts/auto-signing.sh /etc/bind/zones 'dnsprovi.de dnssec.de'
+*/15 * * * *	root	/etc/bind/scripts/auto-signing.sh /etc/bind/zones 'dnsprovi.de dnssec.de' >>/var/log/named/auto-signing.log 2>&1
