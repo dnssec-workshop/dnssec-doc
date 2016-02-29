@@ -1,5 +1,5 @@
 #!/bin/bash
-# /etc/bind/scripts/sign-zone.sh
+# /etc/bind/scripts/sign-zone.sh <TLD> <force_serial>
 # Resign TLD zone
 
 PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
@@ -13,6 +13,11 @@ TLD=$1
 TLD_FILE=$TLD
 [ "$TLD" = "." ] && TLD_FILE="root."
 
+FORCE_SERIAL=$2
+
+# Increment or set serial
+ZONE_SERIAL=${FORCE_SERIAL:-$(($(dig +noall +answer -t SOA $TLD @localhost | awk '{print $7}' 2>/dev/null)+1))}
+
 # Smart zone signing
 if [ ! "$(find $KEYFILE_DIR -name "K${TLD}*" -type f)" ]
 then
@@ -21,5 +26,5 @@ then
 fi
 
 # Sign the zone and update NSEC3PARAM
-dnssec-signzone -S -K $KEYFILE_DIR -d $KEYFILE_DIR -e $RRSIG_VALIDITY -j $RRSIG_JITTER -r /dev/urandom -a -3 $(openssl rand 4 -hex) -H 15 -A -o ${TLD} $ZONEFILE_DIR/${TLD_FILE}zone
+dnssec-signzone -S -K $KEYFILE_DIR -d $KEYFILE_DIR -e $RRSIG_VALIDITY -j $RRSIG_JITTER -r /dev/urandom -a -3 $(openssl rand 4 -hex) -H 15 -A -L $ZONE_SERIAL -o ${TLD} $ZONEFILE_DIR/${TLD_FILE}zone
 exit $?
