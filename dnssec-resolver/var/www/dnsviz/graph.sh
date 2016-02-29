@@ -10,7 +10,7 @@ TRUSTED_KEY_FILE=/etc/trusted-key.key
 echo "Content-Type: text/html"
 echo ""
 
-if [ ! "$DOMAIN" -o ${#DOMAIN} -lt 4 ]
+if [ ! "$DOMAIN" -o ${#DOMAIN} -lt 1 ]
 then
 	echo "ERROR: No valid domain specified: '$DOMAIN'"
 	exit 1
