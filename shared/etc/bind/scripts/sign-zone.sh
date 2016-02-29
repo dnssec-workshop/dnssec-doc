@@ -18,6 +18,9 @@ FORCE_SERIAL=$2
 # Increment or set serial
 ZONE_SERIAL=${FORCE_SERIAL:-$(($(dig +noall +answer -t SOA $TLD @localhost | awk '{print $7}' 2>/dev/null)+1))}
 
+# Additional signing options
+SIGNING_OPTIONS=${SIGNING_OPTIONS:-$3}
+
 # Smart zone signing
 if [ ! "$(find $KEYFILE_DIR -name "K${TLD}*" -type f)" ]
 then
@@ -26,5 +29,5 @@ then
 fi
 
 # Sign the zone and update NSEC3PARAM
-dnssec-signzone -S -K $KEYFILE_DIR -d $KEYFILE_DIR -e $RRSIG_VALIDITY -j $RRSIG_JITTER -r /dev/urandom -a -3 $(openssl rand 4 -hex) -H 15 -A -L $ZONE_SERIAL -o ${TLD} $ZONEFILE_DIR/${TLD_FILE}zone
+dnssec-signzone -S -K $KEYFILE_DIR -d $KEYFILE_DIR -e $RRSIG_VALIDITY -j $RRSIG_JITTER -r /dev/urandom -a -3 $(openssl rand 4 -hex) -H 15 -A -L $ZONE_SERIAL -N increment -o ${TLD} $SIGNING_OPTIONS $ZONEFILE_DIR/${TLD_FILE}zone
 exit $?
