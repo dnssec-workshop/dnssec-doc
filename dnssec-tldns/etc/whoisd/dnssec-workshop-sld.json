@@ -87,14 +87,14 @@
         "format": "{string} {string}"
       },
       "16": {
-        "key": "Nserver1: ",
-        "name": ["nserver1_name", "nserver1_ip"],
+        "key": "Nserver2: ",
+        "name": ["nserver2_name", "nserver2_ip"],
         "related": "name",
         "format": "{string} {string}"
       },
       "17": {
-        "key": "Nserver1: ",
-        "name": ["nserver1_name", "nserver1_ip"],
+        "key": "Nserver3: ",
+        "name": ["nserver3_name", "nserver3_ip"],
         "related": "name",
         "format": "{string} {string}"
       },
