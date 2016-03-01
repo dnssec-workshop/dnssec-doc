@@ -501,7 +501,7 @@ func showEditDomain(w http.ResponseWriter, r *http.Request) {
 		data.Status = "REGISTERED"
 		data.Message = "Domain registered"
 
-		domainData[0]["dnskey1_key"] = strings.Split(insertNth(domainData[0]["dnskey1_key"][0], " ", 40), " ")
+		domainData[0]["dnskey1_key"] = strings.Split(strings.Replace("=", "&#61;", insertNth(domainData[0]["dnskey1_key"][0]), " ", 40), " ")
 		domainData[0]["dnskey2_key"] = strings.Split(insertNth(domainData[0]["dnskey2_key"][0], " ", 40), " ")
 	}
 
