@@ -1,2 +1,3 @@
-# Update records in TLD 
+# Update records in TLD and sign zones with DNSSEC keys
+@reboot		root	systemctl status mysql.service &>/dev/null && /etc/bind/scripts/zone-update.sh >> /var/log/bind-zone-update.log 2>&1
 */5 * * * *	root	/etc/bind/scripts/zone-update.sh >> /var/log/bind-zone-update.log 2>&1
