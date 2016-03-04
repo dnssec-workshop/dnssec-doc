@@ -1,0 +1,116 @@
+#!/bin/sh
+# taken from https://github.com/defsdoor/dnstouch
+#
+# Get current zone SOA to get serial
+
+function error {
+  MSG=$1
+  echo "$DOMAIN:$MSG" >&2
+  exit 1
+}
+
+function log {
+  MSG=$1
+  echo "$DOMAIN:$MSG"
+}
+
+DNSHOST=127.0.0.1
+
+USAGE="Usage: $0 [-h dnshost] [-s current serial] [-z zone file] domain"
+while getopts "h:s:z:" OPTION 
+do
+  case $OPTION in
+    h) DNSHOST=$OPTARG
+     ;;
+    s) SERIAL=$OPTARG
+     ;;
+    z) DOMAINFILE=$OPTARG
+     ;;
+    \?) error "$USAGE"
+  esac
+done
+
+shift $((OPTIND-1))
+
+DOMAIN=$1
+
+if [[ -z $DOMAIN ]]
+then
+  error "$USAGE"
+fi
+
+if [[ -z $DOMAINFILE ]]
+then
+  DOMAINFILE="db.$DOMAIN"
+fi
+
+if [[ ! -r $DOMAINFILE ]]
+then
+  error "Expecting to see $DOMAINFILE in current directory"
+fi
+
+if [[ -z $SERIAL ]]
+then
+  eval $(host -t SOA $DOMAIN $DNSHOST | nawk '/ has / { print "RETDOMAIN=\""$1"\"\nSERIAL=\""$7"\""}')
+else
+  RETDOMAIN=$DOMAIN
+fi
+
+if [[ $RETDOMAIN != $DOMAIN ]]
+then
+  error "Obtaining current serial via host failed"
+fi
+
+log "Current Serial: $SERIAL"
+
+typeset -i OCCURS
+
+OCCURS=$(grep -o -c "\<$SERIAL\>" $DOMAINFILE)
+
+if (( OCCURS != 1 ))
+then
+  (( OCCURS == 0 )) && error "Could not find $SERIAL in $DOMAINFILE"
+  (( OCCURS > 1 )) && error "There seems to be multiple occurances of the serial $SERIAL in $DOMAINFILE."
+fi
+
+if [[ $SERIAL =~ [21][901][0-9][0-9][012][0-9][0123][0-9][0-9][0-9] ]]
+then
+  log "Serial Format: YYYYMMDDnn"
+  NEWDATE=$(date '+%Y%m%d')
+elif [[ $SERIAL =~ [0-9][0-9][012][0-9][0123][0-9][0-9][0-9] ]]
+then  
+  log "Serial Format: YYMMDDnn"
+  NEWDATE=$(date '+%y%m%d')
+else
+  error "Unsupported serial format $SERIAL"
+fi
+
+typeset -i OLDN NEWN
+typeset -Z2 FNEW
+
+OLDDATE=${SERIAL%??}
+OLDN=${SERIAL#$OLDDATE}
+
+if [[ $OLDDATE == $NEWDATE ]]
+then
+  ((NEWN=OLDN+1))
+  if ((NEWN > 99 ))
+  then
+    error "Version portion of serial exceeds 99"
+  fi
+  ((FNEW=NEWN))
+  NEWSERIAL="${NEWDATE}${FNEW}"
+elif [[ $OLDDATE < $NEWDATE ]]
+then
+  NEWSERIAL="${NEWDATE}00"
+else
+  error "Current serial is in the future"
+fi
+
+log "New Serial: $NEWSERIAL"
+
+sed -i- "s/$SERIAL/$NEWSERIAL/" $DOMAINFILE
+
+log "Updated"
+
+exit 0   # Only handle one line of output from host
