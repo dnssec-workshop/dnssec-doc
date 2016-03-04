@@ -13,7 +13,7 @@ FORCE_SERIAL=${FORCE_SERIAL:-$3}
 
 find $ZONEFILE_DIR -name "*.zone" -printf "%f\n" | sed "s/.zone//" | grep "$SEARCH_DOMAINS" | while read zone
 do
-	$(dirname $0)/sign-zone.sh $zone $FORCE_SERIAL -z
+	$(dirname $0)/sign-zone.sh $zone "$FORCE_SERIAL" -z
 done
 
 rndc reload
