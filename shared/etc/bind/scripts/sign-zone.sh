@@ -15,8 +15,12 @@ DOMAIN_FILE=$DOMAIN
 
 FORCE_SERIAL=$2
 
+# Get serial
+curr_serial=$(cat $ZONEFILE_DIR/${DOMAIN_FILE}zone | tr -d '\n' | grep -o 'SOA[[:space:]]\+[^[:space:]]\+[[:space:]]\+[^[:space:]]\+[[:space:]]\+[^[:space:]]\?[[:space:]]\?[0-9]\+' | grep -o '[0-9]\+$')
+echo "$DOMAIN: current serial is $curr_serial"
+
 # Increment or set serial
-ZONE_SERIAL=${FORCE_SERIAL:-$(($(cat $ZONEFILE_DIR/${DOMAIN_FILE}zone | tr -d '\n' | grep -o 'SOA[[:space:]]\+[^[:space:]]\+[[:space:]]\+[^[:space:]]\+[[:space:]]\+[^[:space:]]\?[[:space:]]\?[0-9]\+' | grep -o '[0-9]\+$')+1))}
+ZONE_SERIAL=${FORCE_SERIAL:-$(($curr_serial+1))}
 
 # Additional signing options
 SIGNING_OPTIONS=${SIGNING_OPTIONS:-$3}
@@ -30,6 +34,8 @@ fi
 
 # Bump the serial for transfer/notify
 sed -i "s/\(.*[^a-z0-9]\)$ZONE_SERIAL\([^a-z0-9].*\)/\132\2/i" $ZONEFILE_DIR/${DOMAIN_FILE}zone
+echo "$DOMAIN: new serial is $ZONE_SERIAL"
+
 # Sign the zone and update NSEC3PARAM
 dnssec-signzone -S -K $KEYFILE_DIR -d $KEYFILE_DIR -e $RRSIG_VALIDITY -j $RRSIG_JITTER -r /dev/urandom -a -3 $(openssl rand 4 -hex) -H 15 -A -o ${DOMAIN} $SIGNING_OPTIONS $ZONEFILE_DIR/${DOMAIN_FILE}zone
 exit $?
