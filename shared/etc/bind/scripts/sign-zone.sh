@@ -16,12 +16,12 @@ DOMAIN_FILE=$DOMAIN
 FORCE_SERIAL=$2
 
 # Get serial
-curr_serial=$(cat $ZONEFILE_DIR/${DOMAIN_FILE}zone | tr -d '\n' | grep -o 'SOA[[:space:]]\+[^[:space:]]\+[[:space:]]\+[^[:space:]]\+[[:space:]]\+[^[:space:]]\?[[:space:]]\?[0-9]\+' | grep -o '[0-9]\+$')
+curr_serial=$(cat $ZONEFILE_DIR/${DOMAIN_FILE}zone | tr -d '\n' | grep -o 'SOA[[:space:]]\+[^[:space:]]\+[[:space:]]\+[^[:space:]]\+[[:space:]]\+[^[:space:]]\?[[:space:]]\?[0-9]\+\|###DEPLOY_SERIAL###' | grep -o '[0-9]\+$\|###DEPLOY_SERIAL###$')
 echo "$DOMAIN: current serial is $curr_serial"
 
 if [ "$curr_serial" = "###DEPLOY_SERIAL###" ]
 then
-	curr_set_serial=$(($(dig +noall +answer -t SOA $DOMAIN @localhost 2>/dev/null | awk '{print $7}')+0))
+	curr_set_serial=$(($(dig +noall +answer -t SOA $DOMAIN @localhost 2>/dev/null | grep SOA | awk '{print $7}')+0))
 	FORCE_SERIAL=$(($curr_set_serial+1))
 	[ $curr_set_serial -le 0 ] && FORCE_SERIAL=$(date +%Y%m%d%H)
 	echo "$DOMAIN: forcing serial to $FORCE_SERIAL"
