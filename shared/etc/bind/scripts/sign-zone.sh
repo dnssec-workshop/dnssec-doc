@@ -22,6 +22,7 @@ echo "$DOMAIN: current serial is $curr_serial"
 if [ "$curr_serial" = "###DEPLOY_SERIAL###" ]
 then
 	curr_set_serial=$(($(dig +noall +answer -t SOA $DOMAIN @localhost 2>/dev/null | awk '{print $7}')+0))
+	FORCE_SERIAL=$(($curr_set_serial+1))
 	[ $curr_set_serial -le 0 ] && FORCE_SERIAL=$(date +%Y%m%d%H)
 	echo "$DOMAIN: forcing serial to $FORCE_SERIAL"
 fi
@@ -40,7 +41,7 @@ then
 fi
 
 # Bump the serial for transfer/notify
-sed -i "s/\(.*[^a-z0-9]\)$ZONE_SERIAL\([^a-z0-9].*\)/\132\2/i" $ZONEFILE_DIR/${DOMAIN_FILE}zone
+sed -i "s/\(.*[^a-z0-9]\)$curr_serial\([^a-z0-9].*\)/\1${ZONE_SERIAL}\2/i" $ZONEFILE_DIR/${DOMAIN_FILE}zone
 echo "$DOMAIN: new serial is $ZONE_SERIAL"
 
 # Sign the zone and update NSEC3PARAM
