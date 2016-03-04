@@ -16,7 +16,7 @@ DOMAIN_FILE=$DOMAIN
 FORCE_SERIAL=$2
 
 # Increment or set serial
-ZONE_SERIAL=${FORCE_SERIAL:-$(($(dig +noall +answer -t SOA $DOMAIN @localhost | awk '{print $7}' 2>/dev/null)+1))}
+ZONE_SERIAL=${FORCE_SERIAL:-$(($(cat $ZONEFILE_DIR/${DOMAIN_FILE}zone | tr -d '\n' | grep -o 'SOA[[:space:]]\+[^[:space:]]\+[[:space:]]\+[^[:space:]]\+[[:space:]]\+[^[:space:]]\?[[:space:]]\?[0-9]\+' | grep -o '[0-9]\+$')+1))}
 
 # Additional signing options
 SIGNING_OPTIONS=${SIGNING_OPTIONS:-$3}
@@ -28,8 +28,8 @@ then
 	exit 2
 fi
 
+# Bump the serial for transfer/notify
+sed -i "s/\(.*[^a-z0-9]\)$ZONE_SERIAL\([^a-z0-9].*\)/\132\2/i" $ZONEFILE_DIR/${DOMAIN_FILE}zone
 # Sign the zone and update NSEC3PARAM
-[ "$ZONE_SERIAL" ] && ZONE_SERIAL="-s $ZONE_SERIAL"
-$(dirname $0)/dnstouch $ZONE_SERIAL -z $ZONEFILE_DIR/${DOMAIN_FILE}zone ${DOMAIN}
 dnssec-signzone -S -K $KEYFILE_DIR -d $KEYFILE_DIR -e $RRSIG_VALIDITY -j $RRSIG_JITTER -r /dev/urandom -a -3 $(openssl rand 4 -hex) -H 15 -A -o ${DOMAIN} $SIGNING_OPTIONS $ZONEFILE_DIR/${DOMAIN_FILE}zone
 exit $?
