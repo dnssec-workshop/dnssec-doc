@@ -18,6 +18,13 @@ FORCE_SERIAL=$2
 # Get serial
 curr_serial=$(cat $ZONEFILE_DIR/${DOMAIN_FILE}zone | tr -d '\n' | grep -o 'SOA[[:space:]]\+[^[:space:]]\+[[:space:]]\+[^[:space:]]\+[[:space:]]\+[^[:space:]]\?[[:space:]]\?[0-9]\+' | grep -o '[0-9]\+$')
 echo "$DOMAIN: current serial is $curr_serial"
+if [ "$curr_serial" = "###DEPLOY_SERIAL###" ]
+then
+	curr_serial=$(($(dig +noall +answer -t SOA $DOMAIN @localhost | awk '{print $7}')+0))
+	[ $curr_serial -le 0 ] && curr_serial=$(date +%Y%m%d%H)
+	echo "$DOMAIN: assuming current serial is $curr_serial"
+	curr_serial=
+fi
 
 # Increment or set serial
 ZONE_SERIAL=${FORCE_SERIAL:-$(($curr_serial+1))}

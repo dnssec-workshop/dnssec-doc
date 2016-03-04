@@ -1,5 +1,5 @@
 $TTL 1800
-dnsprovi.de.		SOA	ns1.dnsprovi.de. dnssec.arminpech.de. ( 20160229 1800 900 1800 1800 )
+dnsprovi.de.		SOA	ns1.dnsprovi.de. dnssec.arminpech.de. ( ###DEPLOY_SERIAL### 1800 900 1800 1800 )
 
 dnsprovi.de.		NS	ns1.dnsprovi.de.
 dnsprovi.de.		NS	ns2.dnsprovi.de.
