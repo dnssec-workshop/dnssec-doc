@@ -66,16 +66,6 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
         done
         ```
 
-      * DNS-Zonen einmalig mit Keys signieren -- ist aufgrund fehlender Änderungen nicht erneut notwendig
-        ```
-        /etc/bind/scripts/sign-zone.sh .
-        /etc/bind/scripts/sign-zone.sh test
-        ```
-      * DNSKEY der Root-Zone auf Resolvern einbinden
-        ```
-        grep -h -R -A 10 "key-signing.*, for \.$" /etc/bind/keys/ | grep DNSKEY
-        ```
-
    * dnssec-tldns
      * MySQL-Datenbank für SLDs
         ```
@@ -124,21 +114,27 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
         ```
 
    * dnssec-sldns
+
      * DNSSEC Keys für Test-Zonen anlegen
         ```
         KEY_DIR=/etc/bind/keys
         mkdir $KEY_DIR
         dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 2400 -P now -A now dnsprovi.de.
-        dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 2400 -P now -A now arminpech.de.
+        dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 2400 -P now -A now dnssec.de
+        dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 2400 -P now -A now task-sigchase.de
+        dnssec-keygen -K $KEY_DIR -n ZONE -3 -a RSASHA256 -b 1024 -r /dev/urandom -L 2400 -P now -A now task-sigchase.de
         grep DNSKEY $KEY_DIR/*.key
         ```
+
      * DNSKEY Records der Zonen bei Registrar hinterlegen
+
      * Zonen signieren
         ```
         /etc/bind/scripts/auto-signing.sh
         ```
 
    * dnssec-resolver
+
      * DNSViz selbst einrichten
         ```
         cd /opt
