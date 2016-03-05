@@ -151,19 +151,147 @@ Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
 
 1. Prüfe die Registrierung per whois.
 
-* Register a new domain (name + nserver1_name)
-* Edit your created domain (add a glue record)
-* Configure a unsigned zone in your nameserver
-** Check if your SLD is delivered by the TLD parent
-** Test your SLD
+1. Erstelle Deine Zone Files:
+    * Domain 1:
+       * NS Glue Records
+       * A-Records für Glue Nameserver zeigen auf eigene IP
+       * A-Record auf beliebige IP
+       * CNAME auf andere Zone
+    * Domain 2:
+       * NS-Records auf Domain 1
+       * A-Record
+       * CNAME
+
+1. Lege Deine Konfiguration für Bind an:
+    * Umgebung einrichten
+    ```
+    cp -aH /etc/bind /etc/bind.$(date +%Y%m%d_%H%M%S)
+    cp -aH /var/cache/bind /var/cache/bind.$(date +%Y%m%d_%H%M%S)
+    cp -aH /var/log/named /var/log/named.$(date +%Y%m%d_%H%M%S)
+
+    rm -rI /etc/bind
+
+    mkdir -p /etc/bind/zones /var/cache/bind /var/log/named
+    chown bind: /var/cache/bind /var/log/named || chown named: /var/cache/bind /var/log/named
+    ```
+
+    * Config Files aus dnssec-attendee/ kopieren
+       /etc/bind/named.conf
+       /etc/bind/zones/hint.zone
+
+    * Nameserver starten und prüfen
+    ```
+    named-checkconf /etc/bind/named.conf
+    systemctl restart bind9.service || /etc/init.d/bind9 restart || /etc/init.d/named restart
+
+    dig -t SOA domain1.tld. @localhost
+    dig -t NS domain1.tld. @localhost
+    dig -t SOA domain2.tld. @localhost
+    dig -t NS domain2.tld. @localhost
+    ```
+
+1. Ist Deine Domain im TLD Nameserver eingetragen?
+    ```
+    dig +trace -t NS domain1.tld.
+    dig +trace -t NS domain2.tld.
+    ```
 
 
-## DNSSEC einrichten
-* Create DNSKEYs for your zone and sign it
-** Check your DNSSEC setup locally
-* Publish your DNSSEC KSK to parent via SLD registrar
-** Check the DNSSEC setup
+## DNSSEC Funktionen im Nameserver aktivieren
 
+1. DNSSEC Validierung über lokalen Nameserver versuchen:
+    ```
+    dig +dnssec task-validation.de @localhost
+    ```
+
+1. DNSKEY der Root-Server als Trust Anchor einrichten:
+    ```
+    cat <<EOF > /etc/bind/managed.keys
+    managed-keys {
+      . initial-key 257 3 8 "AwEAAcV2vdlE/+FeNmH4QNOqkeOx7T0v38prLujAggM4gmkBdj/v1DsE DaTEewoekBcXkhC8gQckDRwvMIZU1sSTGP5DYFAZEClpt0NCEJtlCIrS BHQnj2w9+J/iV3f0JC8oMLu727LiT/+Ro4DCSetithDd2Jqc4dsRnncC gsRzs2uC4h0GCXP/z25ZfweqL05t8rk5GAdTKpBiX/J2b1lqUaHC7UxK g0X/fv+SJ/8mYDSGFVssKlDEER4KwVxN6j2Ge44AOPMwE24hQ71faLYq vYwD+DPIClq/zom3REpFVw2PM77Yl3Hse7m6+CFHrsdMxN5IMm1qkxIq UNR43lKxDs0=";
+    };
+    EOF
+    ```
+
+1. DNSSEC im Nameserver aktivieren:
+    /etc/bind/named.conf
+    ```
+    include "/etc/bind/managed.keys";
+
+    dnssec-enable yes;
+    dnssec-validation yes;
+    ```
+
+    ```
+    named-checkconf /etc/bind/named.conf
+    systemctl restart bind9.service || /etc/init.d/bind9 restart || /etc/init.d/named restart
+    ```
+
+1. DNSSEC Validierung prüfen:
+    ```
+    dig +dnssec task-validation.de @localhost
+    ```
+
+## DNSSEC für Domain einrichten
+
+1. DNSSEC Keys für Zonen anlegen
+    ```
+    KEY_DIR=/etc/bind/keys
+    mkdir $KEY_DIR
+
+    dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 2400 -P now -A now domain1.tld
+    dnssec-keygen -K $KEY_DIR -n ZONE -3        -a RSASHA256 -b 1024 -r /dev/urandom -L 2400 -P now -A now domain1.tld
+    ```
+
+1. DNSKEY Files untersuchen
+    * Dateiname
+    * private File
+    * key File
+
+1. Zonen mit DNSKEYs signieren
+    ```
+    # Serial der Zone domain1.tld inkrementieren
+
+    dnssec-signzone -S -K $KEY_DIR -d $KEY_DIR -e +2h -j 300 -r /dev/urandom -a -3 $(openssl rand 4 -hex) -H 15 -A -o domain1.tld. /etc/bind/zones/domain1.tld.zone
+
+    rndc reload
+    ```
+
+1. Zustand der Zonen prüfen
+    ```
+    dig -t DNSKEY domain1.tld. @localhost
+    ```
+
+1. Nameserver Konfiguration für Zone File auf signierte Version anpassen
+    ```
+    file "/etc/bind/zones/domain1.tld.signed";
+    rndc reload
+    ```
+
+1. Zustand der Zonen prüfen
+    ```
+    dig -t DNSKEY domain1.tld. @localhost
+    ```
+
+    http://dnsviz.test/
+
+1. Publikation des KSK im Parent via SLD Registrar Webinterface
+    * KSK anzeigen
+    ```
+    cat /etc/bind/keys/Kdomain1.tld.*.key
+    ```
+
+    * Whois Update der Domain -- http://whois.test/
+      * DNSSEC Key 1 flags: 257
+      * DNSSEC Key 1 algorithm_id: 8
+      * DNSSEC Key 1 key_data: anzeigte Daten aus Keyfile
+
+1. Chain of Trust prüfen
+    * http://dnsviz.test/
+    * per Command Line Tool
+    ```
+    dig +sigchase +topdown domain1.tld.
+    ```
 
 ## DNSSEC verwalten
 * Add some new records to your zone and resign it - check the records
