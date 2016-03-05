@@ -51,6 +51,6 @@ eval "cat <<EOF >${ZONEFILE_DIR}/${TLD}.zone
 $(< $TEMPLATE_DIR/${TLD}.zone.tpl)
 EOF"
 
-awk '{print $1}' ${ZONEFILE_DIR}/${TLD}.zone | grep -io "[a-z]\+\.[a-z]\+.$" | sort -u
+awk '{print $1}' ${ZONEFILE_DIR}/${TLD}.zone | grep -io "[a-z]\+\.[a-z]\+\.$" | sort -u
 
 exit $?
