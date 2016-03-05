@@ -1,2 +1,2 @@
-@reboot		root	/etc/bind/scripts/auto-signing.sh /etc/bind/zones "$(cat /etc/bind/dnssec-domains.list | xargs)" >>/var/log/named/auto-signing.log 2>&1
-*/15 * * * *	root	/etc/bind/scripts/auto-signing.sh /etc/bind/zones "$(cat /etc/bind/dnssec-domains.list | xargs)" >>/var/log/named/auto-signing.log 2>&1
+@reboot		root	/etc/bind/scripts/auto-signing.sh /etc/bind/zones >> /var/log/named/auto-signing.log 2>&1
+*/15 * * * *	root	/etc/bind/scripts/auto-signing.sh /etc/bind/zones >> /var/log/named/auto-signing.log 2>&1

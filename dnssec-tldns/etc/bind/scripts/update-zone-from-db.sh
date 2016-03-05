@@ -1,5 +1,5 @@
 #!/bin/bash
-# /etc/bind/scripts/update-zone-from-db.sh <TLD> <forced_serial>
+# /etc/bind/scripts/update-zone-from-db.sh <TLD>
 # Update SLD zones from database
 
 DB_HOST=localhost
@@ -16,11 +16,6 @@ ZONE_TTL=1800
 
 TLD=$1
 [ "${TLD: -1}" = "." ] && TLD=${TLD:0:-1}
-FORCE_SERIAL=$2
-
-# get current serial
-ZONE_SERIAL=${FORCE_SERIAL:-$(($(dig +noall +answer -t SOA ${TLD}. @localhost | awk '{print $7}' 2>/dev/null)+1))}
-[ ! "$ZONE_SERIAL" ] && ZONE_SERIAL=$(date +%Y%m%d%H)
 
 # get current records from database
 DNS_RECORDS="$(mysql --batch --skip-column-names -u$DB_USERNAME -p$DB_PASSWORD $DB_NAME -e "
@@ -39,6 +34,7 @@ select ifnull(concat(name, '. IN DNSKEY ', dnskey1_flags, ' 3 ', dnskey1_algo, '
 select ifnull(concat(name, '. IN DNSKEY ', dnskey1_flags, ' 3 ', dnskey1_algo, ' ', dnskey1_key), '') from $DB_TABLE where substring_index(name, '.', -1) = '$TLD' and dnskey1_flags > 0 and dnskey1_algo > 0 and not ( dnskey1_key = '' or dnskey1_key is null );
 " | $(dirname $0)/dnskey2ds.pl)"
 
+ZONE_SERIAL=$(date +%s)
 ZONE_RECORDS="$(echo -e "$DNS_RECORDS\n$DNS_DS_RECORDS" | grep -v "^\s*$\|^\s*;")"
 
 if [ ${PIPESTATUS[0]} -ne 0 -o ! "$ZONE_RECORDS" ]
