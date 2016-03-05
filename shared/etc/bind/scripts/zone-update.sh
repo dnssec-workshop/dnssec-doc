@@ -5,15 +5,15 @@ ZONEFILE_DIR=/etc/bind/zones
 KEYFILE_DIR=/etc/bind/keys
 DSSETS_TARGET=${DSSETS_TARGET:-"root@10.20.1.1:/etc/bind/keys/"}
 
-RUN_CHECK=0
+RUN_CHECK=${RUN_CHECK:-0}
 if [ "$1" = "-c" -o "$1" = "--check" ]
 then
 	shift
 	RUN_CHECK=1
 fi
 
-ZONES=${1:-"at com de it net nl org pl se"}
-FORCE_SERIAL=$2
+ZONES=${ZONES:-${1:-"at com de it net nl org pl se"}}
+FORCE_SERIAL=${FORCE_SERIAL:-$2}
 
 echo "[$(date)] Starting $0"
 for tld in $ZONES
@@ -33,9 +33,11 @@ then
 		if [ -e "${ZONEFILE_DIR}/${tld}.zone.signed" ]
 		then
 			named-checkzone ${tld}. ${ZONEFILE_DIR}/${tld}.zone.signed
+
 		elif [ -e "${ZONEFILE_DIR}/${tld}.zone" ]
 		then
 			named-checkzone ${tld}. ${ZONEFILE_DIR}/${tld}.zone
+
 		else
 			echo "ERROR: Found no zone file for TLD $tld" >&2
 			err=$?
