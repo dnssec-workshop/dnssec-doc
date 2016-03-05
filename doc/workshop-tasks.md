@@ -7,42 +7,40 @@
 
 
 ## Umgebung konfigurieren
+
+Als erstes müssen die Geräte für den Workshop konfiguriert werden.
+Du bekommst mehrere IPs in Deinem eigenen /24 Subnetz.
+
 1. Konfiguriere Dein Netzwerk für den Workshop
-
-    1. IP-Forwarding deaktivieren
-        ```
-        echo 0 > /proc/sys/net/ipv4/ip_forward
-        ```
-
-    2. Netzwerk konfigurieren: Teilnehmer erhalten mehrere IPs in einem Subnetz
-        ```
-        set -e
-        [ $UID -ne 0 ] && echo "ERROR: You need to be root for this." && false
-        
-        NSID=42
-        BASENET=10.20.0.0
-        NETPREFIX=10.20.${NSID}
-        NETSIZE=16
-        NSIFACE=eth0
-        
-        NAMED_BASEDIR=/root/dnssec-workshop
-        
-        link_status=`ip link show dev ${NSIFACE}`
-        echo "Your link state: $link_status"
-        echo "$link_status" | grep "state UP"
-        
-        ip addr flush dev ${NSIFACE}
-        ip addr add local ${NETPREFIX}.3/${NETSIZE} dev ${NSIFACE} scope link label ${NSIFACE}.client
-        ip addr add local ${NETPREFIX}.13/${NETSIZE} dev ${NSIFACE} scope link label ${NSIFACE}.master
-        ip addr add local ${NETPREFIX}.19/${NETSIZE} dev ${NSIFACE} scope link label ${NSIFACE}.slave
-        ip addr add local ${NETPREFIX}.18/${NETSIZE} dev ${NSIFACE} scope link label ${NSIFACE}.resolver
-        route add -net ${BASENET}/${NETSIZE} dev ${NSIFACE}
-        route add -net default gw 10.20.0.1
-        
-        echo "Your network configuration:"
-        ip addr show dev ${NSIFACE}
-        route -n
-        ```
+    ```
+    set -e
+    [ $UID -ne 0 ] && echo "ERROR: You need to be root for this." && false
+    
+    read -p "Insert your attendee ID [32-255]>" NSID
+    BASENET=10.20.0.0
+    NETPREFIX=10.20.${NSID}
+    NETSIZE=16
+    NSIFACE=eth0
+    NETGATEWAY=10.20.0.1
+    
+    NAMED_BASEDIR=/root/dnssec-workshop
+    
+    link_status=`ip link show dev ${NSIFACE}`
+    echo "Your link state: $link_status"
+    echo "$link_status" | grep "state UP"
+    
+    ip addr flush dev ${NSIFACE}
+    ip addr add local ${NETPREFIX}.3/${NETSIZE} dev ${NSIFACE} scope link label ${NSIFACE}.client
+    ip addr add local ${NETPREFIX}.13/${NETSIZE} dev ${NSIFACE} scope link label ${NSIFACE}.master
+    ip addr add local ${NETPREFIX}.19/${NETSIZE} dev ${NSIFACE} scope link label ${NSIFACE}.slave
+    ip addr add local ${NETPREFIX}.18/${NETSIZE} dev ${NSIFACE} scope link label ${NSIFACE}.resolver
+    route add -net ${BASENET}/${NETSIZE} dev ${NSIFACE}
+    route add -net default gw ${NETGATEWAY}
+    
+    echo "Your network configuration:"
+    ip addr show dev ${NSIFACE}
+    route -n
+    ```
 
 1. Konfiguriere Deinen Resolver für die Workshop Umgebung
     ```
@@ -57,7 +55,7 @@
     ```
 
 ## Umgebung erkunden
-1. Einige Domains testen
+1. Enige Domains testen
 
 1. Query DNS records of Zone task1.de
 1. Trace DNS query from root servers down to task2.de
