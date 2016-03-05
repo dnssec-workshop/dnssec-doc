@@ -1,5 +1,5 @@
 $TTL 1800
-task-whois.de.		SOA	ns1.dnsprovi.de. dnssec.arminpech.de. ( ###DEPLOY_SERIAL### 1800 900 1800 1800 )
+task-whois.de.		SOA	ns1.dnsprovi.de. dnssec.arminpech.de. ( 1 1800 900 1800 1800 )
 
 task-whois.de.		NS	ns1.dnsprovi.de.
 task-whois.de.		NS	ns2.dnsprovi.de.

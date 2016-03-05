@@ -1,5 +1,5 @@
 $TTL 5m
-test.			SOA	a.root-servers.test. dnssec.arminpech.de. ( ###DEPLOY_SERIAL### 1800 900 1800 1800 )
+test.			SOA	a.root-servers.test. dnssec.arminpech.de. ( 1 1800 900 1800 1800 )
 
 test.			NS	a.root-servers.test.
 test.			NS	b.root-servers.test.
