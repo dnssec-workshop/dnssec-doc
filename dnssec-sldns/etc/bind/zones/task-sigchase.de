@@ -1,0 +1,8 @@
+$TTL 1800
+task-sigchase.de.	SOA	ns1.dnsprovi.de. dnssec.arminpech.de. ( ###DEPLOY_SERIAL### 1800 900 1800 1800 )
+
+task-sigchase.de.	NS	ns1.dnsprovi.de.
+task-sigchase.de.	NS	ns2.dnsprovi.de.
+
+task-sigchase.de.	A	10.20.4.23
+www.task-sigchase.de.	CNAME	www.dnsprovi.de.
