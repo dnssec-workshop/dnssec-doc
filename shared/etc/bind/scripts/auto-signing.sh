@@ -12,14 +12,14 @@ SEARCH_DOMAINS=${SEARCH_DOMAINS:-"$2"}
 FORCE_SERIAL=${FORCE_SERIAL:-$3}
 
 # TODO: read options from domain list file
-find $ZONEFILE_DIR -name "*.zone" -printf "%f\n" | sed "s/.zone//" | grep "$SEARCH_DOMAINS" | while read zone
+find $ZONEFILE_DIR -name "*.zone" ! -name "hint.zone" -printf "%f\n" | sed "s/.zone//" | grep "$SEARCH_DOMAINS" | while read zone
 do
 	echo "== $zone =="
 	$(dirname $0)/sign-zone.sh $zone "$FORCE_SERIAL" -z
 done
 
 # Bump serial of other zones
-find $ZONEFILE_DIR -name "*.zone" -printf "%f\n" | sed "s/.zone//" | grep -v "$SEARCH_DOMAINS" | while read zone
+find $ZONEFILE_DIR -name "*.zone" ! -name "hint.zone" -printf "%f\n" | sed "s/.zone//" | grep -v "$SEARCH_DOMAINS" | while read zone
 do
 	echo "== $zone =="
 	curr_serial=$(cat $ZONEFILE_DIR/${zone}.zone | tr -d '\n' | grep -o 'SOA[[:space:]]\+[^[:space:]]\+[[:space:]]\+[^[:space:]]\+[[:space:]]\+[^[:space:]]\?[[:space:]]\?[0-9]\+\|###DEPLOY_SERIAL###' | grep -o '[0-9]\+$\|###DEPLOY_SERIAL###$')
