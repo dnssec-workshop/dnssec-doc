@@ -1,2 +1,2 @@
 @reboot 	root	( /etc/bind/scripts/sign-zone.sh . ; /etc/bind/scripts/sign-zone.sh test. ) >> /var/log/named/sign-zone.log 2>&1 ; rndc reload
-0 * * * * 	root	( /etc/bind/scripts/sign-zone.sh . ; /etc/bind/scripts/sign-zone.sh test. ) >> /var/log/named/sign-zone.log 2>&1 ; rndc reload
+*/15 * * * * 	root	( /etc/bind/scripts/sign-zone.sh . ; /etc/bind/scripts/sign-zone.sh test. ) >> /var/log/named/sign-zone.log 2>&1 ; rndc reload
