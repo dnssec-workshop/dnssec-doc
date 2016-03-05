@@ -20,6 +20,7 @@ FORCE_SERIAL=$2
 
 # get current serial
 ZONE_SERIAL=${FORCE_SERIAL:-$(($(dig +noall +answer -t SOA ${TLD}. @localhost | awk '{print $7}' 2>/dev/null)+1))}
+[ ! "$ZONE_SERIAL" ] && ZONE_SERIAL=$(date +%Y%m%d%H)
 
 # get current records from database
 DNS_RECORDS="$(mysql --batch --skip-column-names -u$DB_USERNAME -p$DB_PASSWORD $DB_NAME -e "
