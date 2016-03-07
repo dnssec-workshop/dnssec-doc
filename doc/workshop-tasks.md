@@ -239,8 +239,8 @@ Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
     KEY_DIR=/etc/bind/keys
     mkdir $KEY_DIR
 
-    dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 2400 -P now -A now domain1.tld
-    dnssec-keygen -K $KEY_DIR -n ZONE -3        -a RSASHA256 -b 1024 -r /dev/urandom -L 2400 -P now -A now domain1.tld
+    dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 300 -P now -A now domain1.tld
+    dnssec-keygen -K $KEY_DIR -n ZONE -3        -a RSASHA256 -b 1024 -r /dev/urandom -L 300 -P now -A now domain1.tld
     ```
 
 1. DNSKEY Files untersuchen
@@ -294,9 +294,48 @@ Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
     ```
 
 ## DNSSEC verwalten
-* Add some new records to your zone and resign it - check the records
-* Roll over your ZSK without parent interaction
-** Check the DNSSEC setup
+
+1. Füge einige DNS Records in Deiner Zone ein und signiere sie erneut
+    ```
+    vi /etc/bind/zones/domain1.tld
+    dnssec-signzone [...]
+    ```
+
+    * Serial erhöhen nicht vergessen ;-P
+
+1. Führe einen ZSK Rollover ohne Interaktion mit der Parent TLD aus
+    ```
+    KEY_DIR=/etc/bind/keys
+
+    # Neuen ZSK generieren und in Zone publizieren
+    dnssec-keygen -K $KEY_DIR -n ZONE -3 -a RSASHA256 -b 1024 -r /dev/urandom -L 300 -P now -A +1h domain1.tld
+    # Serial der Zone inkrementieren und Zone neu signieren
+    dnssec-signzone [...]
+    rndc reload
+
+    # Warten bis Key öffentlich verfügbar ist (DNSKEY TTL auslaufen lassen)
+
+    # Neuen ZSK für das Signieren aktivieren
+    dnssec-settime -A now $KEY_DIR/K<name>+<alg>+<id>.key
+
+    # Alten ZSK nach DNSKEY TTL nicht mehr zum Signieren nehmen
+    dnssec-settime -I +330 $KEY_DIR/K<name>+<alg>+<id>.key
+
+    # Serial inkrementieren und Zone neu signieren
+    dnssec-signzone [...]
+    rndc reload
+
+    # Keys und Signaturen prüfen
+    # DNSKEY TTL abwarten
+
+    # Alten ZSK raus nehmen
+    dnssec-settime -D now $KEY_DIR/K<name>+<alg>+<id>.key
+
+    # Serial inkrementieren und Zone neu signieren
+    dnssec-signzone [...]
+    rndc reload
+    ```
+
 * Roll over your KSK with updating DNSKEYs in parent via SLD registrar
 ** Check the DNSSEC setup
 * Roll over an alogrithm of your ZSK
