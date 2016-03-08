@@ -24,7 +24,7 @@ then
 fi
 
 # Bump the serial for transfer/notify
-perl -i -e "s/(.*\s+SOA\s+[^\s]+\s+[^\s]+[\s\(]*)\s+[0-9]+(.*)/\$1 $(date +%s)\$2/m" $ZONEFILE_DIR/${DOMAIN_FILE}zone
+perl -pi -e "s/(.*\s+SOA\s+[^\s]+\s+[^\s]+[\s\(]*)\s+[0-9]+(.*)/\$1 $(date +%s)\$2/m" $ZONEFILE_DIR/${DOMAIN_FILE}zone
 
 # Sign the zone and update NSEC3PARAM
 dnssec-signzone -S -K $KEYFILE_DIR -d $KEYFILE_DIR -e $RRSIG_VALIDITY -j $RRSIG_JITTER -r /dev/urandom -a -3 $(openssl rand 4 -hex) -H 15 -A -o ${DOMAIN} $SIGNING_OPTIONS $ZONEFILE_DIR/${DOMAIN_FILE}zone
