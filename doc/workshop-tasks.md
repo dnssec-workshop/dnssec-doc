@@ -303,7 +303,7 @@ Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
 
     * Serial erhöhen nicht vergessen ;-P
 
-1. Führe einen ZSK Rollover ohne Interaktion mit der Parent TLD aus
+1. Führe einen ZSK Rollover (per Pre-Publish) ohne Interaktion mit der Parent TLD aus
     ```
     KEY_DIR=/etc/bind/keys
 
@@ -315,6 +315,8 @@ Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
 
     # Warten bis Key öffentlich verfügbar ist (DNSKEY TTL auslaufen lassen)
 
+    # TESTEN
+
     # Neuen ZSK für das Signieren aktivieren
     dnssec-settime -A now $KEY_DIR/K<name>+<alg>+<id>.key
 
@@ -325,8 +327,12 @@ Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
     dnssec-signzone [...]
     rndc reload
 
+    # TESTEN
+
     # Keys und Signaturen prüfen
-    # DNSKEY TTL abwarten
+    # Maximum Zone TTL abwarten
+
+    # TESTEN
 
     # Alten ZSK raus nehmen
     dnssec-settime -D now $KEY_DIR/K<name>+<alg>+<id>.key
@@ -334,24 +340,83 @@ Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
     # Serial inkrementieren und Zone neu signieren
     dnssec-signzone [...]
     rndc reload
+
+    # TESTEN
     ```
 
-* Roll over your KSK with updating DNSKEYs in parent via SLD registrar
-** Check the DNSSEC setup
-* Roll over an alogrithm of your ZSK
-** Check the DNSSEC setup
-* Change from KSK/ZSK to CSK schema
-** Check the DNSSEC setup
+1. Führe einen KSK Rollover (per Double Signature) inkl. Interaktion mit dem Parent aus
+    ```
+    KEY_DIR=/etc/bind/keys
+
+    # Neuen KSK generieren und in Zone publizieren
+    # Neuer Key soll ZSKs direkt signieren
+    dnssec-keygen -K $KEY_DIR -n ZONE -f KSK -3 -a RSASHA256 -b 1024 -r /dev/urandom -L 300 -P now -A now domain1.tld
+    # Serial der Zone inkrementieren und Zone neu signieren
+    dnssec-signzone [...]
+    rndc reload
+
+    # TESTEN
+
+    # Warten bis Key öffentlich verfügbar ist (DNSKEY TTL auslaufen lassen)
+
+    # Neuen DNSKEY der Domain in der TLD eintragen lassen - http://whois.test/
+
+    # TESTEN
+
+    # Größere TTL abwarten: DS des Parent ODER Maximum Zone TTL eigener Domain
+
+    # TESTEN
+
+    # Alten KSK rausnehmen und Zone
+    dnssec-settime -D now $KEY_DIR/K<name>+<alg>+<id>.key
+
+    # Serial inkrementieren und Zone neu signieren
+    dnssec-signzone [...]
+    rndc reload
+
+    # TESTEN
+    ```
+
+1. Rollover zu einem CSK Schema
+    ```
+    KEY_DIR=/etc/bind/keys
+
+    # Serial der Zone inkrementieren
+    # KSK zum Signieren allen Records verwenden
+    dnssec-signzone -z [...]
+    rndc reload
+
+    # TESTEN
+
+    # Maximum Zone TTL abwarten
+
+    # TESTEN
+
+    # Überflüssigen ZSK raus nehmen
+    dnssec-settime -D now $KEY_DIR/K<name>+<alg>+<id>.key
+
+    # Serial inkrementieren und Zone neu signieren
+    dnssec-signzone [...]
+    rndc reload
+
+    # TESTEN 
+    ```
 
 
 ## Fehler provozieren und beheben
-* Timings: TTL, Expire, Signatur
+
+* Signaturen auslaufen lassen
+* Falschen DS im Parent publizieren
+* KSK oder ZSK löschen/deaktivieren
+* TTL=0 für Records verwenden
+* TTLs auf geringen Wert setzen
 
 
 ## Erweiterung des Setups
-* Setup a slave nameserver for your SLD on local system
-** Add the slave NS via SLD registrar to your domain
-** Test the changed setup
+
+1. Bind Inline Signing
+1. Bump on Wire Signing mit anderen Teilnehmern einrichten
+1. Slave Nameserver für Zonen einrichten (TSIG)
 
 
 /* vim: set syntax=markdown tabstop=2 expandtab: */
