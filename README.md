@@ -32,5 +32,10 @@ Hier kann jeder Teilnehmer ein /24 Subnetz erhalten und mehrere IPs für seine S
 ## Referenzen
 * https://talk.babiel.com/1/dnssec
 * https://ftp.isc.org/isc/bind9/cur/9.9/doc/arm/Bv9ARM.html
-* http://dnsviz.net/
+* http://www.internetsociety.org/deploy360/dnssec/
 * http://dnsviz.net/demo/dnsviz-demo-v2.zip
+
+## Tools
+* http://dnsviz.net/
+* http://dnssec-debugger.verisignlabs.com/
+* https://josefsson.org/walker/

@@ -415,8 +415,13 @@ Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
 ## Erweiterung des Setups
 
 1. Bind Inline Signing
+
 1. Bump on Wire Signing mit anderen Teilnehmern einrichten
+
 1. Slave Nameserver für Zonen einrichten (TSIG)
+
+1. NSEC(3) Zone Walking
+https://josefsson.org/walker/
 
 
 /* vim: set syntax=markdown tabstop=2 expandtab: */
