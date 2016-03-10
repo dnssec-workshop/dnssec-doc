@@ -430,6 +430,9 @@ Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
         file "/etc/bind/zones/domain2.tld.zone";
         auto-dnssec maintain;
         inline-signing yes
+        #update-check-ksk no; # bei Bedarf 'no' für CSK Schema
+                              # no == KSK auch als ZSK nutzen
+        #update-policy local; # für nsupdate von localhost
     };
     ```
 
@@ -463,6 +466,7 @@ Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
     show
     send
     answer
+    quit
     ```
 
 
