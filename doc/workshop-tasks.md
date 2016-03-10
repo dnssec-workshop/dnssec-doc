@@ -162,7 +162,7 @@ Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
        * A-Record
        * CNAME
 
-1. Lege Deine Konfiguration für Bind an:
+1. Lege Deine Konfiguration für BIND an:
     * Umgebung einrichten
     ```
     cp -aH /etc/bind /etc/bind.$(date +%Y%m%d_%H%M%S)
@@ -402,26 +402,96 @@ Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
     # TESTEN 
     ```
 
+## Automatisierung des Zone Signings
+
+1. Basis-Konfiguration im BIND vornehmen
+    ```
+    server {
+        edns yes; # default
+        edns-udp-size 4096; # default
+    };
+
+    options {
+        dnssec-enable yes;
+        key-directory "/etc/bind/dnssec";
+        random-device "/dev/urandom";
+        dnssec-update-mode maintain; # default
+        dnssec-loadkeys-interval 10; # 10 minutes
+        sig-validity-interval 7 4; # 7 day lifetime
+                                   # resigning 4 days before expiration
+                                   # -> signature lifetime window: 3 days
+    };
+    ```
+
+1. Zonen-Konfiguration anpassen
+    ```
+    zone "domain2.tld." IN {
+        type master;
+        file "/etc/bind/zones/domain2.tld.zone";
+        auto-dnssec maintain;
+        inline-signing yes
+    };
+    ```
+
+1. Zone mit DNSSEC signieren und NSEC3 einrichten
+    ```
+    rndc reload
+
+    # TESTEN
+
+    rndc sign domain2.tld
+    rndc signing -nsec3param 1 0 20 $(openssl rand 4 -hex) domain2.tld
+
+    # TESTEN
+    ```
+
+1. Zonendaten aktualisieren
+
+    * Manuell
+    ```
+    rndc freeze domain2.tld
+    vi /etc/bind/zones/domain2.tld
+    rndc thaw domain2.tld
+    ```
+
+    * nsupdate
+    ```
+    nsupdate -l
+    zone domain2.tld
+    ttl 900
+    update add foobar.domain2.tld. CNAME whois.test.
+    show
+    send
+    answer
+    ```
+
+
+## Weitere DNSSEC Informationen prüfen
+
+1. Zone Expire VS. Signatur-Zeitraum
+1. Zone Expire & NSEC Signatur-Zeitraum
+1. NSEC(3) Zone Walking
+https://josefsson.org/walker/
 
 ## Fehler provozieren und beheben
 
-* Signaturen auslaufen lassen
-* Falschen DS im Parent publizieren
-* KSK oder ZSK löschen/deaktivieren
-* TTL=0 für Records verwenden
-* TTLs auf geringen Wert setzen
+1. TCP-Anfragen unterbinden
+1. Response Verhalten bei verschiedenen Flags
+1. Signaturen auslaufen lassen
+1. Falschen DS im Parent publizieren
+1. KSK oder ZSK löschen/deaktivieren
+1. TTL=0 für Records verwenden
+1. TTLs auf geringen Wert setzen
 
 
 ## Erweiterung des Setups
 
-1. Bind Inline Signing
+1. BIND Inline Signing
 
 1. Bump on Wire Signing mit anderen Teilnehmern einrichten
 
 1. Slave Nameserver für Zonen einrichten (TSIG)
 
-1. NSEC(3) Zone Walking
-https://josefsson.org/walker/
 
 
 /* vim: set syntax=markdown tabstop=2 expandtab: */
