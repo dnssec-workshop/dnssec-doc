@@ -16,14 +16,4 @@ then
 	exit 1
 fi
 
-$BIN_DNSVIZ probe -4 -d 2 -E -p $DOMAIN | $BIN_DNSVIZ graph -t $TRUSTED_KEY_FILE -T html | sed "s@file:///usr/local@@"
-
-#if [ "${PIPESTATUS[0]}" != "0" ]
-#then
-#	echo "ERROR: dnsviz probe for domain '$DOMAIN' returned code ${PIPESTATUS[0]}"
-#	exit 1
-#elif [ "${PIPESTATUS[1]}" != "0" ]
-#then
-#	echo "ERROR: dnsviz graph for domain '$DOMAIN' returned code ${PIPESTATUS[1]}"
-#	exit 1
-#fi
+$BIN_DNSVIZ probe -4 -A -d 2 -E -p $DOMAIN | $BIN_DNSVIZ graph -t $TRUSTED_KEY_FILE -T html | sed "s@file:///usr/local@@"
