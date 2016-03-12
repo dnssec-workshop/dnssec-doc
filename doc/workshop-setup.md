@@ -20,7 +20,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
         apt-get install bind9 libnet-dns-sec-perl
         ```
 
-2. Installation spezifischer Software auf den VMs
+1. Installation spezifischer Software auf den VMs
    * dnssec-tldns: whois + Domain Registrar Service
         ```
         apt-get install apache2 mysql-server golang-go
@@ -156,7 +156,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
         systemctl reload apache2.service
         ```
 
-2. Konfiguration der Slave Nameserver
+1. Konfiguration der Slave Nameserver
     ```
     ln -s /etc/init.d/bind9 /etc/init.d/bind9.slave
     cp -aH /etc/default/bind9 /etc/default/bind9.slave
@@ -180,20 +180,21 @@ Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Wo
     bridge_br0="eth0"
     ```
 
-2. Netzwerk des KVM Hosts initialisieren
+. Netzwerk des KVM Hosts initialisieren
     ```
     bash scripts/kvm-init-net.sh
     ```
 
-3. VMs der DNS Infrastruktur starten
+1. VMs der DNS Infrastruktur starten
     ```
     bash scripts/kvm-startup-vms.sh
     ```
 
-4. In VMs: Default Route via KVM-Wirt setzen - optimalerweise in der Netzwerkkonfiguration persistieren
+1. In VMs: Default Route via KVM-Wirt setzen - optimalerweise in der Netzwerkkonfiguration persistieren
     ```
-    # route add -net default gw 10.20.0.1
+    route add -net default gw 10.20.0.1
     ```
+
 
 
 /* vim: set syntax=markdown tabstop=2 expandtab: */
