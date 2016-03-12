@@ -1,2 +1,4 @@
 *.swp
 ext/
+docker/dnssec-bind/shared
+docker/dnssec-bind/dnssec-attendee

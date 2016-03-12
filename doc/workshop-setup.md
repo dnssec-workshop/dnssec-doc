@@ -218,6 +218,10 @@ Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Wo
 1. Docker Image vorbereiten
     ```
     cd ~/git/dnssec-workshop/docker/dnssec-bind
+    mkdir -p shared dnssec-attendee
+    sudo mount -o bind ../../shared shared
+    sudo mount -o bind ../../dnssec-attendee dnssec-attendee
+
     docker build -t dnssec-bind .
     ```
 
@@ -226,6 +230,11 @@ Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Wo
     CID=ns50
     docker run -d --net=bridge --name=$CID dnssec-bind
     echo -n "$CID: " ; docker inspect $(docker ps | grep $CID | cut -d' ' -f1) | grep '"IPAddress' | awk '{print $2}' | tr -d [\",] | uniq
+    ```
+
+1. Anzeigen aller Docker Container und deren IPs
+    ```
+    docker ps | grep -v CONTAINER | awk '{print $1,$NF}' | while read cid name ; do echo -n "$name: " ; docker inspect $cid | grep '"IPAddress' | awk '{print $2}' | tr -d [\",] | uniq ; done
     ```
 
 
