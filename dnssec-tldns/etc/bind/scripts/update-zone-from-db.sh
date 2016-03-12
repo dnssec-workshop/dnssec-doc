@@ -2,6 +2,8 @@
 # /etc/bind/scripts/update-zone-from-db.sh <TLD>
 # Update SLD zones from database
 
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
 DB_HOST=localhost
 DB_PORT=3306
 DB_USERNAME=root

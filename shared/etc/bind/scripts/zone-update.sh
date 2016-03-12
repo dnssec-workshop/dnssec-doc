@@ -1,6 +1,8 @@
 #!/bin/bash
 # /etc/bind/scripts/zone-update.sh [-c|--check] [<tld1 tld2> [<overwrite_soa_serial>]
 
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
 ZONEFILE_DIR=/etc/bind/zones
 KEYFILE_DIR=/etc/bind/keys
 DSSETS_TARGET=${DSSETS_TARGET:-"root@10.20.1.1:/etc/bind/keys/"}
