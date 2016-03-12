@@ -11,7 +11,7 @@ set -e
 INET_INTERFACE="${INET_INTERFACE:-"wlan0 ppp0"}"
 for i in $INET_INTERFACE
 do
-	if ip link show dev $i | grep -qv DOWN
+	if ip link show dev $i | grep $i | grep -qv DOWN
 	then
 		INET_INTERFACE=$i
 		break
