@@ -27,12 +27,23 @@ RUN     mkdir -p /var/run/sshd
 # Prepare bind
 RUN     rm -rf /etc/bind
 RUN     mkdir -p /etc/bind/zones /etc/bind/keys /etc/bind/scripts
+RUN     mkdir -p /var/log/named /var/lib/bind /var/cache/bind
+RUN     chown -R root:bind /var/log/named /var/lib/bind /var/cache/bind
+RUN     chmod 775 /var/log/named /var/lib/bind /var/cache/bind
+
 RUN     rndc-confgen | awk '/^key "rndc-key"/,/^};/ {print}' > /etc/bind/rndc.key
 
 # Deploy DNSSEC workshop material
-COPY    ../../shared/etc/bind/scripts/dnskey2ds.pl /etc/bind/scripts/
-# TODO
-	
+COPY    ../../shared/etc/resolv.conf /etc/resolv.conf
+COPY    ../../shared/etc/bind/named.conf /etc/bind/named.conf
+COPY    ../../dnssec-attendee/etc/bind/managed.keys /etc/bind/managed.keys
+COPY    ../../dnssec-attendee/etc/bind/zone/template.zone /etc/bind/zone/domain1.tld.zone
+COPY    ../../dnssec-attendee/etc/bind/zone/template.zone /etc/bind/zone/domain2.tld.zone
+COPY    ../../shared/etc/bind/zones/hint.zone /etc/bind/zones/hint.zone
+COPY    ../../shared/etc/bind/scripts/dnskey2ds.pl /etc/bind/scripts/dnskey2ds.pl
+COPY    ../../shared/etc/bind/scripts/sign-zone.sh /etc/bind/scripts/sign-zone.sh
+
+# Start services
 EXPOSE  22
 CMD     [ "/usr/sbin/sshd", "-D" ]
 
