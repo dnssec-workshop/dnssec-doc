@@ -13,6 +13,11 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 1. Grundinstallation
    * Debian 8 mit Basissystem
 
+   * Default Route via KVM-Wirt in Netzwerkkonfiguration setzen
+        ```
+        route add -net default gw 10.20.0.1
+        ```
+
    * Software Setup
         ```
         apt-get purge exim4 rpcbind portmap at avahi-daemon
@@ -128,9 +133,9 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 
      * DNSKEY Records der Zonen bei Registrar hinterlegen
 
-     * Zonen signieren
+     * Zonen signieren und regelmäßig per Cron ausführen
         ```
-        /etc/bind/scripts/auto-signing.sh
+        /etc/bind/scripts/auto-signing.sh /etc/bind/zones
         ```
 
    * dnssec-resolver
@@ -190,11 +195,25 @@ Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Wo
     bash scripts/kvm-startup-vms.sh
     ```
 
-1. In VMs: Default Route via KVM-Wirt setzen - optimalerweise in der Netzwerkkonfiguration persistieren
+1. Konfiguration des Docker Deamon
     ```
-    route add -net default gw 10.20.0.1
+    DOCKER_OPTS=" \
+      --log-level=info \
+      --iptables=false --ip-forward=true \
+      -b=br0 --fixed-cidr=10.20.44.0/24 \
+    "
     ```
 
+    * Log Level setzen
+    * Weiterleitung von IP-Pakten ohne Beschränkungen von iptables
+    * Default Bridge für Netzwerk der Docker VMs
+    * IP-Range für Docker Netzwerk
+
+
+1. Startup der Docker Deamon für Teilnehmer VMs
+    ```
+    /etc/init.d/docker start
+    ```
 
 
 /* vim: set syntax=markdown tabstop=2 expandtab: */
