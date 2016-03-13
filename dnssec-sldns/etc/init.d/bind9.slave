@@ -20,7 +20,7 @@ PATH=/sbin:/bin:/usr/sbin:/usr/bin
 OPTIONS=""
 RESOLVCONF=no
 
-test -f /etc/default/bind9.slave && . /etc/default/bind9
+test -f /etc/default/bind9.slave && . /etc/default/bind9.slave
 
 test -x /usr/sbin/rndc || exit 0
 
