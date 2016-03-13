@@ -124,10 +124,11 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
         ```
         KEY_DIR=/etc/bind/keys
         mkdir $KEY_DIR
-        dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 2400 -P now -A now dnsprovi.de.
-        dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 2400 -P now -A now dnssec.de
-        dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 2400 -P now -A now task-sigchase.de
-        dnssec-keygen -K $KEY_DIR -n ZONE -3 -a RSASHA256 -b 1024 -r /dev/urandom -L 2400 -P now -A now task-sigchase.de
+        dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 600 -P now -A now dnsprovi.de
+        dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 600 -P now -A now dnssec.de
+        dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 600 -P now -A now task-walker.de
+        dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 600 -P now -A now task-sigchase.de
+        dnssec-keygen -K $KEY_DIR -n ZONE -3 -a RSASHA256 -b 1024 -r /dev/urandom -L 600 -P now -A now task-sigchase.de
         grep DNSKEY $KEY_DIR/*.key
         ```
 

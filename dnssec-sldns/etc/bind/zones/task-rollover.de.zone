@@ -1,0 +1,8 @@
+$TTL 1800
+task-rollover.de.	SOA	ns1.dnsprovi.de. dnssec.arminpech.de. ( 1 1800 900 1800 1800 )
+
+task-rollover.de.	NS	ns1.dnsprovi.de.
+task-rollover.de.	NS	ns2.dnsprovi.de.
+
+task-rollover.de.	A	10.20.4.23
+www.task-rollover.de.	CNAME	www.dnsprovi.de.

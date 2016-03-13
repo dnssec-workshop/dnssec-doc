@@ -1,0 +1,15 @@
+$TTL 1800
+task-walker.de.		SOA	ns1.dnsprovi.de. dnssec.arminpech.de. ( 1 1800 900 1800 1800 )
+
+task-walker.de.		NS	ns1.dnsprovi.de.
+task-walker.de.		NS	ns2.dnsprovi.de.
+
+task-walker.de.		A	10.20.4.23
+test1.task-walker.de.	A	127.0.0.1
+test2.task-walker.de.	A	127.0.0.2
+test3.task-walker.de.	A	127.0.0.3
+test4.task-walker.de.	A	127.0.0.4
+ftp.task-walker.de.	A	127.0.0.1
+mail.task-walker.de.	CNAME	www.mytrashmail.com.
+vpn.task-walker.de.	A	123.45.67.89
+www.task-walker.de.	CNAME	www.dnsprovi.de.
