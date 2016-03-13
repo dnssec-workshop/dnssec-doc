@@ -195,7 +195,7 @@ Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Wo
     bash scripts/kvm-startup-vms.sh
     ```
 
-1. Konfiguration des Docker Deamon
+1. Konfiguration des Docker Deamon -- `/etc/conf.d/docker`
     ```
     DOCKER_OPTS=" \
       --log-level=info \
@@ -228,7 +228,7 @@ Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Wo
 1. Startup von Docker VMs für die Teilnehmer
     ```
     CID=ns50
-    docker run -d --net=bridge --name=$CID dnssec-bind
+    docker run --detach --net=bridge --hostname=$CID --name=$CID dnssec-bind
     echo -n "$CID: " ; docker inspect $(docker ps | grep $CID | cut -d' ' -f1) | grep '"IPAddress' | awk '{print $2}' | tr -d [\",] | uniq
     ```
 
