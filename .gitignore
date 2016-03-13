@@ -2,3 +2,4 @@
 ext/
 docker/dnssec-bind/shared
 docker/dnssec-bind/dnssec-attendee
+docker/dnssec-bind/ext

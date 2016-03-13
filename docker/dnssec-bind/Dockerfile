@@ -28,12 +28,11 @@ RUN     mkdir -p /var/run/sshd
 RUN     rm -rf /etc/bind
 RUN     mkdir -p /etc/bind/zones /etc/bind/keys /etc/bind/scripts
 RUN     mkdir -p /var/log/named /var/lib/bind /var/cache/bind
-RUN     chown -R root:bind /var/log/named /var/lib/bind /var/cache/bind
-RUN     chmod 775 /var/log/named /var/lib/bind /var/cache/bind
-
-RUN     rndc-confgen | awk '/^key "rndc-key"/,/^};/ {print}' > /etc/bind/rndc.key
+RUN     chown -R root:bind /var/log/named /var/lib/bind /var/cache/bind /etc/bind/zones
+RUN     chmod 775 /var/log/named /var/lib/bind /var/cache/bind /etc/bind/zones
 
 # Deploy DNSSEC workshop material
+COPY    dnssec-attendee/etc/default/bind9 /etc/default/bind9
 COPY    dnssec-attendee/etc/bind/named.conf /etc/bind/named.conf
 COPY    dnssec-attendee/etc/bind/zones/template.zone /etc/bind/zones/domain1.tld.zone
 COPY    dnssec-attendee/etc/bind/zones/template.zone /etc/bind/zones/domain2.tld.zone
@@ -43,6 +42,7 @@ COPY    shared/etc/bind/zones/hint.zone /etc/bind/zones/hint.zone
 COPY    shared/etc/bind/scripts/dnskey2ds.pl /etc/bind/scripts/dnskey2ds.pl
 COPY    shared/etc/bind/scripts/sign-zone.sh /etc/bind/scripts/sign-zone.sh
 COPY    shared/etc/bind/scripts/dnstouch.sh /etc/bind/scripts/dnstouch.sh
+COPY    ext/nsec-walker/ /etc/bind/scripts/nsec-walker/
 
 # Set timezone
 ENV     TZ=Europe/Berlin

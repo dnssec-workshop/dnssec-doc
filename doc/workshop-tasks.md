@@ -493,7 +493,8 @@ Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
 1. Signaturen auslaufen lassen
 1. Falschen DS im Parent publizieren
 1. KSK oder ZSK löschen/deaktivieren
-1. TTL=0 für Records verwenden
+1. Time Drift & Signatur-Validierung
+1. TTL=0 für Records verwenden - Validierung noch möglich?
 1. TTLs auf geringen Wert setzen
 
 
