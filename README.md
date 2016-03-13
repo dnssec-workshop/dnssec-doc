@@ -39,3 +39,4 @@ Hier kann jeder Teilnehmer ein /24 Subnetz erhalten und mehrere IPs für seine S
 * http://dnsviz.net/
 * http://dnssec-debugger.verisignlabs.com/
 * https://josefsson.org/walker/
+* https://www.opendnssec.org/
