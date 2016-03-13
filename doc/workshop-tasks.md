@@ -450,7 +450,7 @@ Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
 
 1. Zonendaten aktualisieren
 
-    * Manuell
+    * Traditionell
     ```
     rndc freeze domain2.tld
     vi /etc/bind/zones/domain2.tld
@@ -472,15 +472,24 @@ Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
 
 ## Weitere DNSSEC Informationen prüfen
 
+1. Signing Schemata vergleichen
+    * task-sigchase.de -- KSK & ZSK
+    * dnsprovi.de -- CSK
+    * task-rollover.de -- Backup KSK
+
 1. Zone Expire VS. Signatur-Zeitraum
+
 1. Zone Expire & NSEC Signatur-Zeitraum
+
 1. NSEC(3) Zone Walking
-https://josefsson.org/walker/
+    * https://josefsson.org/walker/
+    * /etc/bind/scripts/nsec-walker/
+    * `walker -x task-walker.de`
+
 
 ## Fehler provozieren und beheben
 
 1. TCP-Anfragen unterbinden
-1. Response Verhalten bei verschiedenen Flags
 1. Signaturen auslaufen lassen
 1. Falschen DS im Parent publizieren
 1. KSK oder ZSK löschen/deaktivieren

@@ -129,6 +129,8 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
         dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 600 -P now -A now task-walker.de
         dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 600 -P now -A now task-sigchase.de
         dnssec-keygen -K $KEY_DIR -n ZONE -3 -a RSASHA256 -b 1024 -r /dev/urandom -L 600 -P now -A now task-sigchase.de
+        dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a ECDSAP256SHA256 -r /dev/urandom -L 600 -P now -A now task-rollover.de
+        dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a ECDSAP256SHA256 -r /dev/urandom -L 600 -G task-rollover.de
         grep DNSKEY $KEY_DIR/*.key
         ```
 
@@ -222,6 +224,7 @@ Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Wo
     mkdir -p shared dnssec-attendee
     sudo mount -o bind ../../shared shared
     sudo mount -o bind ../../dnssec-attendee dnssec-attendee
+    sudo mount -o bind ../../ext ext
 
     docker build -t dnssec-bind .
     ```
