@@ -174,6 +174,11 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
         a2ensite gitweb.test
         ```
 
+      * Einrichtung Dokumentation
+        ```
+        a2ensite doc.test
+        ```
+
 
 1. Konfiguration der Slave Nameserver
     ```
