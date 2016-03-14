@@ -164,6 +164,17 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
         systemctl reload apache2.service
         ```
 
+      * Einrichtung GitWeb zum Download von Files durch Teilnehmer
+        ```
+        apt-get install gitweb
+        mkdir /var/cache/git
+        chown www-data: /var/cache/git
+        cd /var/lib/git
+        git clone https://github.com/pecharmin/dnssec-workshop.git
+        a2ensite gitweb.test
+        ```
+
+
 1. Konfiguration der Slave Nameserver
     ```
     ln -s /etc/init.d/bind9 /etc/init.d/bind9.slave
@@ -221,7 +232,7 @@ Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Wo
 1. Docker Image vorbereiten
     ```
     cd ~/git/dnssec-workshop/docker/dnssec-bind
-    mkdir -p shared dnssec-attendee
+    mkdir -p shared dnssec-attendee ext
     sudo mount -o bind ../../shared shared
     sudo mount -o bind ../../dnssec-attendee dnssec-attendee
     sudo mount -o bind ../../ext ext
