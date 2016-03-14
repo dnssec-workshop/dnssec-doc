@@ -54,6 +54,11 @@ Du bekommst mehrere IPs in Deinem eigenen /24 Subnetz.
     echo 'nameserver 10.20.8.1' >/etc/resolv.conf
     ```
 
+1. Auf Deinem Rechner brauchst Du ggf. Host-Einträge, wenn die Resolver-Konfiguration nicht angepasst ist
+    ```
+    10.20.2.1 whois.test nic.test
+    10.20.8.1 dnsviz.test resolver.test gitweb.test
+    ```
 
 ## Umgebung erkunden
 
@@ -195,11 +200,18 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     chown named: /var/cache/bind /var/log/named
     ```
 
-    * Config Files aus `dnssec-attendee/` kopieren:
+    * Config Files aus `dnssec-attendee/` kopieren -- nicht in Docker VMs notwendig
        * `/etc/bind/named.conf`
-       * `/etc/bind/zones/hint.zone`
+       ```
+       curl 'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=dnssec-attendee/etc/bind/named.conf' >/etc/bind/named.conf
+       ```
 
-    * Nameserver starten und prüfen -- nicht in Docker VMs notwendig
+       * `/etc/bind/zones/hint.zone`
+       ```
+       curl 'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=shared/etc/bind/zones/hint.zone' >/etc/bind/zones/hint.zone
+       ```
+
+    * Nameserver starten und prüfen
     ```
     named-checkconf /etc/bind/named.conf
     systemctl restart bind9.service || \
@@ -230,13 +242,20 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     ```
 
 1. DNSKEY der Root-Server als Trust Anchor einrichten:
-    ```
-    cat <<EOF > /etc/bind/managed.keys
-    managed-keys {
-      . initial-key 257 3 8 "AwEAAcV2vdlE/+FeNmH4QNOqkeOx7T0v38prLujAggM4gmkBdj/v1DsE DaTEewoekBcXkhC8gQckDRwvMIZU1sSTGP5DYFAZEClpt0NCEJtlCIrS BHQnj2w9+J/iV3f0JC8oMLu727LiT/+Ro4DCSetithDd2Jqc4dsRnncC gsRzs2uC4h0GCXP/z25ZfweqL05t8rk5GAdTKpBiX/J2b1lqUaHC7UxK g0X/fv+SJ/8mYDSGFVssKlDEER4KwVxN6j2Ge44AOPMwE24hQ71faLYq vYwD+DPIClq/zom3REpFVw2PM77Yl3Hse7m6+CFHrsdMxN5IMm1qkxIq UNR43lKxDs0=";
-    };
-    EOF
-    ```
+    * Nicht in Docker VM notwendig
+       * Option A
+       ```
+       cat <<EOF > /etc/bind/managed.keys
+       managed-keys {
+         . initial-key 257 3 8 "AwEAAcV2vdlE/+FeNmH4QNOqkeOx7T0v38prLujAggM4gmkBdj/v1DsE DaTEewoekBcXkhC8gQckDRwvMIZU1sSTGP5DYFAZEClpt0NCEJtlCIrS BHQnj2w9+J/iV3f0JC8oMLu727LiT/+Ro4DCSetithDd2Jqc4dsRnncC gsRzs2uC4h0GCXP/z25ZfweqL05t8rk5GAdTKpBiX/J2b1lqUaHC7UxK g0X/fv+SJ/8mYDSGFVssKlDEER4KwVxN6j2Ge44AOPMwE24hQ71faLYq vYwD+DPIClq/zom3REpFVw2PM77Yl3Hse7m6+CFHrsdMxN5IMm1qkxIq UNR43lKxDs0=";
+       };
+       EOF
+       ```
+
+       * Option B
+       ```
+       curl 'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=shared/etc/bind/managed.keys' >/etc/bind/managed.keys
+       ```
 
 1. DNSSEC im Nameserver aktivieren:
     /etc/bind/named.conf
@@ -249,7 +268,9 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
 
     ```
     named-checkconf /etc/bind/named.conf
-    systemctl restart bind9.service || /etc/init.d/bind9 restart || /etc/init.d/named restart
+    systemctl restart bind9.service || \
+    /etc/init.d/bind9 restart || \
+    /etc/init.d/named restart
     ```
 
 1. DNSSEC Validierung prüfen:
@@ -264,8 +285,13 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     KEY_DIR=/etc/bind/keys
     mkdir $KEY_DIR
 
-    dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK -a RSASHA256 -b 2048 -r /dev/urandom -L 300 -P now -A now domain1.tld
-    dnssec-keygen -K $KEY_DIR -n ZONE -3        -a RSASHA256 -b 1024 -r /dev/urandom -L 300 -P now -A now domain1.tld
+    dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK \
+    -a RSASHA256 -b 2048 -r /dev/urandom -L 300 \
+    -P now -A now domain1.tld
+
+    dnssec-keygen -K $KEY_DIR -n ZONE -3 \
+    -a RSASHA256 -b 1024 -r /dev/urandom -L 300 \
+    -P now -A now domain1.tld
     ```
 
 1. DNSKEY Files untersuchen
@@ -277,7 +303,10 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     ```
     # Serial der Zone domain1.tld inkrementieren
 
-    dnssec-signzone -S -K $KEY_DIR -d $KEY_DIR -e +2h -j 300 -r /dev/urandom -a -3 $(openssl rand 4 -hex) -H 15 -A -o domain1.tld. /etc/bind/zones/domain1.tld.zone
+    dnssec-signzone -S -K $KEY_DIR -d $KEY_DIR \
+    -e +2h -j 300 -r /dev/urandom -a \
+    -3 $(openssl rand 4 -hex) -H 15 -A \
+    -o domain1.tld. /etc/bind/zones/domain1.tld.zone
 
     rndc reload
     ```
