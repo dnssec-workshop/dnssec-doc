@@ -32,6 +32,7 @@
   * Subnetz von 50 bis 255 -- 10.20.${NETID}.1/16
     ```
     ifconfig eth0 10.20.X.1/16
+    route add -net default gw 10.20.0.1
     ```
 
   * Konfiguriere Deinen Resolver für die Workshop Umgebung
@@ -43,26 +44,24 @@
   * Auf Deinem Rechner brauchst Du ggf. Host-Einträge, wenn die Resolver-Konfiguration nicht angepasst ist
     ```
     10.20.2.1 whois.test nic.test
-    10.20.8.1 dnsviz.test resolver.test gitweb.test
+    10.20.8.1 dnsviz.test resolver.test gitweb.test doc.test
     ```
 
 * Verfügbare Services:
   * Default Router / ggf. Gateway ins Internet
-    ```
-    route add -net default gw 10.20.0.1
-    ```
-
   * Registrierung von Domains
   * Whois Service über Domains
+
   * DNS-Resolver mit DNSSEC-Support: `resolver.test` / `10.20.8.1`
     ```
     dig -t ANY test. @10.20.8.1
     ```
+
   * GitWeb mit relevanten Daten zum Workshop \\
     http://gitweb.test/
 
   * Workshop Anleitungen \\
-    http://wiki.test/
+    http://doc.test/
 
   * DNSViz Debugging
 
