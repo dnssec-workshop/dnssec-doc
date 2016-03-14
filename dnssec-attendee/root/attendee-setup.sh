@@ -4,6 +4,9 @@
 set -e
 [ $UID -ne 0 ] && echo "ERROR: You need to be root for this." && false
 
+read -p "Insert your network device name [eth0]>" NSIFACE
+NSIFACE=${NSIFACE:-"eth0"}
+
 read -p "Insert your attendee ID [32-255]>" NSID
 BASENET=10.20.0.0
 NETPREFIX=10.20.${NSID}

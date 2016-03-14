@@ -1,23 +1,75 @@
-# Tasks für den Workshop
+## Informationen zur Workshop Umgebung
 
-* Jeder Teilnehmer kann mehrere BIND-Instanzen betreiben, um das DNSSEC Setup vollständig durchzuführen
-  * 1x authoritativer Master Nameserver für SLDs
-  * 1x authoritativer Slave Nameserver für SLDs
-  * 1x Resolver für DNSSEC Validierung
+* dnssec-rootns
+  * DNS Master:   10.20.1.1/16
+  * DNS Slave:    10.20.1.2/16
+* dnssec-tldns
+  * DNS Master:   10.20.2.1/16
+  * DNS Slave:    10.20.2.2/16
+  * whois:        10.20.2.22/16
+  * Webserver:    10.20.2.23/16
+* dnssec-sldns
+  * DNS Master:   10.20.4.1/16
+  * DNS Slave:    10.20.4.2/16
+* dnssec-resolver
+  * DNS Resolver: 10.20.8.1/16
+  * Webserver:    10.20.8.23/16
+
+* Verfügbare TLDs:
+  * at, com, de, it, net, nl, org, pl, se, test
+  * test: Domain für interne Workshop-Services
+  * it: keine Signierung mit DNSSEC
+  * org: DS-Records nicht in Root-Servern eingetragen
+
+* Netzwerkumgebung
+  * Netz: 10.20.0.0/16
+  * Du bekommst mehrere IPs in Deinem eigenen /24 Subnetz.
+  * Subnetz von 50 bis 255 -- 10.20.${NETID}.1/16
+  * Gateway: 10.20.0.1
+  * Konfiguriere Deinen Resolver für die Workshop Umgebung
+    * Nicht in Docker VMs notwendig
+    ```
+    cp -aH /etc/resolv.conf /etc/resolv.conf.$(date +%Y%m%d_%H%M%S)
+    echo 'nameserver 10.20.8.1' >/etc/resolv.conf
+    ```
+
+  * Auf Deinem Rechner brauchst Du ggf. Host-Einträge, wenn die Resolver-Konfiguration nicht angepasst ist
+    ```
+    10.20.2.1 whois.test nic.test
+    10.20.8.1 dnsviz.test resolver.test gitweb.test
+    ```
+
+* Verfügbare Services:
+  * Default Router / ggf. Gateway ins Internet
+    ```
+    route add -net default gw 10.20.0.1
+    ```
+
+  * Registrierung von Domains
+  * Whois Service über Domains
+  * DNS-Resolver mit DNSSEC-Support: resolver.test / 10.20.8.1
+    ```
+    dig -t ANY test. @10.20.8.1
+    ```
+  * GitWeb mit relevanten Daten zum Workshop \\
+    http://gitweb.test/
+
+  * DNSViz Debugging
 
 
 ## Umgebung konfigurieren
 
-Als erstes müssen die Geräte für den Workshop konfiguriert werden.
-Du bekommst mehrere IPs in Deinem eigenen /24 Subnetz.
+Als erstes müssen die Geräte für den Workshop konfiguriert werden. \\
 
-1. Konfiguriere Dein Netzwerk für den Workshop
+1. Konfiguriere Deinen Netzwerk Stack für den Workshop
     * Docker VMs
     ```
     bash /root/attendee-setup.sh
     ```
 
     * Eigenes Notebook
+
+      http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob;f=dnssec-attendee/root/attendee-setup.sh
     ```
     set -e
     [ $UID -ne 0 ] && echo "ERROR: You need to be root for this." && false
@@ -47,18 +99,6 @@ Du bekommst mehrere IPs in Deinem eigenen /24 Subnetz.
     route -n
     ```
 
-1. Konfiguriere Deinen Resolver für die Workshop Umgebung
-    * Nicht in Docker VMs notwendig
-    ```
-    cp -aH /etc/resolv.conf /etc/resolv.conf.$(date +%Y%m%d_%H%M%S)
-    echo 'nameserver 10.20.8.1' >/etc/resolv.conf
-    ```
-
-1. Auf Deinem Rechner brauchst Du ggf. Host-Einträge, wenn die Resolver-Konfiguration nicht angepasst ist
-    ```
-    10.20.2.1 whois.test nic.test
-    10.20.8.1 dnsviz.test resolver.test gitweb.test
-    ```
 
 ## Umgebung erkunden
 
@@ -67,15 +107,11 @@ Nachdem Du nun im Workshop-Netz bist, können wir einige Tests vornehmen und die
 1. Einige Domains testen
     ```
     dig -t SOA dnsprovi.de
-    dig dnssec.de
     ```
 
 1. Nameserver der Root-Zone anzeigen
     ```
     dig -t NS .
-    dig -t NS . @a.root-servers.test.
-    dig -t SOA . @a.root-servers.test.
-    dig -t SOA . @b.root-servers.test.
     ```
 
 1. Welche Server liefern die TLD `test.` aus?
@@ -98,27 +134,17 @@ Nachdem Du nun im Workshop-Netz bist, können wir einige Tests vornehmen und die
 
 Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
 
-1. Lass Dir die DNSKEYs der Root-Server anzeigen.
-    ```
-    dig -t DNSKEY .
-    ```
-
-    * Unterschiede KSK (257) und ZSK (256)
-    * Key Typ: 3 (DNSSEC)
-    * Algorithmus: 8 (RSA SHA-256)
-    * Details per dig anzeigen
-        ```
-        dig +noall +answer +multiline -t DNSKEY .
-        ```
-    * Key ID: Eindeutige Identifikation möglich
-
 1. Zeige die DNSSEC Records der TLD de. an.
     ```
     dig +dnssec +multiline -t DNSKEY de.
     ```
 
-    * Sind die Signaturen aktuell und vollständig?
+    * Unterschiede KSK (257) und ZSK (256)
+    * Key Typ: 3 (DNSSEC)
+    * Algorithmus: 8 (RSA SHA-256)
+    * Key ID: Eindeutige Identifikation möglich
     * Wo finden wir die DNSSEC Key IDs wieder?
+    * Sind die Signaturen aktuell und vollständig?
 
 1. Wie wird die TLD de. durch die Root-Zone authentifiziert?
     ```
@@ -175,17 +201,6 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     whois -h whois.test domain2.tld
     ```
 
-1. Erstelle Deine Zone Files:
-    * `domain1.tld`:
-       * NS Glue Records
-       * A-Records für Glue Nameserver zeigen auf eigene IP
-       * A-Record auf beliebige IP
-       * CNAME auf andere Zone
-    * `domain2.tld`:
-       * NS-Records von `domain1.tld`
-       * A-Record
-       * CNAME
-
 1. Lege Deine Konfiguration für BIND an:
     * Umgebung einrichten -- nicht in Docker VMs notwendig
     ```
@@ -211,7 +226,18 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
        curl 'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=shared/etc/bind/zones/hint.zone' >/etc/bind/zones/hint.zone
        ```
 
-    * Nameserver starten und prüfen
+1. Erstelle Deine Zone Files:
+    * `domain1.tld`:
+       * NS Glue Records
+       * A-Records für Glue Nameserver zeigen auf eigene IP
+       * A-Record auf beliebige IP
+       * CNAME auf andere Zone
+    * `domain2.tld`:
+       * NS-Records von `domain1.tld`
+       * A-Record
+       * CNAME
+
+1. Nameserver starten und prüfen
     ```
     named-checkconf /etc/bind/named.conf
     systemctl restart bind9.service || \
@@ -219,18 +245,15 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     /etc/init.d/named restart
     ```
 
-    * Setup prüfen
+1. Setup prüfen
     ```
     dig -t SOA domain1.tld. @localhost
     dig -t NS domain1.tld. @localhost
-    dig -t SOA domain2.tld. @localhost
-    dig -t NS domain2.tld. @localhost
     ```
 
 1. Ist Deine Domain im TLD Nameserver eingetragen?
     ```
     dig +trace -t NS domain1.tld.
-    dig +trace -t NS domain2.tld.
     ```
 
 
@@ -362,12 +385,15 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     KEY_DIR=/etc/bind/keys
 
     # Neuen ZSK generieren und in Zone publizieren
-    dnssec-keygen -K $KEY_DIR -n ZONE -3 -a RSASHA256 -b 1024 -r /dev/urandom -L 300 -P now -A +1h domain1.tld
+    dnssec-keygen -K $KEY_DIR -n ZONE -3 -a RSASHA256 -b 1024 \
+    -r /dev/urandom -L 300 -P now -A +1h domain1.tld
+
     # Serial der Zone inkrementieren und Zone neu signieren
     dnssec-signzone [...]
     rndc reload
 
-    # Warten bis Key öffentlich verfügbar ist (DNSKEY TTL auslaufen lassen)
+    # Warten bis Key öffentlich verfügbar ist 
+    #  (DNSKEY TTL auslaufen lassen)
 
     # TESTEN
 
@@ -404,20 +430,26 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
 
     # Neuen KSK generieren und in Zone publizieren
     # Neuer Key soll ZSKs direkt signieren
-    dnssec-keygen -K $KEY_DIR -n ZONE -f KSK -3 -a RSASHA256 -b 1024 -r /dev/urandom -L 300 -P now -A now domain1.tld
+    dnssec-keygen -K $KEY_DIR -n ZONE -f KSK -3 -a RSASHA256 -b 2048 \
+    -r /dev/urandom -L 300 -P now -A now domain1.tld
+
     # Serial der Zone inkrementieren und Zone neu signieren
     dnssec-signzone [...]
     rndc reload
 
     # TESTEN
 
-    # Warten bis Key öffentlich verfügbar ist (DNSKEY TTL auslaufen lassen)
+    # Warten bis Key öffentlich verfügbar ist
+    #  (DNSKEY TTL auslaufen lassen)
 
-    # Neuen DNSKEY der Domain in der TLD eintragen lassen - http://whois.test/
+    # Neuen DNSKEY der Domain in der TLD eintragen
+    #  http://whois.test/
 
     # TESTEN
 
-    # Größere TTL abwarten: DS des Parent ODER Maximum Zone TTL eigener Domain
+    # Größere TTL abwarten:
+    # * DS des Parent ODER
+    # * Maximum Zone TTL eigener Domain
 
     # TESTEN
 
@@ -471,9 +503,10 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
         random-device "/dev/urandom";
         dnssec-update-mode maintain; # default
         dnssec-loadkeys-interval 10; # 10 minutes
-        sig-validity-interval 7 4; # 7 day lifetime
-                                   # resigning 4 days before expiration
-                                   # -> signature lifetime window: 3 days
+        sig-validity-interval 7 4;
+        # 7 Tage Signatur-Zeitrraum
+        # Resigning 4 Tage vor Expiration
+        # -> Signatur-Zeitfenster: 3 Tage
     };
     ```
 
@@ -484,9 +517,13 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
         file "/etc/bind/zones/domain2.tld.zone";
         auto-dnssec maintain;
         inline-signing yes;
-        #update-check-ksk no; # bei Bedarf 'no' für CSK Schema
-                              # no == KSK auch als ZSK nutzen
-        #update-policy local; # für nsupdate von localhost
+
+        # bei Bedarf 'no' für CSK Schema
+        # no == KSK auch als ZSK nutzen
+        #update-check-ksk no;
+
+        # für nsupdate von localhost
+        #update-policy local;
     };
     ```
 
@@ -497,7 +534,8 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     # TESTEN
 
     rndc sign domain2.tld
-    rndc signing -nsec3param 1 0 20 $(openssl rand 4 -hex) domain2.tld
+    rndc signing -nsec3param 1 0 20 \
+    $(openssl rand 4 -hex) domain2.tld
 
     # TESTEN
     ```

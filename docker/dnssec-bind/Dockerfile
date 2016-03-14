@@ -9,7 +9,7 @@ MAINTAINER dape16 "dockerhub@arminpech.de"
 RUN     apt-get update
 RUN     apt-get purge -y exim4 rpcbind portmap at avahi-daemon
 RUN     apt-get upgrade -y
-RUN     apt-get install -y --no-install-recommends openssh-server tcpdump traceroute curl git less screen vim ntp ntpdate bind9 dnsutils libnet-dns-sec-perl supervisor whois
+RUN     apt-get install -y --no-install-recommends openssh-server tcpdump traceroute curl git less screen vim ntp ntpdate bind9 dnsutils libnet-dns-sec-perl supervisor whois openssl
 RUN     rm -rf /var/lib/apt/lists/*
 RUN     apt-get clean
 
@@ -27,6 +27,8 @@ RUN     mkdir -p /etc/bind/zones /etc/bind/keys /etc/bind/scripts
 RUN     mkdir -p /var/log/named /var/lib/bind /var/cache/bind
 RUN     chown -R root:bind /var/log/named /var/lib/bind /var/cache/bind /etc/bind/zones
 RUN     chmod 775 /var/log/named /var/lib/bind /var/cache/bind /etc/bind/zones
+
+RUN     rndc-confgen | awk '/^key "rndc-key"/,/^};/ {print}' > /etc/bind/rndc.key
 
 # Deploy DNSSEC workshop material
 COPY    dnssec-attendee/etc/default/bind9 /etc/default/bind9
