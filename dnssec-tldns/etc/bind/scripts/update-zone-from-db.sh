@@ -33,7 +33,7 @@ select ifnull(concat(nserver3_name, '. A ', nserver3_ip), '') from $DB_TABLE whe
 
 DNS_DS_RECORDS="$(mysql --batch --skip-column-names -u$DB_USERNAME -p$DB_PASSWORD $DB_NAME -e "
 select ifnull(concat(name, '. IN DNSKEY ', dnskey1_flags, ' 3 ', dnskey1_algo, ' ', dnskey1_key), '') from $DB_TABLE where substring_index(name, '.', -1) = '$TLD' and dnskey1_flags > 0 and dnskey1_algo > 0 and not ( dnskey1_key = '' or dnskey1_key is null );
-select ifnull(concat(name, '. IN DNSKEY ', dnskey1_flags, ' 3 ', dnskey1_algo, ' ', dnskey1_key), '') from $DB_TABLE where substring_index(name, '.', -1) = '$TLD' and dnskey1_flags > 0 and dnskey1_algo > 0 and not ( dnskey1_key = '' or dnskey1_key is null );
+select ifnull(concat(name, '. IN DNSKEY ', dnskey2_flags, ' 3 ', dnskey2_algo, ' ', dnskey2_key), '') from $DB_TABLE where substring_index(name, '.', -1) = '$TLD' and dnskey2_flags > 0 and dnskey2_algo > 0 and not ( dnskey2_key = '' or dnskey2_key is null );
 " | $(dirname $0)/dnskey2ds.pl)"
 
 ZONE_SERIAL=$(date +%s)
