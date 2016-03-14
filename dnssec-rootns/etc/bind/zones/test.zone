@@ -12,3 +12,4 @@ nic.test.		A	10.20.2.23
 resolver.test.		A	10.20.8.1
 dnsviz.test.		A	10.20.8.23
 gitweb.test.		A	10.20.8.23
+doc.test.		A	10.20.8.23

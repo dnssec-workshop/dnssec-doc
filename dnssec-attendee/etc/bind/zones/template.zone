@@ -1,10 +1,11 @@
 $TTL 1800
-domain.tld.	SOA	ns2.domain.tld. mail.domain.tld. ( 1234567890 1800 900 1800 1814400 )
+domain.tld.		SOA	ns1.domain.tld. mail.domain.tld. ( 1234567890 1800 900 1800 1814400 )
 
-domain.tld.	NS	ns1.domain.tld.
-domain.tld.	NS	ns2.domain.tld.
+domain.tld.		NS	ns1.domain.tld.
+domain.tld.		NS	ns2.domain.tld.
 
-ns1.domain.tld.	A	10.20.44.X
-ns2.domain.tld.	A	10.20.44.X
+ns1.domain.tld.		A	10.20.44.X
+ns2.domain.tld.		A	10.20.44.X
 
-www.domain.tld.	A	10.20.8.23
+www.domain.tld.		A	10.20.8.23
+link.domain.tld.	CNAME	www.dnsprovi.de.
