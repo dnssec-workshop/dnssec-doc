@@ -57,11 +57,9 @@
     dig -t ANY test. @10.20.8.1
     ```
 
-  * GitWeb mit relevanten Daten zum Workshop \\
-    http://gitweb.test/
+  * GitWeb mit relevanten Daten zum Workshop: http://gitweb.test/
 
-  * Workshop Anleitungen \\
-    http://doc.test/
+  * Workshop Anleitungen: http://doc.test/
 
   * DNSViz Debugging
 
