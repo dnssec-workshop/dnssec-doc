@@ -12,6 +12,12 @@ Als erstes müssen die Geräte für den Workshop konfiguriert werden.
 Du bekommst mehrere IPs in Deinem eigenen /24 Subnetz.
 
 1. Konfiguriere Dein Netzwerk für den Workshop
+    * Docker VMs
+    ```
+    bash /root/attendee-setup.sh
+    ```
+
+    * Eigenes Notebook
     ```
     set -e
     [ $UID -ne 0 ] && echo "ERROR: You need to be root for this." && false
@@ -29,7 +35,6 @@ Du bekommst mehrere IPs in Deinem eigenen /24 Subnetz.
     echo "Your link state: $link_status"
     echo "$link_status" | grep "state UP"
     
-    ip addr flush dev ${NSIFACE}
     ip addr add local ${NETPREFIX}.3/${NETSIZE} dev ${NSIFACE} scope link label ${NSIFACE}.client
     ip addr add local ${NETPREFIX}.13/${NETSIZE} dev ${NSIFACE} scope link label ${NSIFACE}.master
     ip addr add local ${NETPREFIX}.19/${NETSIZE} dev ${NSIFACE} scope link label ${NSIFACE}.slave
@@ -43,6 +48,7 @@ Du bekommst mehrere IPs in Deinem eigenen /24 Subnetz.
     ```
 
 1. Konfiguriere Deinen Resolver für die Workshop Umgebung
+    * Nicht in Docker VMs notwendig
     ```
     cp -aH /etc/resolv.conf /etc/resolv.conf.$(date +%Y%m%d_%H%M%S)
     echo 'nameserver 10.20.8.1' >/etc/resolv.conf
@@ -67,17 +73,17 @@ Nachdem Du nun im Workshop-Netz bist, können wir einige Tests vornehmen und die
     dig -t SOA . @b.root-servers.test.
     ```
 
-1. Welche Server liefern die TLD test. aus?
+1. Welche Server liefern die TLD `test.` aus?
     ```
     dig -t NS test.
     ```
 
-1. Rekursive Anfragen ab den Root-Servern herunter bis Domain task1.de ausführen
+1. Rekursive Anfragen ab den Root-Servern herunter bis Domain `task1.de.` ausführen
     ```
-    dig +trace task-trace.de
+    dig +trace +nodnssec task-trace.de.
     ```
 
-1. Get whois information about task-whois.de
+1. Whois Informationen der Doamin `task-whois.de.` abfragen
     ```
     whois -h whois.test task-whois.de
     ```
@@ -85,7 +91,7 @@ Nachdem Du nun im Workshop-Netz bist, können wir einige Tests vornehmen und die
 
 ## DNSSEC Informationen 
 
-Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
+Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
 
 1. Lass Dir die DNSKEYs der Root-Server anzeigen.
     ```
@@ -100,13 +106,6 @@ Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
         dig +noall +answer +multiline -t DNSKEY .
         ```
     * Key ID: Eindeutige Identifikation möglich
-
-
-1. Richte den DNSKEY KSK der Root-Nameserver für das weitere Resolving ein.
-    ```
-    cp -aH /etc/trusted-key.key /etc/trusted-key.key.$(date +%Y%m%d_%H%M%S)
-    dig +noall +answer +multi -t DNSKEY . @10.20.1.1 | awk '/DNSKEY 257/,/; KSK;/ {print}' > /etc/trusted-key.key
-    ```
 
 1. Zeige die DNSSEC Records der TLD de. an.
     ```
@@ -123,47 +122,67 @@ Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
 
     * Welchen DNSSEC Typ referenziert der DS-Records für de.?
 
-1. Ist die Domain task-sigchase.de mit DNSSEC signiert?
+1. Ist die Domain `task-sigchase.de.` mit DNSSEC signiert?
     ```
-    dig -t DNSKEY task-sigchase.de
+    dig -t DNSKEY task-sigchase.de.
     ```
 
-1. Prüfe die Chain of Trust für die Domain task-sigchase.de.
+1. Richte den DNSKEY KSK der Root-Nameserver für die Authentifizierung der Records ein:
+    * Nicht in Docker VMs notwendig
     ```
-    dig +sigchase +topdown task-sigchase.de
+    cp -aH /etc/trusted-key.key \
+           /etc/trusted-key.key.$(date +%Y%m%d_%H%M%S)
+
+    dig +noall +answer +multi -t DNSKEY . @10.20.1.1 | \
+      awk '/DNSKEY 257/,/; KSK;/ {print}' > /etc/trusted-key.key
+    ```
+
+1. Prüfe die Chain of Trust für die Domain `task-sigchase.de.`
+    ```
+    dig +sigchase +topdown task-sigchase.de.
     ```
 
 1. Die visualisierte der Prüfung kann auch per DNSViz erfolgen:
-    http://dnsviz.test/graph.sh?domain=task-sigchase.de
+    * http://dnsviz.test/graph.sh?domain=task-sigchase.de
 
 
 ## Eigene Domain einrichten
 
 1. Lass Dir die aktuell registierten Domains anzeigen:
     * Webinterface http://whois.test/ aufrufen
-    * Welche Nameserver und Handle sind für die Domain task-whois.de konfiguriert?
+    * Welche Nameserver und Handles sind für die Domain `task-whois.de` konfiguriert?
 
 1. Lege Dir über das SLD-Interface zwei Domains an:
-    * Domain 1 für die Verwaltung Deiner Nameserver-Umgebung.
-    * Hier müssen Glue-Records eingetragen werden.
-    * Die Nameserver der Domain 1 können als NS-Records für weitere Domains (ohne Glues) verwendet werden.
-    * Lege Domain 2 mit den Nameservern aus Domain 1 an.
+    * `domain1.tld`
+        * Verwaltung Deiner Nameserver-Umgebung.
+        * Hier müssen Glue-Records eingetragen werden!
+            * `ns1.domain1.tld` -- `10.20.44.X`
+            * `ns2.domain1.tld` -- `10.20.44.X`
+        * Die Nameserver von `domain1.tld` können als NS-Records für weitere Domains (ohne Glues) verwendet werden.
+    * `domain2.tld`
+        * Lege `domain2.tld` mit den Nameservern von `domain1.tld` an:
+            * `ns1.domain1.tld`
+            * `ns2.domain1.tld`
 
 1. Prüfe die Registrierung per whois.
+    ```
+    whois -h whois.test domain1.tld
+    whois -h whois.test domain2.tld
+    ```
 
 1. Erstelle Deine Zone Files:
-    * Domain 1:
+    * `domain1.tld`:
        * NS Glue Records
        * A-Records für Glue Nameserver zeigen auf eigene IP
        * A-Record auf beliebige IP
        * CNAME auf andere Zone
-    * Domain 2:
-       * NS-Records auf Domain 1
+    * `domain2.tld`:
+       * NS-Records von `domain1.tld`
        * A-Record
        * CNAME
 
 1. Lege Deine Konfiguration für BIND an:
-    * Umgebung einrichten
+    * Umgebung einrichten -- nicht in Docker VMs notwendig
     ```
     cp -aH /etc/bind /etc/bind.$(date +%Y%m%d_%H%M%S)
     cp -aH /var/cache/bind /var/cache/bind.$(date +%Y%m%d_%H%M%S)
@@ -172,18 +191,24 @@ Jetzt können wir uns die DNSSEC Informationen der Umgebung anzeigen lassen.
     rm -rI /etc/bind
 
     mkdir -p /etc/bind/zones /var/cache/bind /var/log/named
-    chown bind: /var/cache/bind /var/log/named || chown named: /var/cache/bind /var/log/named
+    chown bind: /var/cache/bind /var/log/named || \
+    chown named: /var/cache/bind /var/log/named
     ```
 
-    * Config Files aus dnssec-attendee/ kopieren
-       /etc/bind/named.conf
-       /etc/bind/zones/hint.zone
+    * Config Files aus `dnssec-attendee/` kopieren:
+       * `/etc/bind/named.conf`
+       * `/etc/bind/zones/hint.zone`
 
-    * Nameserver starten und prüfen
+    * Nameserver starten und prüfen -- nicht in Docker VMs notwendig
     ```
     named-checkconf /etc/bind/named.conf
-    systemctl restart bind9.service || /etc/init.d/bind9 restart || /etc/init.d/named restart
+    systemctl restart bind9.service || \
+    /etc/init.d/bind9 restart || \
+    /etc/init.d/named restart
+    ```
 
+    * Setup prüfen
+    ```
     dig -t SOA domain1.tld. @localhost
     dig -t NS domain1.tld. @localhost
     dig -t SOA domain2.tld. @localhost
