@@ -9,7 +9,7 @@ MAINTAINER dape16 "dockerhub@arminpech.de"
 RUN     apt-get update
 RUN     apt-get purge -y exim4 rpcbind portmap at avahi-daemon
 RUN     apt-get upgrade -y
-RUN     apt-get install -y --no-install-recommends openssh-server tcpdump traceroute curl git less screen vim ntp ntpdate bind9 dnsutils libnet-dns-sec-perl supervisor
+RUN     apt-get install -y --no-install-recommends openssh-server tcpdump traceroute curl git less screen vim ntp ntpdate bind9 dnsutils libnet-dns-sec-perl supervisor whois
 RUN     rm -rf /var/lib/apt/lists/*
 RUN     apt-get clean
 
@@ -17,10 +17,7 @@ RUN     apt-get clean
 RUN     echo 'root:root' | chpasswd
 
 # Configure sshd
-RUN     sed -ri 's/^PermitRootLogin\s+.*/PermitRootLogin yes/' /etc/ssh/sshd_config
-RUN     sed -ri 's/UsePAM yes/#UsePAM yes/g' /etc/ssh/sshd_config
-RUN     sed -ri '/UseDNS/id' /etc/ssh/sshd_config
-RUN     echo 'UseDNS no' >>/etc/ssh/sshd_config
+COPY    dnssec-attendee/etc/ssh/ /etc/ssh/
 
 RUN     mkdir -p /var/run/sshd
 
@@ -43,6 +40,10 @@ COPY    shared/etc/bind/scripts/dnskey2ds.pl /etc/bind/scripts/dnskey2ds.pl
 COPY    shared/etc/bind/scripts/sign-zone.sh /etc/bind/scripts/sign-zone.sh
 COPY    shared/etc/bind/scripts/dnstouch.sh /etc/bind/scripts/dnstouch.sh
 COPY    ext/nsec-walker/ /etc/bind/scripts/nsec-walker/
+
+# Deploy further scripts and helper
+COPY    dnssec-attendee/root/attendee-setup.sh /root/attendee-setup.sh
+COPY    shared/etc/trusted-key.key /etc/trusted-key.key
 
 # Set timezone
 ENV     TZ=Europe/Berlin
