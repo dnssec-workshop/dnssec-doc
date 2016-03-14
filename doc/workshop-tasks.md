@@ -1,4 +1,4 @@
-## Informationen zur Workshop Umgebung
+## Informationen und Setup der Workshop Umgebung
 
 * dnssec-rootns
   * DNS Master:   10.20.1.1/16
@@ -21,15 +21,22 @@
   * it: keine Signierung mit DNSSEC
   * org: DS-Records nicht in Root-Servern eingetragen
 
+* Mitmachen:
+  * Docker VM
+  * Eigenes Gerät
+
 * Netzwerkumgebung
   * Netz: 10.20.0.0/16
-  * Du bekommst mehrere IPs in Deinem eigenen /24 Subnetz.
-  * Subnetz von 50 bis 255 -- 10.20.${NETID}.1/16
   * Gateway: 10.20.0.1
+  * Du bekommst Dein eigenes /24 Subnetz.
+  * Subnetz von 50 bis 255 -- 10.20.${NETID}.1/16
+    ```
+    ifconfig eth0 10.20.X.1/16
+    ```
+
   * Konfiguriere Deinen Resolver für die Workshop Umgebung
     * Nicht in Docker VMs notwendig
     ```
-    cp -aH /etc/resolv.conf /etc/resolv.conf.$(date +%Y%m%d_%H%M%S)
     echo 'nameserver 10.20.8.1' >/etc/resolv.conf
     ```
 
@@ -47,57 +54,17 @@
 
   * Registrierung von Domains
   * Whois Service über Domains
-  * DNS-Resolver mit DNSSEC-Support: resolver.test / 10.20.8.1
+  * DNS-Resolver mit DNSSEC-Support: `resolver.test` / `10.20.8.1`
     ```
     dig -t ANY test. @10.20.8.1
     ```
   * GitWeb mit relevanten Daten zum Workshop \\
     http://gitweb.test/
 
+  * Workshop Anleitungen \\
+    http://wiki.test/
+
   * DNSViz Debugging
-
-
-## Umgebung konfigurieren
-
-Als erstes müssen die Geräte für den Workshop konfiguriert werden. \\
-
-1. Konfiguriere Deinen Netzwerk Stack für den Workshop
-    * Docker VMs
-    ```
-    bash /root/attendee-setup.sh
-    ```
-
-    * Eigenes Notebook
-
-      http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob;f=dnssec-attendee/root/attendee-setup.sh
-    ```
-    set -e
-    [ $UID -ne 0 ] && echo "ERROR: You need to be root for this." && false
-    
-    read -p "Insert your attendee ID [32-255]>" NSID
-    BASENET=10.20.0.0
-    NETPREFIX=10.20.${NSID}
-    NETSIZE=16
-    NSIFACE=eth0
-    NETGATEWAY=10.20.0.1
-    
-    NAMED_BASEDIR=/root/dnssec-workshop
-    
-    link_status=`ip link show dev ${NSIFACE}`
-    echo "Your link state: $link_status"
-    echo "$link_status" | grep "state UP"
-    
-    ip addr add local ${NETPREFIX}.3/${NETSIZE} dev ${NSIFACE} scope link label ${NSIFACE}.client
-    ip addr add local ${NETPREFIX}.13/${NETSIZE} dev ${NSIFACE} scope link label ${NSIFACE}.master
-    ip addr add local ${NETPREFIX}.19/${NETSIZE} dev ${NSIFACE} scope link label ${NSIFACE}.slave
-    ip addr add local ${NETPREFIX}.18/${NETSIZE} dev ${NSIFACE} scope link label ${NSIFACE}.resolver
-    route add -net ${BASENET}/${NETSIZE} dev ${NSIFACE}
-    route add -net default gw ${NETGATEWAY}
-    
-    echo "Your network configuration:"
-    ip addr show dev ${NSIFACE}
-    route -n
-    ```
 
 
 ## Umgebung erkunden
