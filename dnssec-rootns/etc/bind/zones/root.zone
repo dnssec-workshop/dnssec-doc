@@ -14,16 +14,16 @@ $INCLUDE "/etc/bind/keys/dsset-test."
 
 at.			NS	a.ns.at.
 at.			NS	b.ns.at.
-;$INCLUDE "/etc/bind/keys/dsset-at."
+$INCLUDE "/etc/bind/keys/dsset-at."
 a.ns.at.		A	10.20.2.1
 b.ns.at.		A	10.20.2.2
 
 com.			NS	a.gtld.net.
 com.			NS	b.gtld.net.
-;$INCLUDE "/etc/bind/keys/dsset-com."
+$INCLUDE "/etc/bind/keys/dsset-com."
 net.			NS	a.gtld.net.
 net.			NS	b.gtld.net.
-;$INCLUDE "/etc/bind/keys/dsset-net."
+$INCLUDE "/etc/bind/keys/dsset-net."
 org.			NS	a.gtld.net.
 org.			NS	b.gtld.net.
 ; DS-Records werden zum Test der Chain of Trust nicht verankert
@@ -44,18 +44,18 @@ b.dns.it.		A	10.20.2.2
 
 nl.			NS	ns1.dns.nl.
 nl.			NS	ns2.dns.nl.
-;$INCLUDE "/etc/bind/keys/dsset-nl."
+$INCLUDE "/etc/bind/keys/dsset-nl."
 ns1.dns.nl.		A	10.20.2.1
 ns2.dns.nl.		A	10.20.2.2
 
 pl.			NS	a-dns.pl.
 pl.			NS	b-dns.pl.
-;$INCLUDE "/etc/bind/keys/dsset-pl."
+$INCLUDE "/etc/bind/keys/dsset-pl."
 a-dns.pl.		A	10.20.2.1
 b-dns.pl.		A	10.20.2.2
 
 se.			NS	a.ns.se.
 se.			NS	b.ns.se.
-;$INCLUDE "/etc/bind/keys/dsset-se."
+$INCLUDE "/etc/bind/keys/dsset-se."
 a.ns.se.		A	10.20.2.1
 b.ns.se.		A	10.20.2.2
