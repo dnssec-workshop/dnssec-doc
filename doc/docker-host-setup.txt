@@ -62,14 +62,22 @@ docker build -t dnssec-bind .
 
 
 /etc/default/docker:
-    DOCKER_OPTS=" \
-      --log-level=info \
-      --iptables=false --ip-forward=true \
-      -b=br0 --fixed-cidr=10.20.<NETID>.0/24 \
-    "
+DOCKER_OPTS="--log-level=info --iptables=false --ip-forward=true -b=br0 --fixed-cidr=10.20<NETID>.0/24"
+DOCKER_POST_CMD="/sbin/ip add del 172.17.<NETID>.0/16 dev br0"
+
+
+/etc/systemd/system/docker.service:
+[Service]
+EnvironmentFile=-/etc/default/docker
+ExecStart=/usr/bin/docker daemon -p /run/docker.pid $DOCKER_OPTS
+ExecStart=$DOCKER_POST_CMD
+
+
 
 ~/.bashrc
 =========
+
+alias d=docker
 
 ds() {
 	CID=ns$1
