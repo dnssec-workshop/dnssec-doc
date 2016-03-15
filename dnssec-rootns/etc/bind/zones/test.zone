@@ -1,5 +1,5 @@
 $TTL 1d
-test.			SOA	a.root-servers.test. dnssec.arminpech.de. ( 1 1800 900 1800 1814400 )
+test.			SOA	a.root-servers.test. dnssec.arminpech.de. ( 1 1800 900 1814400 1800 )
 
 test.			NS	a.root-servers.test.
 test.			NS	b.root-servers.test.

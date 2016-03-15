@@ -1,5 +1,5 @@
 \$TTL $ZONE_TTL
-de.		SOA	a.nic.de. dnssec.arminpech.de. ( $ZONE_SERIAL 1800 900 1800 1814400 )
+de.		SOA	a.nic.de. dnssec.arminpech.de. ( $ZONE_SERIAL 1800 900 1814400 1800 )
 
 de.		NS	a.nic.de.
 de.		NS	b.denic.de.

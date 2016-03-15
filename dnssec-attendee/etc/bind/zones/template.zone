@@ -1,5 +1,5 @@
 $TTL 1800
-domain.tld.		SOA	ns1.domain.tld. mail.domain.tld. ( 1234567890 1800 900 1800 1814400 )
+domain.tld.		SOA	ns1.domain.tld. mail.domain.tld. ( 1234567890 1800 900 1814400 1800 )
 
 domain.tld.		NS	ns1.domain.tld.
 domain.tld.		NS	ns2.domain.tld.
