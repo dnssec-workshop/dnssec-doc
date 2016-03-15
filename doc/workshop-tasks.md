@@ -1,4 +1,4 @@
-## Informationen und Setup der Workshop Umgebung
+## Informationen und Setup des Workshop
 
 * dnssec-rootns
   * DNS Master:   10.20.1.1/16
@@ -36,7 +36,7 @@
     ```
 
   * Konfiguriere Deinen Resolver für die Workshop Umgebung
-    * Nicht in Docker VMs notwendig
+    * **Nicht in Docker VMs notwendig**
     ```
     echo 'nameserver 10.20.8.1' >/etc/resolv.conf
     ```
@@ -96,7 +96,7 @@ Nachdem Du nun im Workshop-Netz bist, können wir einige Tests vornehmen und die
     ```
 
 
-## DNSSEC Informationen 
+## DNSSEC Informationen abfragen
 
 Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
 
@@ -125,7 +125,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     ```
 
 1. Richte den DNSKEY KSK der Root-Nameserver für die Authentifizierung der Records ein:
-    * Nicht in Docker VMs notwendig
+    * **Nicht in Docker VMs notwendig**
     ```
     cp -aH /etc/trusted-key.key \
            /etc/trusted-key.key.$(date +%Y%m%d_%H%M%S)
@@ -144,7 +144,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     * http://dnsviz.test/graph.sh?domain=task-sigchase.de
 
 
-## Eigene Domain einrichten
+## Eigene Domain anlegen
 
 1. Lass Dir die aktuell registierten Domains anzeigen:
     * Registar-Interface http://whois.test/ aufrufen
@@ -164,7 +164,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     ```
 
 1. Lege Deine Konfiguration für BIND an:
-    * Nicht in Docker VMs notwendig
+    * **Nicht in Docker VMs notwendig**
     * Umgebung einrichten
     ```
     cp -aH /etc/bind /etc/bind.$(date +%Y%m%d_%H%M%S)
@@ -231,10 +231,14 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     dig +trace -t NS $DOMAIN_TLD.
     ```
 
+1. Delegation visualisieren:
+    * http://dnsviz.test/graph.sh?domain=$DOMAIN_TLD
 
-## DNSSEC im Nameserver für Domain einrichten
+
+## DNSSEC für Domain einrichten
 
 1. Basis-Konfiguration im BIND vornehmen
+    * `/etc/bind/named.conf`
     ```
     server {
         edns yes; # default
@@ -254,6 +258,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     };
     ```
 
+    * Konfiguration laden
     ```
     named-checkconf
     rndc reload
@@ -290,21 +295,22 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
       ```
 
 1. Zonen-Konfiguration anpassen
+    * `/etc/bind/named.conf`
     ```
     zone "$DOMAIN_TLD." IN {
         type master;
         file "/etc/bind/zones/$DOMAIN_TLD.zone";
         auto-dnssec maintain;
         inline-signing yes;
-        update-policy local;
     };
     ```
 
+    * Konfiguration laden
     ```
     rndc reload
     ```
 
-1. Zustand der Zonen prüfen
+1. Zustand der unsignierten Zonen prüfen
     ```
     dig -t DNSKEY $DOMAIN_TLD. @localhost
     ```
@@ -316,17 +322,22 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     $(openssl rand 4 -hex) $DOMAIN_TLD
 
     ls -l /etc/bind/zones
+
+    less /var/log/named/default.log
     ```
 
-1. Zustand der Zonen prüfen
+1. Zustand der signierten Zonen prüfen
+    * Manuelle Prüfung
     ```
-    dig -t DNSKEY $DOMAIN_TLD. @localhost
+    dig +dnssec +multi -t DNSKEY $DOMAIN_TLD. @localhost
     ```
 
-    http://dnsviz.test/
+    * Visualiserung:
+    
+      http://dnsviz.test/graph.sh?domain=$DOMAIN_TLD
 
 1. Publikation des KSK im Parent via SLD Registrar Webinterface
-    * KSK anzeigen
+    * KSK anzeigen (Key mit ID 257 finden)
     ```
     cat /etc/bind/keys/K$DOMAIN_TLD.*.key
     ```
@@ -334,23 +345,29 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     * Whois Update der Domain -- http://whois.test/
       * DNSSEC Key 1 flags: 257
       * DNSSEC Key 1 algorithm_id: 8
-      * DNSSEC Key 1 key_data: anzeigte Daten aus Keyfile
+      * DNSSEC Key 1 key_data: Key Material in Base64
 
 1. Chain of Trust prüfen
     * http://dnsviz.test/
     * per Command Line Tool
     ```
-    dig +sigchase +topdown $DOMAIN_TLD.
+    drill -S -k /etc/trusted-key.key $DOMAIN_TLD.
+    # dig +sigchase +topdown $DOMAIN_TLD.
     ```
 
 ## DNSSEC verwalten
+
+TODO: remove
 
 1. Füge einige DNS Records in Deiner Zone ein und signiere sie erneut
 
     * Traditionell
     ```
     rndc freeze $DOMAIN_TLD
-    vi /etc/bind/zones/$DOMAIN_TLD
+
+    vi /etc/bind/zones/$DOMAIN_TLD.zone
+    # Serial erhöhen nicht vergessen!
+
     rndc thaw $DOMAIN_TLD
     ```
 
@@ -366,15 +383,29 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     quit
     ```
 
+
+## DNSSEC nutzen
+
+TODO
+
+
+## Key Management
+
 1. Führe einen ZSK Rollover (per Pre-Publish) ohne Interaktion mit der Parent TLD aus
     ```
     KEY_DIR=/etc/bind/keys
 
     # Neuen ZSK generieren und in Zone publizieren
-    dnssec-keygen -K $KEY_DIR -n ZONE -3 -a RSASHA256 -b 1024 \
-    -r /dev/urandom -L 300 -P now -A +1h $DOMAIN_TLD
+    dnssec-keygen -K $KEY_DIR -n ZONE -3 \
+    -a RSASHA256 -b 1024 \
+    -r /dev/urandom -L 300 \
+    -P now -A +1h $DOMAIN_TLD
+
+    chown -R bind: $KEY_DIR
 
     rndc sign $DOMAIN_TLD
+
+    rndc signing -list $DOMAIN_TLD
 
     # Warten bis Key öffentlich verfügbar ist 
     #  (DNSKEY TTL auslaufen lassen)
@@ -382,12 +413,17 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     # TESTEN
 
     # Neuen ZSK für das Signieren aktivieren
-    dnssec-settime -A now $KEY_DIR/K<name>+<alg>+<id>.key
+    dnssec-settime -A now \
+    $KEY_DIR/K<name>+<alg>+<id>.key
 
-    # Alten ZSK nach DNSKEY TTL nicht mehr zum Signieren nehmen
-    dnssec-settime -I +330 $KEY_DIR/K<name>+<alg>+<id>.key
+    # Alten ZSK nach DNSKEY TTL
+    #  nicht mehr zum Signieren nehmen
+    dnssec-settime -I +330 \
+    $KEY_DIR/K<name>+<alg>+<id>.key
 
     rndc sign $DOMAIN_TLD
+
+    rndc signing -list $DOMAIN_TLD
 
     # TESTEN
 
@@ -397,9 +433,12 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     # TESTEN
 
     # Alten ZSK raus nehmen
-    dnssec-settime -D now $KEY_DIR/K<name>+<alg>+<id>.key
+    dnssec-settime -D now \
+    $KEY_DIR/K<name>+<alg>+<id>.key
 
     rndc sign $DOMAIN_TLD
+
+    rndc signing -list $DOMAIN_TLD
 
     # TESTEN
     ```
@@ -410,8 +449,12 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
 
     # Neuen KSK generieren und in Zone publizieren
     # Neuer Key soll ZSKs direkt signieren
-    dnssec-keygen -K $KEY_DIR -n ZONE -f KSK -3 -a RSASHA256 -b 2048 \
-    -r /dev/urandom -L 300 -P now -A now $DOMAIN_TLD
+    dnssec-keygen -K $KEY_DIR -n ZONE -f KSK \
+    -3 -a RSASHA256 -b 2048 \
+    -r /dev/urandom -L 300 \
+    -P now -A now $DOMAIN_TLD
+
+    chown -R bind: $KEY_DIR
 
     rndc sign $DOMAIN_TLD
 
@@ -432,7 +475,8 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     # TESTEN
 
     # Alten KSK rausnehmen und Zone
-    dnssec-settime -D now $KEY_DIR/K<name>+<alg>+<id>.key
+    dnssec-settime -D now \
+    $KEY_DIR/K<name>+<alg>+<id>.key
 
     rndc sign $DOMAIN_TLD
 
@@ -457,7 +501,8 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     # TESTEN
 
     # Überflüssigen ZSK raus nehmen
-    dnssec-settime -D now $KEY_DIR/K<name>+<alg>+<id>.key
+    dnssec-settime -D now \
+    $KEY_DIR/K<name>+<alg>+<id>.key
 
     rndc sign $DOMAIN_TLD
 
@@ -502,7 +547,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     ```
 
 1. DNSKEY der Root-Server als Trust Anchor einrichten:
-    * Nicht in Docker VM notwendig
+    * **Nicht in Docker VM notwendig**
        * Option A
        ```
        cat <<EOF > /etc/bind/managed.keys

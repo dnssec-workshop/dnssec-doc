@@ -9,7 +9,7 @@ MAINTAINER dape16 "dockerhub@arminpech.de"
 RUN     apt-get update
 RUN     apt-get purge -y exim4 rpcbind portmap at avahi-daemon
 RUN     apt-get upgrade -y
-RUN     apt-get install -y --no-install-recommends openssh-server tcpdump traceroute curl git less screen vim ntp ntpdate bind9 dnsutils libnet-dns-sec-perl supervisor whois openssl ldnsutils
+RUN     apt-get install -y --no-install-recommends openssh-server tcpdump traceroute curl git less screen vim ntp ntpdate bind9 dnsutils libnet-dns-sec-perl supervisor whois openssl ldnsutils man
 RUN     rm -rf /var/lib/apt/lists/*
 RUN     apt-get clean
 
