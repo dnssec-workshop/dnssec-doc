@@ -198,10 +198,12 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     ```
 
     * Zone-File von `$DOMAIN_TLD`
-       * NS Glue Records
+       * Domain-Namen anpassen
+       * NS Glue Records eintragen
        * A-Records für Glue Nameserver zeigen auf eigene IP
        * A-Record auf beliebige IP
        * CNAME auf andere Zone
+
     * Nameserver Konfiguration
       ```
       zone "$DOMAIN_TLD." {
@@ -212,8 +214,10 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
 
 1. Nameserver starten und prüfen
     ```
-    named-checkconf /etc/bind/named.conf
+    named-checkconf
     rndc reload
+
+    less /var/log/named/default.log
     ```
 
 1. Setup prüfen
@@ -251,7 +255,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     ```
 
     ```
-    named-checkconf /etc/bind/named.conf
+    named-checkconf
     rndc reload
     ```
 
@@ -474,6 +478,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
 
 1. NSEC(3) Zone Walking
     * https://josefsson.org/walker/
+    * TODO: Download walker
     * /etc/bind/scripts/nsec-walker/
     * `walker -x task-walker.de`
 
@@ -523,7 +528,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     ```
 
     ```
-    named-checkconf /etc/bind/named.conf
+    named-checkconf
     systemctl restart bind9.service || \
     /etc/init.d/bind9 restart || \
     /etc/init.d/named restart

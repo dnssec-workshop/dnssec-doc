@@ -40,11 +40,12 @@ COPY    shared/etc/bind/zones/hint.zone /etc/bind/zones/hint.zone
 COPY    shared/etc/bind/scripts/dnskey2ds.pl /etc/bind/scripts/dnskey2ds.pl
 COPY    shared/etc/bind/scripts/sign-zone.sh /etc/bind/scripts/sign-zone.sh
 COPY    shared/etc/bind/scripts/dnstouch.sh /etc/bind/scripts/dnstouch.sh
-COPY    ext/nsec-walker/ /etc/bind/scripts/nsec-walker/
+#COPY    ext/nsec-walker/ /etc/bind/scripts/nsec-walker/ # Download by attendee from git
 
 # Deploy further scripts and helper
 COPY    dnssec-attendee/root/attendee-setup.sh /root/attendee-setup.sh
 COPY    shared/etc/trusted-key.key /etc/trusted-key.key
+COPY    shared/etc/trusted-key.key /etc/unbound/root.key
 
 # Set timezone
 ENV     TZ=Europe/Berlin
