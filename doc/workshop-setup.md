@@ -254,7 +254,7 @@ Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Wo
 
 1. Anzeigen aller Docker Container und deren IPs
     ```
-    docker ps | grep -v CONTAINER | awk '{print $1,$NF}' | while read cid name ; do echo -n "$name: " ; docker inspect $cid | grep '"IPAddress' | awk '{print $2}' | tr -d [\",] | uniq ; done
+    docker ps -a | grep -v CONTAINER | awk '{print $1,$NF}' | while read cid name ; do echo -n "$name: " ; docker inspect $cid | grep '"IPAddress' | awk '{print $2}' | tr -d [\",] | uniq ; done | sort
     ```
 
 
