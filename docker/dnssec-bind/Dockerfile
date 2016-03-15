@@ -33,8 +33,7 @@ RUN     rndc-confgen | awk '/^key "rndc-key"/,/^};/ {print}' > /etc/bind/rndc.ke
 # Deploy DNSSEC workshop material
 COPY    dnssec-attendee/etc/default/bind9 /etc/default/bind9
 COPY    dnssec-attendee/etc/bind/named.conf /etc/bind/named.conf
-COPY    dnssec-attendee/etc/bind/zones/template.zone /etc/bind/zones/domain1.tld.zone
-COPY    dnssec-attendee/etc/bind/zones/template.zone /etc/bind/zones/domain2.tld.zone
+COPY    dnssec-attendee/etc/bind/zones/template.zone /etc/bind/zones/template.zone
 
 COPY    shared/etc/bind/managed.keys /etc/bind/managed.keys
 COPY    shared/etc/bind/zones/hint.zone /etc/bind/zones/hint.zone
