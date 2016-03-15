@@ -481,6 +481,8 @@ TODO
     rndc sign $DOMAIN_TLD
 
     # TESTEN
+
+    # Alten KSK im whois rausnehmen
     ```
 
 1. Rollover zu einem CSK Schema
@@ -489,6 +491,11 @@ TODO
         update-check-ksk no;
     };
     ```
+
+    ```
+    rndc reload
+    ```
+
     ```
     KEY_DIR=/etc/bind/keys
 
