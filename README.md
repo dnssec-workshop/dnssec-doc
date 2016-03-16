@@ -20,17 +20,19 @@ Die Workshop-Umgebung besteht aus folgenden Systemen:
   * BIND Nameserver als Resolver für Workshop-Umgebung
   * dnsviz Analyse-Tool
   * Git-Repository mit den Workshop-Informationen und Dateien
+  * Webserver mit Files und Informationen
 
-Als Netzwerk-Umgebung wird ein Class A Net 10.20.0.0/16 verwenden.
-Hier kann jeder Teilnehmer ein /24 Subnetz erhalten und mehrere IPs für seine Services konfigurieren.
+Als Netzwerk-Umgebung wird das Class B Net 10.20.0.0/16 verwenden.
+Hier kann jeder Teilnehmer ein /24 Subnetz erhalten und ggf. mehrere IPs für seine Services konfigurieren.
 
 ## Rahmenbedingungen
 * Jeder Teilnehmer bringt sein eigenes Notebook inkl. installiertem BIND Nameserver mit.
+* Alternativ werden VMs mit den relevanten Services als Docker Container bereitgestellt.
 * Teilnehmer verbinden sich per LAN zum oben beschriebenen fiktiven Internet.
-* Internet-Zugang ist über WLAN möglich.
+* Internet-Zugang ist ggf. über WLAN des Dozenten möglich.
 
 ## Referenzen
-* https://talk.babiel.com/1/dnssec
+* https://talk.babiel.com/dnssec-workshop
 * https://ftp.isc.org/isc/bind9/cur/9.9/doc/arm/Bv9ARM.html
 * http://www.internetsociety.org/deploy360/dnssec/
 * http://dnsviz.net/demo/dnsviz-demo-v2.zip
@@ -40,3 +42,7 @@ Hier kann jeder Teilnehmer ein /24 Subnetz erhalten und mehrere IPs für seine S
 * http://dnssec-debugger.verisignlabs.com/
 * https://josefsson.org/walker/
 * https://www.opendnssec.org/
+
+
+
+/* vim: set syntax=markdown tabstop=2 expandtab: */
