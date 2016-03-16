@@ -20,6 +20,7 @@ RUN     echo 'root:root' | chpasswd
 
 # Configure sshd
 COPY    dnssec-attendee/etc/ssh/ /etc/ssh/
+RUN     chmod 600 /etc/ssh/ssh_host_*
 
 RUN     mkdir -p /var/run/sshd
 
@@ -42,6 +43,7 @@ COPY    shared/etc/bind/zones/hint.zone /etc/bind/zones/hint.zone
 COPY    shared/etc/bind/scripts/dnskey2ds.pl /etc/bind/scripts/dnskey2ds.pl
 COPY    shared/etc/bind/scripts/sign-zone.sh /etc/bind/scripts/sign-zone.sh
 COPY    shared/etc/bind/scripts/dnstouch.sh /etc/bind/scripts/dnstouch.sh
+RUN     chmod 755 /etc/bind/scripts/*
 
 # Postfix config
 COPY    dnssec-attendee/etc/postfix/main.cf /etc/postfix/main.cf
