@@ -11,7 +11,7 @@ RUN     apt-get purge -y exim4 rpcbind portmap at avahi-daemon
 RUN     apt-get upgrade -y
 RUN     echo "postfix postfix/mailname string dnssec-bind" | debconf-set-selections
 RUN     echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections
-RUN     apt-get install -y --no-install-recommends openssh-server tcpdump traceroute curl git less screen vim ntp ntpdate bind9 dnsutils libnet-dns-sec-perl supervisor whois openssl ldnsutils man postfix nginx
+RUN     apt-get install -y --no-install-recommends openssh-server tcpdump traceroute curl git less screen vim nano ntp ntpdate bind9 dnsutils libnet-dns-sec-perl supervisor whois openssl ldnsutils man postfix nginx telnet
 RUN     rm -rf /var/lib/apt/lists/*
 RUN     apt-get clean
 
@@ -42,10 +42,12 @@ COPY    shared/etc/bind/zones/hint.zone /etc/bind/zones/hint.zone
 COPY    shared/etc/bind/scripts/dnskey2ds.pl /etc/bind/scripts/dnskey2ds.pl
 COPY    shared/etc/bind/scripts/sign-zone.sh /etc/bind/scripts/sign-zone.sh
 COPY    shared/etc/bind/scripts/dnstouch.sh /etc/bind/scripts/dnstouch.sh
-#COPY    ext/nsec-walker/ /etc/bind/scripts/nsec-walker/ # Download by attendee from git
+
+# Postfix config
+COPY    dnssec-attendee/etc/postfix/main.cf /etc/postfix/main.cf
+COPY    dnssec-attendee/etc/postfix/master.cf /etc/postfix/master.cf
 
 # Deploy further scripts and helper
-COPY    dnssec-attendee/root/attendee-setup.sh /root/attendee-setup.sh
 COPY    shared/etc/trusted-key.key /etc/trusted-key.key
 COPY    shared/etc/trusted-key.key /etc/unbound/root.key
 

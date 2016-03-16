@@ -1,0 +1,62 @@
+# See /usr/share/postfix/main.cf.dist for a commented, more complete version
+
+
+# Debian specific:  Specifying a file name will cause the first
+# line of that file to be used as the name.  The Debian default
+# is /etc/mailname.
+#myorigin = /etc/mailname
+
+smtpd_banner = $myhostname ESMTP $mail_name (Debian/GNU)
+biff = no
+
+# appending .domain is the MUA's job.
+append_dot_mydomain = no
+
+# Uncomment the next line to generate "delayed mail" warnings
+#delay_warning_time = 4h
+
+readme_directory = no
+
+# See /usr/share/doc/postfix/TLS_README.gz in the postfix-doc package for
+# information on enabling SSL in the smtp client.
+
+smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
+alias_maps = hash:/etc/aliases
+alias_database = hash:/etc/aliases
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
+mailbox_size_limit = 0
+recipient_delimiter = +
+inet_interfaces = all
+
+
+### DNSSEC Workshop
+
+myhostname = mail.kfeige.nl
+mydestination = kfeige.nl
+relayhost = 
+
+# Opportunistic TLS und DANE Settings
+tls_random_source = dev:/dev/urandom
+tls_preempt_cipherlist = yes
+tls_high_cipherlist = EDH+CAMELLIA:EDH+aRSA:EECDH+aRSA+AESGCM:EECDH+aRSA+SHA384:EECDH+aRSA+SHA256:EECDH:+CAMELLIA256:+AES256:+CAMELLIA128:+AES128:+SSLv3:!aNULL:!eNULL:!LOW:!3DES:!MD5:!EXP:!PSK:!DSS:!RC4:!SEED:!ECDSA:CAMELLIA256-SHA:AES256-SHA:CAMELLIA128-SHA:AES128-SHA
+
+smtpd_tls_cert_file = /etc/postfix/server.pem
+smtpd_tls_key_file = /etc/postfix/server.pem
+smtpd_tls_dh512_param_file = /etc/postfix/server.pem
+smtpd_tls_security_level = may
+smtpd_tls_protocols = !SSLv2, !SSLv3
+smtpd_tls_mandatory_ciphers = high
+smtpd_tls_ciphers = high
+smtpd_tls_eecdh_grade = strong
+smtpd_tls_session_cache_database = btree:${data_directory}/smtpd_scache
+smtpd_tls_received_header = yes
+smtpd_tls_loglevel = 1
+
+smtp_tls_protocols = !SSLv2, !SSLv3
+smtp_tls_mandatory_ciphers = high
+smtp_tls_ciphers = high
+smtp_tls_session_cache_database = btree:${data_directory}/smtp_scache
+smtp_tls_loglevel = 1
+
+smtp_tls_security_level = dane
+smtp_dns_support_level = dnssec
