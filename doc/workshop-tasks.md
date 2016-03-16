@@ -386,8 +386,54 @@ TODO: remove
 
 ## DNSSEC nutzen
 
-TODO
+### SSH
 
+1. Neue Host Keys generieren
+    ```
+    rm /etc/ssh/ssh_host_*
+    ssh-keygen -A 
+    ```
+
+1. SSH Fingerprints
+    ```
+    ssh-keygen -r ssh.$DOMAIN_TLD.
+    ```
+
+1. Neue DNS-Records in Zone veröffentlichen
+
+1. DNS-Verifikation im SSH-Client aktivieren
+    ```
+    VerifyHostKeyDNS yes
+    ```
+
+### DANE für Mailing
+
+1. SSL-Zertifikate für Postfix generieren
+    ```
+    ```
+
+1. DNS-Verifikation im Postfix aktivieren
+    ```
+    smtpd_use_tls = yes
+    smtp_tls_security_level = dane
+    smtp_dns_support_level = dnssec
+    ```
+
+    ```
+    postfix check && postfix reload
+    ```
+
+1. TLSA Records der Key Fingerprints generieren
+    ```
+    openssl x509 –in /etc/postfix/$DOMAIN_TLD.crt \
+    -outform DER | sha256sum
+    ```
+
+    ```
+    _25._tcp.<DOMAIN_TLD>. IN TLSA 3 0 1 <FINGERPRINT>
+    ```
+
+1. TODO: Verify DANE Setup
 
 ## Key Management
 
@@ -539,6 +585,7 @@ TODO
 
 1. TCP-Anfragen unterbinden
 1. Signaturen auslaufen lassen
+    * `task-expired.de`
 1. Falschen DS im Parent publizieren
 1. KSK oder ZSK löschen/deaktivieren
 1. Time Drift & Signatur-Validierung

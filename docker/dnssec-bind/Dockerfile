@@ -9,7 +9,7 @@ MAINTAINER dape16 "dockerhub@arminpech.de"
 RUN     apt-get update
 RUN     apt-get purge -y exim4 rpcbind portmap at avahi-daemon
 RUN     apt-get upgrade -y
-RUN     apt-get install -y --no-install-recommends openssh-server tcpdump traceroute curl git less screen vim ntp ntpdate bind9 dnsutils libnet-dns-sec-perl supervisor whois openssl ldnsutils man
+RUN     apt-get install -y --no-install-recommends openssh-server tcpdump traceroute curl git less screen vim ntp ntpdate bind9 dnsutils libnet-dns-sec-perl supervisor whois openssl ldnsutils man postfix
 RUN     rm -rf /var/lib/apt/lists/*
 RUN     apt-get clean
 
@@ -55,7 +55,7 @@ RUN     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezo
 RUN     mkdir -p /var/log/supervisor
 COPY    dnssec-attendee/etc/supervisor/conf.d/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-EXPOSE  22 53
+EXPOSE  22 25 53 465
 CMD     [ "/usr/bin/supervisord" ]
 
 # vim: set syntax=docker tabstop=2 expandtab:
