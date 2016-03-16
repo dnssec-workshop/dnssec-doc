@@ -31,8 +31,8 @@ inet_interfaces = all
 
 ### DNSSEC Workshop
 
-myhostname = mail.kfeige.nl
-mydestination = kfeige.nl
+myhostname = mail.DOMAIN.TLD
+mydestination = DOMAIN.TLD
 relayhost = 
 
 # Opportunistic TLS und DANE Settings
