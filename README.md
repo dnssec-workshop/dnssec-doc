@@ -35,11 +35,13 @@ Hier kann jeder Teilnehmer ein /24 Subnetz erhalten und ggf. mehrere IPs für se
 * https://talk.babiel.com/dnssec-workshop
 * https://ftp.isc.org/isc/bind9/cur/9.9/doc/arm/Bv9ARM.html
 * http://www.internetsociety.org/deploy360/dnssec/
+* http://www.internetsociety.org/deploy360/resources/dane/
 * http://dnsviz.net/demo/dnsviz-demo-v2.zip
 
 ## Tools
 * http://dnsviz.net/
 * http://dnssec-debugger.verisignlabs.com/
+* https://www.dnssec-validator.cz/
 * https://josefsson.org/walker/
 * https://www.opendnssec.org/
 

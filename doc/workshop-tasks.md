@@ -545,7 +545,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     # TESTEN
 
     # Alten ZSK raus nehmen
-    dnssec-settime -D now \
+    dnssec-settime -I now -D now \
     $KEY_DIR/K<name>+<alg>+<id>.key
 
     rndc sign $DOMAIN_TLD
