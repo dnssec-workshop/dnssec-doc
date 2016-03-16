@@ -41,8 +41,10 @@
     echo 'nameserver 10.20.8.1' >/etc/resolv.conf
     ```
 
-  * Auf Deinem Rechner brauchst Du ggf. Host-Einträge, wenn die Resolver-Konfiguration nicht angepasst ist
+  * Auf Deinem eigenen Rechner brauchst Du ggf. Host-Einträge, wenn die Resolver-Konfiguration nicht angepasst ist
     ```
+    cp -aH /etc/hosts /etc/hosts.$(date +%Y%m%d_%H%M)
+
     cat <<EOF >>/etc/hosts
 
     # DNSSEC Workshop CLT2016
@@ -59,7 +61,9 @@
 
   * Whois Service über Domains
 
-  * DNS-Resolver mit DNSSEC-Support: `resolver.test` / `10.20.8.1`
+  * DNS-Resolver mit DNSSEC-Support:
+  
+    `resolver.test` / `10.20.8.1`
     ```
     dig -t ANY test. @10.20.8.1
     ```
@@ -75,17 +79,12 @@
 
 Nachdem Du nun im Workshop-Netz bist, können wir einige Tests vornehmen und die Umgebung erkunden.
 
-1. Einige Domains testen
-    ```
-    dig -t SOA dnsprovi.de
-    ```
-
 1. Nameserver der Root-Zone anzeigen
     ```
     dig -t NS .
     ```
 
-1. Rekursive Anfragen ab den Root-Servern herunter bis Domain `task1.de.` ausführen
+1. Rekursive Anfragen ab den Root-Servern herunter bis Domain `task-trace.de.` ausführen
     ```
     dig +trace +nodnssec task-trace.de.
     ```
@@ -98,7 +97,7 @@ Nachdem Du nun im Workshop-Netz bist, können wir einige Tests vornehmen und die
 
 ## DNSSEC Informationen abfragen
 
-Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
+Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
 1. Zeige die DNSSEC Records der TLD `de.` an.
     ```
@@ -128,7 +127,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     * **Nicht in Docker VMs notwendig**
     ```
     cp -aH /etc/trusted-key.key \
-           /etc/trusted-key.key.$(date +%Y%m%d_%H%M%S)
+           /etc/trusted-key.key.$(date +%Y%m%d_%H%M)
 
     dig +noall +answer +multi -t DNSKEY . @10.20.1.1 | \
       awk '/DNSKEY 257/,/; KSK;/ {print}' > /etc/trusted-key.key
@@ -146,11 +145,16 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
 
 ## Eigene Domain anlegen
 
+1. Wähle einen Domainnamen für die weiteren Schritte
+    ```
+    export DOMAIN_TLD=meindomainname.de
+    ```
+
 1. Lass Dir die aktuell registierten Domains anzeigen:
     * Registar-Interface http://whois.test/ aufrufen
-    * Welche Nameserver und Handles sind für die Domain `task-whois.de` konfiguriert?
 
 1. Lege Dir über das Registrar-Interface eine Domain an:
+    * http://whois.test/edit
     * `$DOMAIN_TLD`
         * Verwaltung Deiner Nameserver-Umgebung.
         * Hier müssen Glue-Records eingetragen werden!
@@ -167,9 +171,9 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     * **Nicht in Docker VMs notwendig**
     * Umgebung einrichten
     ```
-    cp -aH /etc/bind /etc/bind.$(date +%Y%m%d_%H%M%S)
-    cp -aH /var/cache/bind /var/cache/bind.$(date +%Y%m%d_%H%M%S)
-    cp -aH /var/log/named /var/log/named.$(date +%Y%m%d_%H%M%S)
+    cp -aH /etc/bind /etc/bind.$(date +%Y%m%d_%H%M)
+    cp -aH /var/cache/bind /var/cache/bind.$(date +%Y%m%d_%H%M)
+    cp -aH /var/log/named /var/log/named.$(date +%Y%m%d_%H%M)
 
     rm -rI /etc/bind
 
@@ -189,9 +193,17 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
        curl 'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=shared/etc/bind/zones/hint.zone' >/etc/bind/zones/hint.zone
        ```
 
+       * `/etc/bind/zones/hint.zone`
+       ```
+       curl 'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=dnssec-attendee/etc/bind/zones/template.zone' > /etc/bind/zones/template.zone
+       ```
+
 1. Erstelle Deine Zonen-Konfiguration:
     ```
     cp /etc/bind/zones/template.zone \
+    /etc/bind/zones/$DOMAIN_TLD.zone
+
+    sed -i "s/domain.tld./$DOMAIN_TLD./g" \
     /etc/bind/zones/$DOMAIN_TLD.zone
 
     vi /etc/bind/zones/$DOMAIN_TLD.zone
@@ -205,6 +217,8 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
        * CNAME auf andere Zone
 
     * Nameserver Konfiguration
+
+      `/etc/bind/named.conf`
       ```
       zone "$DOMAIN_TLD." {
              type master;
@@ -214,7 +228,11 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
 
 1. Nameserver starten und prüfen
     ```
-    named-checkconf
+    named-checkzone $DOMAIN_TLD. \
+    /etc/bind/zones/$DOMAIN_TLD.zone
+
+    named-checkconf -z
+
     rndc reload
 
     less /var/log/named/default.log
@@ -228,7 +246,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
 
 1. Ist Deine Domain im TLD Nameserver eingetragen?
     ```
-    dig +trace -t NS $DOMAIN_TLD.
+    dig +trace +nodnssec -t NS $DOMAIN_TLD.
     ```
 
 1. Delegation visualisieren:
@@ -260,7 +278,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
 
     * Konfiguration laden
     ```
-    named-checkconf
+    named-checkconf -z
     rndc reload
     ```
 
@@ -310,29 +328,42 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     rndc reload
     ```
 
-1. Zustand der unsignierten Zonen prüfen
+    * Zone schon automatisch signiert?
     ```
-    dig -t DNSKEY $DOMAIN_TLD. @localhost
-    ```
-
-1. Zone mit DNSSEC signieren und NSEC3 einrichten
-    ```
-    rndc sign $DOMAIN_TLD
-    rndc signing -nsec3param 1 0 20 \
-    $(openssl rand 4 -hex) $DOMAIN_TLD
-
-    ls -l /etc/bind/zones
-
     less /var/log/named/default.log
     ```
 
 1. Zustand der signierten Zonen prüfen
+    ```
+    ls -l /etc/bind/zones
+
+    dig -t DNSKEY $DOMAIN_TLD. @localhost
+
+    dig +dnssec -t DNSKEY test.$DOMAIN_TLD. @localhost
+    ```
+
+1. NSEC3 für die Zone einrichten
+    ```
+    rndc signing -nsec3param 1 0 20 \
+    $(openssl rand 4 -hex) $DOMAIN_TLD
+    ```
+
+    ```
+    dig +dnssec -t DNSKEY test.$DOMAIN_TLD. @localhost
+    ```
+
+1. Zustand der signierten Zonen prüfen
+    * Keys anzeigen lassen
+    ```
+    rndc signing -list $DOMAIN_TLD.
+    ```
+
     * Manuelle Prüfung
     ```
     dig +dnssec +multi -t DNSKEY $DOMAIN_TLD. @localhost
     ```
 
-    * Visualiserung:
+    * Visualisierung
     
       http://dnsviz.test/graph.sh?domain=$DOMAIN_TLD
 
@@ -355,34 +386,6 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen erkunden.
     # dig +sigchase +topdown $DOMAIN_TLD.
     ```
 
-## DNSSEC verwalten
-
-TODO: remove
-
-1. Füge einige DNS Records in Deiner Zone ein und signiere sie erneut
-
-    * Traditionell
-    ```
-    rndc freeze $DOMAIN_TLD
-
-    vi /etc/bind/zones/$DOMAIN_TLD.zone
-    # Serial erhöhen nicht vergessen!
-
-    rndc thaw $DOMAIN_TLD
-    ```
-
-    * nsupdate
-    ```
-    nsupdate -l
-    zone $DOMAIN_TLD
-    ttl 900
-    update add foobar.$DOMAIN_TLD. CNAME whois.test.
-    show
-    send
-    answer
-    quit
-    ```
-
 
 ## DNSSEC nutzen
 
@@ -399,41 +402,104 @@ TODO: remove
     ssh-keygen -r ssh.$DOMAIN_TLD.
     ```
 
-1. Neue DNS-Records in Zone veröffentlichen
+1. Generierte DNS-Records in Zone veröffentlichen
+    * Unsigniertes Zone-File anpassen
+      * A-Record zu `ssh.$DOMAIN_TLD.` mit eigener IP eintragen
+      * SSHFP Records eintragen
+    * Serial der Zone erhöht?
+    * Zone laden
+      ```
+      rndc reload
+      dig -t ANY ssh.$DOMAIN_TLD. @localhost
+      ```
 
 1. DNS-Verifikation im SSH-Client aktivieren
-    ```
-    VerifyHostKeyDNS yes
-    ```
+
+    * `/etc/ssh/ssh_config`
+      ```
+      VerifyHostKeyDNS yes
+      ```
+
+    * Zum Nachbarn verbinden
+      ```
+      host ssh.fellow.next
+
+      ssh <ip_von_ssh.fellow.next>
+
+      ssh ssh.fellow.next
+      ```
+
 
 ### DANE für Mailing
 
 1. SSL-Zertifikate für Postfix generieren
     ```
+    cd /etc/postfix
+
+    openssl req -new -x509 -nodes \
+    -out server.pem -keyout server.pem \
+    -subject "/C=DE/ST=Sachsen/L=Chemnitz/O=Linux Tage/OU=2016/CN=mail.$DOMAIN_TLD"
+
+    openssl gendh 512 >> server.pem
     ```
 
 1. DNS-Verifikation im Postfix aktivieren
+
+    * `/etc/postfix/main.cf`
     ```
     smtpd_use_tls = yes
     smtp_tls_security_level = dane
     smtp_dns_support_level = dnssec
     ```
 
+    * `myhostname` und `mydestination` anpassen
+
+    * Konfiguration laden
     ```
     postfix check && postfix reload
     ```
 
 1. TLSA Records der Key Fingerprints generieren
     ```
-    openssl x509 –in /etc/postfix/$DOMAIN_TLD.crt \
+    openssl x509 -in /etc/postfix/server.pem \
     -outform DER | sha256sum
     ```
 
+1. Daten im DNS veröffentlichen
+    * DNS Settings für Mailing definieren
+      ```
+      mail.DOMAIN.TLD. A <ip>
+      DOMAIN.TLD. MX 10 mail.DOMAIN.TLD.
+      ```
+
+    * TLSA-Record eintragen
+      ```
+      _25._tcp.mail.<DOMAIN_TLD>.  IN TLSA 3 0 1 <FINGERPRINT>
+      _465._tcp.mail.<DOMAIN_TLD>. IN TLSA 3 0 1 <FINGERPRINT>
+      ```
+
+    * Serial erhöht?
+
+    * Zone laden
     ```
-    _25._tcp.<DOMAIN_TLD>. IN TLSA 3 0 1 <FINGERPRINT>
+    named-checkconf -z
+    rndc reload
     ```
 
-1. TODO: Verify DANE Setup
+1. Verifikation des DANE Setup
+    ```
+    openssl s_client -connect mail.$DOMAIN_TLD:465
+    ```
+
+    ```
+    ldns-dane verify -k /etc/trusted-key.key \
+    -d mail.$DOMAIN_TLD 465
+    ```
+
+1. Test der DNSSEC/DANE Konfiguration per Mailing
+    ```
+    TODO
+    ```
 
 ## Key Management
 
@@ -576,8 +642,7 @@ TODO: remove
 
 1. NSEC(3) Zone Walking
     * https://josefsson.org/walker/
-    * TODO: Download walker
-    * /etc/bind/scripts/nsec-walker/
+    * http://doc.test/walker
     * `walker -x task-walker.de`
 
 
@@ -641,9 +706,9 @@ TODO: remove
 
 ## Erweiterung des Setups
 
-1. BIND Inline Signing
-
 1. Bump on Wire Signing mit anderen Teilnehmern einrichten
+    * Master Zone soll nicht mit DNSSEC signiert sein (neue Zone anlegen)
+    * Slave Zone analog zu DNSSEC Master Zone konfigurieren
 
 1. Slave Nameserver für Zonen einrichten (TSIG)
 
