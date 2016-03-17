@@ -7,6 +7,12 @@ source /etc/network/interfaces.d/*
 auto lo
 iface lo inet loopback
 
+auto lo:2
+iface lo:2 inet static
+address 127.0.0.2
+network 255.0.0.0
+
+
 # The primary network interface
 # DNS Resolver
 auto eth0
