@@ -496,10 +496,6 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     -d mail.$DOMAIN_TLD 465
     ```
 
-1. Test der DNSSEC/DANE Konfiguration per Mailing
-    ```
-    TODO
-    ```
 
 ## Key Management
 
@@ -629,41 +625,16 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     ```
 
 
-## Weitere DNSSEC Informationen prüfen
-
-1. Signing Schemata vergleichen
-    * task-sigchase.de -- KSK & ZSK
-    * dnsprovi.de -- CSK
-    * task-rollover.de -- Backup KSK
-
-1. Zone Expire VS. Signatur-Zeitraum
-
-1. Zone Expire & NSEC Signatur-Zeitraum
-
-1. NSEC(3) Zone Walking
-    * https://josefsson.org/walker/
-    * http://doc.test/walker
-    * `walker -x task-walker.de`
-
-
-## Fehler provozieren und beheben
-
-1. TCP-Anfragen unterbinden
-1. Signaturen auslaufen lassen
-    * `task-expired.de`
-1. Falschen DS im Parent publizieren
-1. KSK oder ZSK löschen/deaktivieren
-1. Time Drift & Signatur-Validierung
-1. TTL=0 für Records verwenden - Validierung noch möglich?
-1. TTLs auf geringen Wert setzen
-
-
 ## DNSSEC Validierung im Nameserver einrichten
 
-1. DNSSEC Validierung über lokalen Nameserver versuchen:
+1. DNSSEC Validierung über lokalen Nameserver versuchen
     ```
-    dig +dnssec task-validation.de @localhost
+    dig +dnssec task-sigchase.de @localhost
+    dig +dnssec dnssec-failed.net @localhost
     ```
+
+    * AD-Flag gesetzt?
+    * Welche Section liefert DNSSEC-Records?
 
 1. DNSKEY der Root-Server als Trust Anchor einrichten:
     * **Nicht in Docker VM notwendig**
@@ -681,7 +652,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
        curl 'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=shared/etc/bind/managed.keys' >/etc/bind/managed.keys
        ```
 
-1. DNSSEC im Nameserver aktivieren:
+1. DNSSEC im Nameserver aktivieren
     /etc/bind/named.conf
     ```
     include "/etc/bind/managed.keys";
@@ -693,15 +664,44 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     ```
     named-checkconf
-    systemctl restart bind9.service || \
-    /etc/init.d/bind9 restart || \
-    /etc/init.d/named restart
+
+    rndc reload
     ```
 
-1. DNSSEC Validierung prüfen:
+1. DNSSEC Validierung prüfen
     ```
-    dig +dnssec task-validation.de @localhost
+    dig +dnssec task-sigchase.de @localhost
+    dig +dnssec dnssec-failed.net @localhost
     ```
+
+
+## Fehler provozieren und beheben
+
+1. TCP-Anfragen unterbinden
+1. Signaturen auslaufen lassen
+    * `task-expired.de`
+1. Falschen DS im Parent publizieren
+1. KSK oder ZSK löschen/deaktivieren
+1. Time Drift & Signatur-Validierung
+1. TTL=0 für Records verwenden - Validierung noch möglich?
+1. TTLs auf geringen Wert setzen
+
+
+## Weitere DNSSEC Informationen prüfen
+
+1. Signing Schemata vergleichen
+    * task-sigchase.de -- KSK & ZSK
+    * dnsprovi.de -- CSK
+    * task-rollover.de -- Backup KSK
+
+1. Zone Expire VS. Signatur-Zeitraum
+
+1. Zone Expire & NSEC Signatur-Zeitraum
+
+1. NSEC(3) Zone Walking
+    * https://josefsson.org/walker/
+    * http://doc.test/nsec-walker/
+    * `walker -x task-walker.de`
 
 
 ## Erweiterung des Setups
