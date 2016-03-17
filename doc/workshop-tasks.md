@@ -228,9 +228,6 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
 1. Nameserver starten und prüfen
     ```
-    named-checkzone $DOMAIN_TLD. \
-    /etc/bind/zones/$DOMAIN_TLD.zone
-
     named-checkconf -z
 
     rndc reload
@@ -438,7 +435,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     openssl req -new -x509 -nodes \
     -out server.pem -keyout server.pem \
-    -subject "/C=DE/ST=Sachsen/L=Chemnitz/O=Linux Tage/OU=2016/CN=mail.$DOMAIN_TLD"
+    -subj "/C=DE/ST=Sachsen/L=Chemnitz/O=Linux Tage/OU=2016/CN=mail.$DOMAIN_TLD"
 
     openssl gendh 512 >> server.pem
     ```
@@ -671,20 +668,12 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 1. DNSSEC Validierung prüfen
     ```
     dig +dnssec task-sigchase.de @localhost
+
     dig +dnssec dnssec-failed.net @localhost
+    less /var/log/named/default.log
+
+    drill -S -k /etc/trusted-key.key dnssec-failed.net
     ```
-
-
-## Fehler provozieren und beheben
-
-1. TCP-Anfragen unterbinden
-1. Signaturen auslaufen lassen
-    * `task-expired.de`
-1. Falschen DS im Parent publizieren
-1. KSK oder ZSK löschen/deaktivieren
-1. Time Drift & Signatur-Validierung
-1. TTL=0 für Records verwenden - Validierung noch möglich?
-1. TTLs auf geringen Wert setzen
 
 
 ## Weitere DNSSEC Informationen prüfen
@@ -702,6 +691,18 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     * https://josefsson.org/walker/
     * http://doc.test/nsec-walker/
     * `walker -x task-walker.de`
+
+
+## Fehler provozieren und beheben
+
+1. TCP-Anfragen unterbinden
+1. Signaturen auslaufen lassen
+    * `task-failed.net`
+1. Falschen DS im Parent publizieren
+1. KSK oder ZSK löschen/deaktivieren
+1. Time Drift & Signatur-Validierung
+1. TTL=0 für Records verwenden - Validierung noch möglich?
+1. TTLs auf geringen Wert setzen
 
 
 ## Erweiterung des Setups
