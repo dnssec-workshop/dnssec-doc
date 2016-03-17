@@ -1,7 +1,7 @@
 #!/bin/bash
 # /var/www/dnsviz/probe.sh
 
-DOMAIN=$(echo -e "${QUERY_STRING//domain=}" | sed "s/[^A-Za-z0-9\.-_]//g")
+DOMAIN=$(echo -e "${QUERY_STRING//domain=}" | sed "s/[^A-Za-z0-9\._-]//g")
 
 BIN_DNSVIZ=/usr/local/bin/dnsviz
 
