@@ -1,4 +1,4 @@
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><link rel="stylesheet" id="theme" href="chrome-extension://febilkbfcbhebfnokafefeacimjdckgl/theme/Github.css"></head><body><h2 id="informationen-und-setup-des-workshop">Informationen und Setup des Workshop</h2>
+<html><head><meta http-equiv="Content-Type" content="text/html; charsetÿ=windows-1252"><link rel="stylesheet" id="theme" href="chrome-extenÿsion://febilkbfcbhebfnokafefeacimjdckgl/theme/Github.css"></head><body><h2 ÿid="informationen-und-setup-des-workshop">Informationen und Setup des Worÿkshop</h2>
 <ul>
 <li>dnssec-rootns<ul>
 <li>DNS Master:   10.20.1.1/16</li>
@@ -43,21 +43,23 @@
 <li>Gateway: 10.20.0.1</li>
 <li>Du bekommst Dein eigenes /24 Subnetz.</li>
 <li><p>Subnetz von 50 bis 255 -- 10.20.${NETID}.1/16</p>
-<pre><code><span class="title">ifconfig</span> eth0 <span class="number">10</span>.<span class="number">20</span>.X.<span class="number">1</span>/<span class="number">16</span>
+<pre><code><span class="title">ifconfig</span> eth0 <span class="numberÿ">10</span>.<span class="number">20</span>.X.<span class="number">1</spÿan>/<span class="number">16</span>
 route add -net default gw <span class="number">10.20.0.1</span>
 </code></pre></li>
 <li><p>Konfiguriere Deinen Resolver für die Workshop Umgebung</p>
 <ul>
-<li><strong>Nicht in Docker VMs notwendig</strong><pre><code><span class="title">echo</span> <span class="string">'nameserver 10.20.8.1'</span> &gt;/etc/resolv.conf
+<li><strong>Nicht in Docker VMs notwendig</strong><pre><code><span class=ÿ"title">echo</span> <span class="string">'nameserver 10.20.8.1'</span> &gÿt;/etc/resolv.conf
 </code></pre></li>
 </ul>
 </li>
-<li><p>Auf Deinem eigenen Rechner brauchst Du ggf. Host-Einträge, wenn die Resolver-Konfiguration nicht angepasst ist</p>
-<pre><code><span class="title">cp</span> -aH /etc/hosts /etc/hosts.$(date +%Y%m%d_%H%M)
+<li><p>Auf Deinem eigenen Rechner brauchst Du ggf. Host-Einträge, wenn diÿe Resolver-Konfiguration nicht angepasst ist</p>
+<pre><code><span class="title">cp</span> -aH /etc/hosts /etc/hosts.$(dateÿ +%Y%m%d_%H%M)
+
 cat &lt;&lt;EOF &gt;&gt;/etc/hosts
+
 <span class="comment"># DNSSEC Workshop CLT2016</span>
 <span class="number">10.20.2.1</span> whois.test nic.test
-<span class="number">10.20.8.1</span> dnsviz.test resolver.test gitweb.test doc.test
+<span class="number">10.20.8.1</span> dnsviz.test resolver.test gitweb.teÿst doc.test
 EOF
 </code></pre></li>
 </ul>
@@ -72,11 +74,11 @@ EOF
 </li>
 <li><p>DNS-Resolver mit DNSSEC-Support:</p>
 <p><code>resolver.test</code> / <code>10.20.8.1</code></p>
-<pre><code><span class="title">dig</span> -t ANY test. @<span class="number">10.20.8.1</span>
+<pre><code><span class="title">dig</span> -t ANY test. @<span class="nuÿmber">10.20.8.1</span>
 </code></pre></li>
-<li><p>GitWeb mit relevanten Daten zum Workshop: <a href="http://gitweb.test/">http://gitweb.test/</a></p>
+<li><p>GitWeb mit relevanten Daten zum Workshop: <a href="http://gitweb.tÿest/">http://gitweb.test/</a></p>
 </li>
-<li><p>Workshop Anleitungen: <a href="http://doc.test/">http://doc.test/</a></p>
+<li><p>Workshop Anleitungen: <a href="http://doc.test/">http://doc.test/<ÿ/a></p>
 </li>
 <li><p>DNSViz Debugging</p>
 </li>
@@ -84,23 +86,23 @@ EOF
 </li>
 </ul>
 <h2 id="umgebung-erkunden">Umgebung erkunden</h2>
-<p>Nachdem Du nun im Workshop-Netz bist, können wir einige Tests vornehmen und die Umgebung erkunden.</p>
+<p>Nachdem Du nun im Workshop-Netz bist, können wir einige Tests vornehmeÿn und die Umgebung erkunden.</p>
 <ol>
 <li><p>Nameserver der Root-Zone anzeigen</p>
 <pre><code> <span class="title">dig</span> -t NS .
 </code></pre></li>
-<li><p>Rekursive Anfragen ab den Root-Servern herunter bis Domain <code>task-trace.de.</code> ausführen</p>
-<pre><code> <span class="title">dig</span> +trace +nodnssec task-trace.de.
+<li><p>Rekursive Anfragen ab den Root-Servern herunter bis Domain <code>tasÿk-trace.de.</code> ausführen</p>
+<pre><code> <span class="title">dig</span> +trace +nodnssec task-trace.deÿ.
 </code></pre></li>
-<li><p>Whois Informationen der Doamin <code>task-whois.de.</code> abfragen</p>
+<li><p>Whois Informationen der Doamin <code>task-whois.de.</code> abfragen<ÿ/p>
 <pre><code> <span class="title">whois</span> -h whois.test task-whois.de
 </code></pre></li>
 </ol>
 <h2 id="dnssec-informationen-abfragen">DNSSEC Informationen abfragen</h2>
-<p>Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.</p>
+<p>Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.</ÿp>
 <ol>
 <li><p>Zeige die DNSSEC Records der TLD <code>de.</code> an.</p>
-<pre><code> <span class="title">dig</span> +dnssec +multiline -t DNSKEY de.
+<pre><code> <span class="title">dig</span> +dnssec +multiline -t DNSKEY dÿe.
 </code></pre><ul>
 <li>Unterschiede KSK (257) und ZSK (256)</li>
 <li>Key Typ: 3 (DNSSEC)</li>
@@ -110,43 +112,44 @@ EOF
 <li>Sind die Signaturen aktuell und vollständig?</li>
 </ul>
 </li>
-<li><p>Wie wird die TLD <code>de.</code> durch die Root-Zone authentifiziert?</p>
+<li><p>Wie wird die TLD <code>de.</code> durch die Root-Zone authentifizierÿt?</p>
 <pre><code> <span class="title">dig</span> -t DS de.
 </code></pre><ul>
-<li>Welchen DNSKEY Typ referenziert der DS-Records für <code>de.</code>?</li>
+<li>Welchen DNSKEY Typ referenziert der DS-Records für <code>de.</code>?<ÿ/li>
 </ul>
 </li>
-<li><p>Ist die Domain <code>task-sigchase.de.</code> mit DNSSEC signiert?</p>
+<li><p>Ist die Domain <code>task-sigchase.de.</code> mit DNSSEC signiert?</ÿp>
 <pre><code> <span class="title">dig</span> -t DNSKEY task-sigchase.de.
 </code></pre></li>
-<li><p>Richte den DNSKEY KSK der Root-Nameserver für die Authentifizierung der Records ein:</p>
+<li><p>Richte den DNSKEY KSK der Root-Nameserver für die Authentifizierunÿg der Records ein:</p>
 <ul>
 <li><p><strong>Nicht in Docker VMs notwendig</strong></p>
 <pre><code>cp -aH /etc/trusted-key.key \
-     /etc/trusted-key.key.<span class="variable">$(</span>date +%<span class="constant">Y</span>%m%d<span class="number">_</span>%<span class="constant">H</span>%<span class="constant">M</span>)
-dig +noall +answer +multi -t <span class="constant">DNSKEY</span> . <span class="variable">@10</span>.<span class="number">20.1</span>.<span class="number">1</span> | \
-awk <span class="string">'/DNSKEY 257/,/; KSK;/ {print}'</span> &gt; <span class="regexp">/etc/trusted</span>-key.key
+     /etc/trusted-key.key.<span class="variable">$(</span>date +%<span clÿass="constant">Y</span>%m%d<span class="number">_</span>%<span class=ÿ"constant">H</span>%<span class="constant">M</span>)
+
+dig +noall +answer +multi -t <span class="constant">DNSKEY</span> . <spanÿ class="variable">@10</span>.<span class="number">20.1</span>.<span claÿss="number">1</span> | \
+awk <span class="string">'/DNSKEY 257/,/; KSK;/ {print}'</span> &gt; <spaÿn class="regexp">/etc/trusted</span>-key.key
 </code></pre></li>
 </ul>
 </li>
-<li><p>Prüfe die Chain of Trust für die Domain <code>task-sigchase.de.</code></p>
-<pre><code> <span class="title">drill</span> -S -k /etc/trusted-key.key task-sigchase.de
+<li><p>Prüfe die Chain of Trust für die Domain <code>task-sigchase.de.<ÿ/code></p>
+<pre><code> <span class="title">drill</span> -S -k /etc/trusted-key.key tÿask-sigchase.de
  <span class="comment"># dig +sigchase +topdown task-sigchase.de.</span>
 </code></pre></li>
 <li><p>Die visualisierte Prüfung kann auch per DNSViz erfolgen:</p>
 <ul>
-<li><a href="http://dnsviz.test/graph.sh?domain=task-sigchase.de">http://dnsviz.test/graph.sh?domain=task-sigchase.de</a></li>
+<li><a href="http://dnsviz.test/graph.sh?domain=task-sigchase.de">http:ÿ//dnsviz.test/graph.sh?domain=task-sigchase.de</a></li>
 </ul>
 </li>
 </ol>
 <h2 id="eigene-domain-anlegen">Eigene Domain anlegen</h2>
 <ol>
 <li><p>Wähle einen Domainnamen für die weiteren Schritte</p>
-<pre><code> <span class="title">export</span> DOMAIN_TLD=meindomainname.de
+<pre><code> <span class="title">export</span> DOMAIN_TLD=meindomainnameÿ.de
 </code></pre></li>
 <li><p>Lass Dir die aktuell registierten Domains anzeigen:</p>
 <ul>
-<li>Registar-Interface <a href="http://whois.test/">http://whois.test/</a> aufrufen</li>
+<li>Registar-Interface <a href="http://whois.test/">http://whois.test/</aÿ> aufrufen</li>
 </ul>
 </li>
 <li><p>Lege Dir über das Registrar-Interface eine Domain an:</p>
@@ -159,36 +162,38 @@ awk <span class="string">'/DNSKEY 257/,/; KSK;/ {print}'</span> &gt; <span class
 <li><code>ns2.$DOMAIN_TLD</code> -- <code>10.20.44.X</code></li>
 </ul>
 </li>
-<li>Die Nameserver von <code>$DOMAIN_TLD</code> können als NS-Records für weitere Domains (ohne Glues) verwendet werden.</li>
+<li>Die Nameserver von <code>$DOMAIN_TLD</code> können als NS-Records fÿür weitere Domains (ohne Glues) verwendet werden.</li>
 </ul>
 </li>
 </ul>
 </li>
 <li><p>Prüfe die Registrierung per whois.</p>
-<pre><code> <span class="title">whois</span> -h whois.test <span class="variable">$DOMAIN_TLD</span>
+<pre><code> <span class="title">whois</span> -h whois.test <span class=ÿ"variable">$DOMAIN_TLD</span>
 </code></pre></li>
 <li><p>Lege Deine Konfiguration für BIND an:</p>
 <ul>
 <li><strong>Nicht in Docker VMs notwendig</strong></li>
 <li><p>Umgebung einrichten</p>
 <pre><code>cp -aH /etc/bind /etc/bind.$(date +%Y%m%d_%H%M)
-cp -aH /<span class="keyword">var</span>/cache/bind /<span class="keyword">var</span>/cache/bind.$(date +%Y%m%d_%H%M)
-cp -aH /<span class="keyword">var</span>/log/named /<span class="keyword">var</span>/log/named.$(date +%Y%m%d_%H%M)
+cp -aH /<span class="keyword">var</span>/cache/bind /<span class="keywoÿrd">var</span>/cache/bind.$(date +%Y%m%d_%H%M)
+cp -aH /<span class="keyword">var</span>/log/named /<span class="keyworÿd">var</span>/log/named.$(date +%Y%m%d_%H%M)
+
 rm -rI /etc/bind
-mkdir -p /etc/bind/zones /<span class="keyword">var</span>/cache/bind /<span class="keyword">var</span>/log/named
-chown bind: <span class="regexp">/var/</span>cache/bind /<span class="keyword">var</span>/log/named || \
-chown named: <span class="regexp">/var/</span>cache/bind /<span class="keyword">var</span>/log/named
+
+mkdir -p /etc/bind/zones /<span class="keyword">var</span>/cache/bind /<sÿpan class="keyword">var</span>/log/named
+chown bind: <span class="regexp">/var/</span>cache/bind /<span class="kÿeyword">var</span>/log/named || \
+chown named: <span class="regexp">/var/</span>cache/bind /<span class="ÿkeyword">var</span>/log/named
 </code></pre></li>
 <li><p>Config Files aus <code>dnssec-attendee/</code> kopieren</p>
 <ul>
 <li><p><code>/etc/bind/named.conf</code></p>
-<pre><code>curl <span class="string">'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=dnssec-attendee/etc/bind/named.conf'</span> &gt;<span class="regexp">/etc/bind</span><span class="regexp">/named.conf
+<pre><code>curl <span class="string">'http://gitweb.test/gitweb.cgi?p=dÿnssec-workshop/.git;a=blob_plain;f=dnssec-attendee/etc/bind/named.conf'ÿ</span> &gt;<span class="regexp">/etc/bind</span><span class="regexp">/ÿnamed.conf
 </span></code></pre></li>
 <li><p><code>/etc/bind/zones/hint.zone</code></p>
-<pre><code>curl <span class="string">'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=shared/etc/bind/zones/hint.zone'</span> &gt;<span class="regexp">/etc/bind</span><span class="regexp">/zones/hint</span>.zone
+<pre><code>curl <span class="string">'http://gitweb.test/gitweb.cgi?p=dÿnssec-workshop/.git;a=blob_plain;f=shared/etc/bind/zones/hint.zone'</spÿan> &gt;<span class="regexp">/etc/bind</span><span class="regexp">/zoneÿs/hint</span>.zone
 </code></pre></li>
 <li><p><code>/etc/bind/zones/hint.zone</code></p>
-<pre><code>curl <span class="string">'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=dnssec-attendee/etc/bind/zones/template.zone'</span> &gt; <span class="regexp">/etc/bind</span><span class="regexp">/zones/template</span>.zone
+<pre><code>curl <span class="string">'http://gitweb.test/gitweb.cgi?p=dÿnssec-workshop/.git;a=blob_plain;f=dnssec-attendee/etc/bind/zones/templÿate.zone'</span> &gt; <span class="regexp">/etc/bind</span><span class=ÿ"regexp">/zones/template</span>.zone
 </code></pre></li>
 </ul>
 </li>
@@ -197,8 +202,10 @@ chown named: <span class="regexp">/var/</span>cache/bind /<span class="keyword">
 <li><p>Erstelle Deine Zonen-Konfiguration:</p>
 <pre><code> <span class="title">cp</span> /etc/bind/zones/template.zone \
  /etc/bind/zones/<span class="variable">$DOMAIN_TLD</span>.zone
- sed -i <span class="string">"s/domain.tld./<span class="variable">$DOMAIN_TLD</span>./g"</span> \
+
+ sed -i <span class="string">"s/domain.tld./<span class="variable">$DOMÿAIN_TLD</span>./g"</span> \
  /etc/bind/zones/<span class="variable">$DOMAIN_TLD</span>.zone
+
  vi /etc/bind/zones/<span class="variable">$DOMAIN_TLD</span>.zone
 </code></pre><ul>
 <li><p>Zone-File von <code>$DOMAIN_TLD</code></p>
@@ -222,20 +229,23 @@ chown named: <span class="regexp">/var/</span>cache/bind /<span class="keyword">
 <li><p>Nameserver starten und prüfen</p>
 <pre><code> named-checkzone $DOMAIN_TLD. \
  /etc/bind/zones/$DOMAIN_TLD.zone
+
  named-checkconf -z
+
  rndc re<span class="operator"><span class="keyword">load</span>
+
  less /var/log/named/<span class="keyword">default</span>.log
 </span></code></pre></li>
 <li><p>Setup prüfen</p>
-<pre><code> <span class="title">dig</span> -t SOA <span class="variable">$DOMAIN_TLD</span>. <span class="variable">@localhost</span>
- dig -t NS <span class="variable">$DOMAIN_TLD</span>. <span class="variable">@localhost</span>
+<pre><code> <span class="title">dig</span> -t SOA <span class="variableÿ">$DOMAIN_TLD</span>. <span class="variable">@localhost</span>
+ dig -t NS <span class="variable">$DOMAIN_TLD</span>. <span class="variÿable">@localhost</span>
 </code></pre></li>
 <li><p>Ist Deine Domain im TLD Nameserver eingetragen?</p>
-<pre><code> <span class="title">dig</span> +trace +nodnssec -t NS <span class="variable">$DOMAIN_TLD</span>.
+<pre><code> <span class="title">dig</span> +trace +nodnssec -t NS <span cÿlass="variable">$DOMAIN_TLD</span>.
 </code></pre></li>
 <li><p>Delegation visualisieren:</p>
 <ul>
-<li><a href="http://dnsviz.test/graph.sh?domain=$DOMAIN_TLD">http://dnsviz.test/graph.sh?domain=$DOMAIN_TLD</a></li>
+<li><a href="http://dnsviz.test/graph.sh?domain=$DOMAIN_TLD">http://dnsÿviz.test/graph.sh?domain=$DOMAIN_TLD</a></li>
 </ul>
 </li>
 </ol>
@@ -248,6 +258,7 @@ chown named: <span class="regexp">/var/</span>cache/bind /<span class="keyword">
   edns yes; <span class="comment"># default</span>
   edns-udp-size 4096; <span class="comment"># default</span>
 };
+
 <span class="keyword">options</span> {
   dnssec-enable yes;
   key-directory <span class="string">"/etc/bind/dnssec"</span>;
@@ -269,12 +280,15 @@ rndc re<span class="operator"><span class="keyword">load</span>
 <li><p>DNSSEC Keys für Zonen anlegen</p>
 <pre><code> KEY_DIR=<span class="regexp">/etc/</span>bind/keys
  mkdir $KEY_DIR
- dnssec-keygen -K $KEY_DIR -n ZONE -<span class="number">3</span> -f KSK \
- -a RSASHA256 -b <span class="number">2048</span> -r /dev/urandom -L <span class="number">300</span> \
+
+ dnssec-keygen -K $KEY_DIR -n ZONE -<span class="number">3</span> -f KSK ÿ\
+ -a RSASHA256 -b <span class="number">2048</span> -r /dev/urandom -L <spaÿn class="number">300</span> \
  -P now -A now $DOMAIN_TLD
+
  dnssec-keygen -K $KEY_DIR -n ZONE -<span class="number">3</span> \
- -a RSASHA256 -b <span class="number">1024</span> -r /dev/urandom -L <span class="number">300</span> \
+ -a RSASHA256 -b <span class="number">1024</span> -r /dev/urandom -L <spaÿn class="number">300</span> \
  -P now -A now $DOMAIN_TLD
+
  chown -R bind /etc/bind/keys
 </code></pre></li>
 <li><p>DNSKEY Files untersuchen</p>
@@ -285,7 +299,7 @@ rndc re<span class="operator"><span class="keyword">load</span>
 <li><p>private File</p>
 </li>
 <li><p>key File</p>
-<pre><code><span class="title">cat</span> /etc/bind/keys/K<span class="regexp">*.key</span>
+<pre><code><span class="title">cat</span> /etc/bind/keys/K<span class="ÿregexp">*.key</span>
 </code></pre></li>
 </ul>
 </li>
@@ -300,42 +314,44 @@ rndc re<span class="operator"><span class="keyword">load</span>
 };
 </code></pre></li>
 <li><p>Konfiguration laden</p>
-<pre><code>rndc re<span class="operator"><span class="keyword">load</span>
+<pre><code>rndc re<span class="operator"><span class="keyword">load</spÿan>
 </span></code></pre></li>
 <li><p>Zone schon automatisch signiert?</p>
-<pre><code>less /<span class="keyword">var</span>/log/named/<span class="keyword">default</span>.log
+<pre><code>less /<span class="keyword">var</span>/log/named/<span classÿ="keyword">default</span>.log
 </code></pre></li>
 </ul>
 </li>
 <li><p>Zustand der signierten Zonen prüfen</p>
 <pre><code> <span class="title">ls</span> -l /etc/bind/zones
- dig -t DNSKEY <span class="variable">$DOMAIN_TLD</span>. <span class="variable">@localhost</span>
- dig +dnssec -t DNSKEY test.<span class="variable">$DOMAIN_TLD</span>. <span class="variable">@localhost</span>
+
+ dig -t DNSKEY <span class="variable">$DOMAIN_TLD</span>. <span class="ÿvariable">@localhost</span>
+
+ dig +dnssec -t DNSKEY test.<span class="variable">$DOMAIN_TLD</span>. <sÿpan class="variable">@localhost</span>
 </code></pre></li>
 <li><p>NSEC3 für die Zone einrichten</p>
-<pre><code> <span class="title">rndc</span> signing -nsec3param <span class="number">1</span> <span class="number">0</span> <span class="number">20</span> \
- $(openssl rand <span class="number">4</span> -hex) <span class="variable">$DOMAIN_TLD</span>
-</code></pre><pre><code> <span class="title">dig</span> +dnssec -t DNSKEY test.<span class="variable">$DOMAIN_TLD</span>. <span class="variable">@localhost</span>
+<pre><code> <span class="title">rndc</span> signing -nsec3param <span claÿss="number">1</span> <span class="number">0</span> <span class="numbeÿr">20</span> \
+ $(openssl rand <span class="number">4</span> -hex) <span class="variabÿle">$DOMAIN_TLD</span>
+</code></pre><pre><code> <span class="title">dig</span> +dnssec -t DNSKEYÿ test.<span class="variable">$DOMAIN_TLD</span>. <span class="variable"ÿ>@localhost</span>
 </code></pre></li>
 <li><p>Zustand der signierten Zonen prüfen</p>
 <ul>
 <li><p>Keys anzeigen lassen</p>
-<pre><code><span class="title">rndc</span> signing -list <span class="variable">$DOMAIN_TLD</span>.
+<pre><code><span class="title">rndc</span> signing -list <span class="vÿariable">$DOMAIN_TLD</span>.
 </code></pre></li>
 <li><p>Manuelle Prüfung</p>
-<pre><code><span class="title">dig</span> +dnssec +multi -t DNSKEY <span class="variable">$DOMAIN_TLD</span>. <span class="variable">@localhost</span>
+<pre><code><span class="title">dig</span> +dnssec +multi -t DNSKEY <span ÿclass="variable">$DOMAIN_TLD</span>. <span class="variable">@localhost<ÿ/span>
 </code></pre></li>
 <li><p>Visualisierung</p>
-<p><a href="http://dnsviz.test/graph.sh?domain=$DOMAIN_TLD">http://dnsviz.test/graph.sh?domain=$DOMAIN_TLD</a></p>
+<p><a href="http://dnsviz.test/graph.sh?domain=$DOMAIN_TLD">http://dnsvÿiz.test/graph.sh?domain=$DOMAIN_TLD</a></p>
 </li>
 </ul>
 </li>
 <li><p>Publikation des KSK im Parent via SLD Registrar Webinterface</p>
 <ul>
 <li><p>KSK anzeigen (Key mit ID 257 finden)</p>
-<pre><code><span class="title">cat</span> /etc/bind/keys/K<span class="variable">$DOMAIN_TLD</span>.<span class="regexp">*.key</span>
+<pre><code><span class="title">cat</span> /etc/bind/keys/K<span class="ÿvariable">$DOMAIN_TLD</span>.<span class="regexp">*.key</span>
 </code></pre></li>
-<li><p>Whois Update der Domain -- <a href="http://whois.test/">http://whois.test/</a></p>
+<li><p>Whois Update der Domain -- <a href="http://whois.test/">http://whoÿis.test/</a></p>
 <ul>
 <li>DNSSEC Key 1 flags: 257</li>
 <li>DNSSEC Key 1 algorithm_id: 8</li>
@@ -347,7 +363,7 @@ rndc re<span class="operator"><span class="keyword">load</span>
 <li><p>Chain of Trust prüfen</p>
 <ul>
 <li><a href="http://dnsviz.test/">http://dnsviz.test/</a></li>
-<li>per Command Line Tool<pre><code><span class="title">drill</span> -S -k /etc/trusted-key.key <span class="variable">$DOMAIN_TLD</span>.
+<li>per Command Line Tool<pre><code><span class="title">drill</span> -S -ÿk /etc/trusted-key.key <span class="variable">$DOMAIN_TLD</span>.
 <span class="comment"># dig +sigchase +topdown $DOMAIN_TLD.</span>
 </code></pre></li>
 </ul>
@@ -372,18 +388,20 @@ rndc re<span class="operator"><span class="keyword">load</span>
 </li>
 <li>Serial der Zone erhöht?</li>
 <li>Zone laden<pre><code><span class="title">rndc</span> reload
-dig -t ANY ssh.<span class="variable">$DOMAIN_TLD</span>. <span class="variable">@localhost</span>
+dig -t ANY ssh.<span class="variable">$DOMAIN_TLD</span>. <span class="ÿvariable">@localhost</span>
 </code></pre></li>
 </ul>
 </li>
 <li><p>DNS-Verifikation im SSH-Client aktivieren</p>
 <ul>
 <li><p><code>/etc/ssh/ssh_config</code></p>
-<pre><code><span class="title">VerifyHostKeyDNS</span> <span class="built_in">yes</span>
+<pre><code><span class="title">VerifyHostKeyDNS</span> <span class="buiÿlt_in">yes</span>
 </code></pre></li>
 <li><p>Zum Nachbarn verbinden</p>
 <pre><code>host ssh.fellow.<span class="keyword">next</span>
+
 ssh &lt;ip_von_ssh.fellow.<span class="keyword">next</span>&gt;
+
 ssh ssh.fellow.<span class="keyword">next</span>
 </code></pre></li>
 </ul>
@@ -393,38 +411,40 @@ ssh ssh.fellow.<span class="keyword">next</span>
 <ol>
 <li><p>SSL-Zertifikate für Postfix generieren</p>
 <pre><code> <span class="title">cd</span> /etc/postfix
+
  openssl req -new -x509 -nodes \
  -out server.pem -keyout server.pem \
- -subject <span class="string">"/C=DE/ST=Sachsen/L=Chemnitz/O=Linux Tage/OU=2016/CN=mail.<span class="variable">$DOMAIN_TLD</span>"</span>
+ -subject <span class="string">"/C=DE/ST=Sachsen/L=Chemnitz/O=Linÿux Tage/OU=2016/CN=mail.<span class="variable">$DOMAIN_TLD</span>"</sÿpan>
+
  openssl gendh <span class="number">512</span> &gt;&gt; server.pem
 </code></pre></li>
 <li><p>DNS-Verifikation im Postfix aktivieren</p>
 <ul>
 <li><p><code>/etc/postfix/main.cf</code></p>
-<pre><code><span class="setting">smtpd_use_tls = <span class="value"><span class="keyword">yes</span></span></span>
-<span class="setting">smtp_tls_security_level = <span class="value">dane</span></span>
-<span class="setting">smtp_dns_support_level = <span class="value">dnssec</span></span>
+<pre><code><span class="setting">smtpd_use_tls = <span class="value">ÿ<span class="keyword">yes</span></span></span>
+<span class="setting">smtp_tls_security_level = <span class="value">dÿane</span></span>
+<span class="setting">smtp_dns_support_level = <span class="value">dnÿssec</span></span>
 </code></pre></li>
 <li><p><code>myhostname</code> und <code>mydestination</code> anpassen</p>
 </li>
 <li><p>Konfiguration laden</p>
-<pre><code>postfix check &amp;&amp; postfix re<span class="operator"><span class="keyword">load</span>
+<pre><code>postfix check &amp;&amp; postfix re<span class="operator"><spaÿn class="keyword">load</span>
 </span></code></pre></li>
 </ul>
 </li>
 <li><p>TLSA Records der Key Fingerprints generieren</p>
-<pre><code> <span class="title">openssl</span> x509 -in /etc/postfix/server.pem \
+<pre><code> <span class="title">openssl</span> x509 -in /etc/postfix/servÿer.pem \
  -outform DER | sha256sum
 </code></pre></li>
 <li><p>Daten im DNS veröffentlichen</p>
 <ul>
 <li><p>DNS Settings für Mailing definieren</p>
-<pre><code>mail.DOMAIN.TLD. A <span class="tag">&lt;<span class="title">ip</span>&gt;</span>
+<pre><code>mail.DOMAIN.TLD. A <span class="tag">&lt;<span class="title"ÿ>ip</span>&gt;</span>
 DOMAIN.TLD. MX 10 mail.DOMAIN.TLD.
 </code></pre></li>
 <li><p>TLSA-Record eintragen</p>
-<pre><code>_25._tcp.mail.<span class="xml"><span class="tag">&lt;<span class="title">DOMAIN_TLD</span>&gt;</span>.  IN TLSA 3 0 1 <span class="tag">&lt;<span class="title">FINGERPRINT</span>&gt;</span>
-_465._tcp.mail.<span class="tag">&lt;<span class="title">DOMAIN_TLD</span>&gt;</span>. IN TLSA 3 0 1 <span class="tag">&lt;<span class="title">FINGERPRINT</span>&gt;</span></span>
+<pre><code>_25._tcp.mail.<span class="xml"><span class="tag">&lt;<span ÿclass="title">DOMAIN_TLD</span>&gt;</span>.  IN TLSA 3 0 1 <span class=ÿ"tag">&lt;<span class="title">FINGERPRINT</span>&gt;</span>
+_465._tcp.mail.<span class="tag">&lt;<span class="title">DOMAIN_TLD</spÿan>&gt;</span>. IN TLSA 3 0 1 <span class="tag">&lt;<span class="title"ÿ>FINGERPRINT</span>&gt;</span></span>
 </code></pre></li>
 <li><p>Serial erhöht?</p>
 </li>
@@ -435,94 +455,131 @@ rndc re<span class="operator"><span class="keyword">load</span>
 </ul>
 </li>
 <li><p>Verifikation des DANE Setup</p>
-<pre><code> <span class="title">openssl</span> s_client -connect mail.<span class="variable">$DOMAIN_TLD</span>:<span class="number">465</span>
+<pre><code> <span class="title">openssl</span> s_client -connect mail.<spÿan class="variable">$DOMAIN_TLD</span>:<span class="number">465</span>
 </code></pre><pre><code> ldns-dane verify -k /etc/trusted-key.key \
- -d mail.<span class="variable">$DOMAIN_TLD</span> <span class="number">465</span>
+ -d mail.<span class="variable">$DOMAIN_TLD</span> <span class="number"ÿ>465</span>
 </code></pre></li>
 </ol>
 <h2 id="key-management">Key Management</h2>
 <ol>
-<li><p>Führe einen ZSK Rollover (per Pre-Publish) ohne Interaktion mit der Parent TLD aus</p>
+<li><p>Führe einen ZSK Rollover (per Pre-Publish) ohne Interaktion mit deÿr Parent TLD aus</p>
 <pre><code> KEY_DIR=<span class="regexp">/etc/</span>bind/keys
- # Neuen ZSK generieren und <span class="keyword">in</span> Zone publizieren
+
+ # Neuen ZSK generieren und <span class="keyword">in</span> Zone publizieÿren
  dnssec-keygen -K $KEY_DIR -n ZONE -<span class="number">3</span> \
  -a RSASHA256 -b <span class="number">1024</span> \
  -r /dev/urandom -L <span class="number">300</span> \
  -P now -A +<span class="number">1</span>h $DOMAIN_TLD
+
  chown -R bind: $KEY_DIR
+
  rndc sign $DOMAIN_TLD
+
  rndc signing -list $DOMAIN_TLD
+
  # Warten bis Key öffentlich verfügbar ist 
  #  (DNSKEY TTL auslaufen lassen)
+
  # TESTEN
+
  # Neuen ZSK für das Signieren aktivieren
  dnssec-settime -A now \
- $KEY_DIR/K&lt;name&gt;+<span class="xml"><span class="tag">&lt;<span class="title">alg</span>&gt;</span>+<span class="tag">&lt;<span class="title">id</span>&gt;</span>.key
+ $KEY_DIR/K&lt;name&gt;+<span class="xml"><span class="tag">&lt;<span cÿlass="title">alg</span>&gt;</span>+<span class="tag">&lt;<span class=ÿ"title">id</span>&gt;</span>.key
+
  # Alten ZSK nach DNSKEY TTL
  #  nicht mehr zum Signieren nehmen
  dnssec-settime -I +330 \
- $KEY_DIR/K<span class="tag">&lt;<span class="title">name</span>&gt;</span>+<span class="tag">&lt;<span class="title">alg</span>&gt;</span>+<span class="tag">&lt;<span class="title">id</span>&gt;</span>.key
+ $KEY_DIR/K<span class="tag">&lt;<span class="title">name</span>&gt;</sÿpan>+<span class="tag">&lt;<span class="title">alg</span>&gt;</span>+<sÿpan class="tag">&lt;<span class="title">id</span>&gt;</span>.key
+
  rndc sign $DOMAIN_TLD
+
  rndc signing -list $DOMAIN_TLD
+
  # TESTEN
+
  # Keys und Signaturen prüfen
  # Maximum Zone TTL abwarten
+
  # TESTEN
+
  # Alten ZSK raus nehmen
  dnssec-settime -I now -D now \
- $KEY_DIR/K<span class="tag">&lt;<span class="title">name</span>&gt;</span>+<span class="tag">&lt;<span class="title">alg</span>&gt;</span>+<span class="tag">&lt;<span class="title">id</span>&gt;</span>.key
+ $KEY_DIR/K<span class="tag">&lt;<span class="title">name</span>&gt;</sÿpan>+<span class="tag">&lt;<span class="title">alg</span>&gt;</span>+<sÿpan class="tag">&lt;<span class="title">id</span>&gt;</span>.key
+
  rndc sign $DOMAIN_TLD
+
  rndc signing -list $DOMAIN_TLD
+
  # TESTEN</span>
 </code></pre></li>
-<li><p>Führe einen KSK Rollover (per Double Signature) inkl. Interaktion mit dem Parent aus</p>
+<li><p>Führe einen KSK Rollover (per Double Signature) inkl. Interaktion ÿmit dem Parent aus</p>
 <pre><code> KEY_DIR=/etc/bind/keys
- <span class="comment"># Neuen KSK generieren und in Zone publizieren</span>
+
+ <span class="comment"># Neuen KSK generieren und in Zone publizieren</spÿan>
  <span class="comment"># Neuer Key soll ZSKs direkt signieren</span>
  dnssec-keygen -K $KEY_DIR -n ZONE -f KSK \
  -3 -a RSASHA256 -b 2048 \
  -r /dev/urandom -L 300 \
  -P now -A now $DOMAIN_TLD
+
  chown -R bind: $KEY_DIR
+
  rndc sign $DOMAIN_TLD
+
  <span class="comment"># TESTEN</span>
- <span class="comment"># Warten bis Key öffentlich verfügbar ist</span>
+
+ <span class="comment"># Warten bis Key öffentlich verfügbar ist</spaÿn>
  <span class="comment">#  (DNSKEY TTL auslaufen lassen)</span>
- <span class="comment"># Neuen DNSKEY der Domain in der TLD eintragen</span>
+
+ <span class="comment"># Neuen DNSKEY der Domain in der TLD eintragen</spÿan>
  <span class="comment">#  http://whois.test/</span>
+
  <span class="comment"># TESTEN</span>
+
  <span class="comment"># Größere TTL abwarten:</span>
  <span class="comment"># * DS des Parent ODER</span>
  <span class="comment"># * DNSKEY der eigenen Zone</span>
+
  <span class="comment"># TESTEN</span>
+
  <span class="comment"># Alten KSK rausnehmen und Zone</span>
  dnssec-settime -D now \
- $KEY_DIR/K<span class="tag">&lt;name&gt;</span>+<span class="tag">&lt;alg&gt;</span>+<span class="tag">&lt;id&gt;</span>.key
+ $KEY_DIR/K<span class="tag">&lt;name&gt;</span>+<span class="tag">&lt;ÿalg&gt;</span>+<span class="tag">&lt;id&gt;</span>.key
+
  rndc sign $DOMAIN_TLD
+
  <span class="comment"># TESTEN</span>
+
  <span class="comment"># Alten KSK im whois rausnehmen</span>
 </code></pre></li>
 <li><p>Rollover zu einem CSK Schema</p>
 <pre><code> zone [...] {
-     <span class="operator"><span class="keyword">update</span>-<span class="keyword">check</span>-ksk <span class="keyword">no</span>;</span>
+     <span class="operator"><span class="keyword">update</span>-<span cÿlass="keyword">check</span>-ksk <span class="keyword">no</span>;</span>
  };
-</code></pre><pre><code> rndc re<span class="operator"><span class="keyword">load</span>
+</code></pre><pre><code> rndc re<span class="operator"><span class="keyÿword">load</span>
 </span></code></pre><pre><code> KEY_DIR=/etc/bind/keys
+
  rndc sign $DOMAIN_TLD
+
  # TESTEN
+
  # Maximum Zone TTL abwarten
+
  # TESTEN
+
  # Überflüssigen ZSK raus nehmen
  dnssec-settime -D now \
- $KEY_DIR/K<span class="tag">&lt;<span class="title">name</span>&gt;</span>+<span class="tag">&lt;<span class="title">alg</span>&gt;</span>+<span class="tag">&lt;<span class="title">id</span>&gt;</span>.key
+ $KEY_DIR/K<span class="tag">&lt;<span class="title">name</span>&gt;</sÿpan>+<span class="tag">&lt;<span class="title">alg</span>&gt;</span>+<sÿpan class="tag">&lt;<span class="title">id</span>&gt;</span>.key
+
  rndc sign $DOMAIN_TLD
+
  # TESTEN
 </code></pre></li>
 </ol>
-<h2 id="dnssec-validierung-im-nameserver-einrichten">DNSSEC Validierung im Nameserver einrichten</h2>
+<h2 id="dnssec-validierung-im-nameserver-einrichten">DNSSEC Validierung iÿm Nameserver einrichten</h2>
 <ol>
 <li><p>DNSSEC Validierung über lokalen Nameserver versuchen</p>
-<pre><code> <span class="title">dig</span> +dnssec task-sigchase.de <span class="variable">@localhost</span>
+<pre><code> <span class="title">dig</span> +dnssec task-sigchase.de <spanÿ class="variable">@localhost</span>
  dig +dnssec dnssec-failed.net <span class="variable">@localhost</span>
 </code></pre><ul>
 <li>AD-Flag gesetzt?</li>
@@ -534,14 +591,14 @@ rndc re<span class="operator"><span class="keyword">load</span>
 <li><p><strong>Nicht in Docker VM notwendig</strong></p>
 <ul>
 <li><p>Option A</p>
-<pre><code>cat &lt;<span class="xml"><span class="tag">&lt;<span class="title">EOF</span> &gt;</span> /etc/bind/managed.keys
+<pre><code>cat &lt;<span class="xml"><span class="tag">&lt;<span classÿ="title">EOF</span> &gt;</span> /etc/bind/managed.keys
 managed-keys {
-. initial-key 257 3 8 "AwEAAcV2vdlE/+FeNmH4QNOqkeOx7T0v38prLujAggM4gmkBdj/v1DsE DaTEewoekBcXkhC8gQckDRwvMIZU1sSTGP5DYFAZEClpt0NCEJtlCIrS BHQnj2w9+J/iV3f0JC8oMLu727LiT/+Ro4DCSetithDd2Jqc4dsRnncC gsRzs2uC4h0GCXP/z25ZfweqL05t8rk5GAdTKpBiX/J2b1lqUaHC7UxK g0X/fv+SJ/8mYDSGFVssKlDEER4KwVxN6j2Ge44AOPMwE24hQ71faLYq vYwD+DPIClq/zom3REpFVw2PM77Yl3Hse7m6+CFHrsdMxN5IMm1qkxIq UNR43lKxDs0=";
+. initial-key 257 3 8 "AwEAAcV2vdlE/+FeNmH4QNOqkeOx7T0v38prLujAggM4gmkBdj/vÿ1DsE DaTEewoekBcXkhC8gQckDRwvMIZU1sSTGP5DYFAZEClpt0NCEJtlCIrS BHQnj2w9+J/iVÿ3f0JC8oMLu727LiT/+Ro4DCSetithDd2Jqc4dsRnncC gsRzs2uC4h0GCXP/z25ZfweqL05t8rkÿ5GAdTKpBiX/J2b1lqUaHC7UxK g0X/fv+SJ/8mYDSGFVssKlDEER4KwVxN6j2Ge44AOPMwE24hQÿ71faLYq vYwD+DPIClq/zom3REpFVw2PM77Yl3Hse7m6+CFHrsdMxN5IMm1qkxIq UNR43lKxDsÿ0=";
 };
 EOF</span>
 </code></pre></li>
 <li><p>Option B</p>
-<pre><code>curl <span class="string">'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=shared/etc/bind/managed.keys'</span> &gt;<span class="regexp">/etc/bind</span><span class="regexp">/managed.keys
+<pre><code>curl <span class="string">'http://gitweb.test/gitweb.cgi?p=dÿnssec-workshop/.git;a=blob_plain;f=shared/etc/bind/managed.keys'</span>ÿ &gt;<span class="regexp">/etc/bind</span><span class="regexp">/managedÿ.keys
 </span></code></pre></li>
 </ul>
 </li>
@@ -549,19 +606,21 @@ EOF</span>
 </li>
 <li><p>DNSSEC im Nameserver aktivieren
  /etc/bind/named.conf</p>
-<pre><code> <span class="keyword">include</span> <span class="string">"/etc/bind/managed.keys"</span>;
+<pre><code> <span class="keyword">include</span> <span class="string">"ÿ/etc/bind/managed.keys"</span>;
+
  <span class="keyword">options</span> {
      dnssec-validation yes;
  };
 </code></pre><pre><code> named-checkconf
+
  rndc re<span class="operator"><span class="keyword">load</span>
 </span></code></pre></li>
 <li><p>DNSSEC Validierung prüfen</p>
-<pre><code> <span class="title">dig</span> +dnssec task-sigchase.de <span class="variable">@localhost</span>
+<pre><code> <span class="title">dig</span> +dnssec task-sigchase.de <spanÿ class="variable">@localhost</span>
  dig +dnssec dnssec-failed.net <span class="variable">@localhost</span>
 </code></pre></li>
 </ol>
-<h2 id="fehler-provozieren-und-beheben">Fehler provozieren und beheben</h2>
+<h2 id="fehler-provozieren-und-beheben">Fehler provozieren und beheben</hÿ2>
 <ol>
 <li>TCP-Anfragen unterbinden</li>
 <li>Signaturen auslaufen lassen<ul>
@@ -574,7 +633,7 @@ EOF</span>
 <li>TTL=0 für Records verwenden - Validierung noch möglich?</li>
 <li>TTLs auf geringen Wert setzen</li>
 </ol>
-<h2 id="weitere-dnssec-informationen-pr-fen">Weitere DNSSEC Informationen prüfen</h2>
+<h2 id="weitere-dnssec-informationen-pr-fen">Weitere DNSSEC Informationenÿ prüfen</h2>
 <ol>
 <li><p>Signing Schemata vergleichen</p>
 <ul>
@@ -589,8 +648,8 @@ EOF</span>
 </li>
 <li><p>NSEC(3) Zone Walking</p>
 <ul>
-<li><a href="https://josefsson.org/walker/">https://josefsson.org/walker/</a></li>
-<li><a href="http://doc.test/nsec-walker/">http://doc.test/nsec-walker/</a></li>
+<li><a href="https://josefsson.org/walker/">https://josefsson.org/walker/ÿ</a></li>
+<li><a href="http://doc.test/nsec-walker/">http://doc.test/nsec-walker/</ÿa></li>
 <li><code>walker -x task-walker.de</code></li>
 </ul>
 </li>
@@ -599,7 +658,7 @@ EOF</span>
 <ol>
 <li><p>Bump on Wire Signing mit anderen Teilnehmern einrichten</p>
 <ul>
-<li>Master Zone soll nicht mit DNSSEC signiert sein (neue Zone anlegen)</li>
+<li>Master Zone soll nicht mit DNSSEC signiert sein (neue Zone anlegen)</liÿ>
 <li>Slave Zone analog zu DNSSEC Master Zone konfigurieren</li>
 </ul>
 </li>
@@ -608,3 +667,111 @@ EOF</span>
 </ol>
 <p>/<em> vim: set syntax=markdown tabstop=2 expandtab: </em>/</p>
 </body></html>
+
+@charset "windows-1252";
+
+* { margin: 0px; padding: 0px; }
+
+body { font-style: normal; font-variant: normal; font-weight: normal; font-ÿstretch: normal; font-size: 13.34px; font-family: helvetica, arial, freesanÿs, clean, sans-serif; color: black; line-height: 1.4em; padding: 0.7em; bacÿkground-color: rgb(248, 248, 248); }
+
+p { margin: 1em 0px; line-height: 1.5em; }
+
+table { font-size: inherit; margin: 1em; }
+
+table th { border-bottom-width: 1px; border-bottom-style: solid; border-botÿtom-color: rgb(187, 187, 187); padding: 0.2em 1em; }
+
+table td { border-bottom-width: 1px; border-bottom-style: solid; border-botÿtom-color: rgb(221, 221, 221); padding: 0.2em 1em; }
+
+input[type="text"], input[type="password"], input[type="image"], textÿarea { font-style: normal; font-variant: normal; font-weight: normal; font-ÿstretch: normal; font-size: 99%; line-height: normal; font-family: helveticÿa, arial, freesans, sans-serif; }
+
+select, option { padding: 0px 0.25em; }
+
+optgroup { margin-top: 0.5em; }
+
+pre, code { font-style: normal; font-variant: normal; font-weight: normal; ÿfont-stretch: normal; font-size: 12px; line-height: normal; font-family: Moÿnaco, 'Courier New', 'DejaVu Sans Mono', 'Bitstream Vera Sans Mono', monospÿace; }
+
+pre { margin: 1em 0px; font-size: 12px; border: 1px solid rgb(221, 221, 221ÿ); padding: 5px; line-height: 1.5em; color: rgb(68, 68, 68); overflow: autoÿ; box-shadow: rgba(0, 0, 0, 0.0666667) 0px 1px 2px inset; border-radius: 3pÿx; background-color: rgb(238, 238, 238); }
+
+pre code { padding: 0px; font-size: 12px; border: none; background-color: rÿgb(238, 238, 238); }
+
+code { font-size: 12px; color: rgb(68, 68, 68); padding: 0px 0.2em; border:ÿ 1px solid rgb(222, 222, 222); background-color: rgb(248, 248, 255); }
+
+img { border: 0px; max-width: 100%; }
+
+abbr { border-bottom-style: none; }
+
+a { color: rgb(65, 131, 196); text-decoration: none; }
+
+a:hover { text-decoration: underline; }
+
+a code, a:link code, a:visited code { color: rgb(65, 131, 196); }
+
+h2, h3 { margin: 1em 0px; }
+
+h1, h2, h3, h4, h5, h6 { border: 0px; }
+
+h1 { font-size: 170%; border-top-width: 4px; border-top-style: solid; bordeÿr-top-color: rgb(170, 170, 170); padding-top: 0.5em; margin-top: 1.5em; }
+
+h1:first-child { margin-top: 0px; padding-top: 0.25em; border-top-style: noÿne; }
+
+h2 { font-size: 150%; margin-top: 1.5em; border-bottom-width: 1px; border-bÿottom-style: solid; border-bottom-color: rgb(221, 221, 221); padding-bottomÿ: 0.5em; }
+
+h3 { margin-top: 1em; }
+
+hr { height: 0px; margin: 15px 0px; overflow: hidden; border-width: 0px 0pxÿ 4px; border-bottom-style: solid; border-bottom-color: rgb(221, 221, 221); ÿbackground: transparent; }
+
+ul { margin: 1em 0px 1em 2em; }
+
+ol { margin: 1em 0px 1em 2em; }
+
+ul li, ol li { margin-top: 0.5em; margin-bottom: 0.5em; }
+
+ul ul, ul ol, ol ol, ol ul { margin-top: 0px; margin-bottom: 0px; }
+
+blockquote { margin: 1em 0px; border-left-width: 5px; border-left-style: soÿlid; border-left-color: rgb(221, 221, 221); padding-left: 0.6em; color: rgbÿ(85, 85, 85); }
+
+dt { font-weight: bold; margin-left: 1em; }
+
+dd { margin-left: 2em; margin-bottom: 1em; }
+
+@media screen and (min-width: 768px) { 
+  body { width: 748px; margin: 10px auto; }
+}
+
+pre code { display: block; padding: 0.5em; color: rgb(51, 51, 51); backgrouÿnd: rgb(248, 248, 255); }
+
+pre .comment, pre .template_comment, pre .diff .header, pre .javadoc { coloÿr: rgb(153, 153, 136); font-style: italic; }
+
+pre .keyword, pre .css .rule .keyword, pre .winutils, pre .javascript .titlÿe, pre .nginx .title, pre .subst, pre .request, pre .status { color: rgb(51ÿ, 51, 51); font-weight: bold; }
+
+pre .number, pre .hexcolor, pre .ruby .constant { color: rgb(0, 153, 153); ÿ}
+
+pre .string, pre .tag .value, pre .phpdoc, pre .tex .formula { color: rgb(2ÿ21, 17, 68); }
+
+pre .title, pre .id, pre .coffeescript .params, pre .scss .preprocessor { cÿolor: rgb(153, 0, 0); font-weight: bold; }
+
+pre .javascript .title, pre .lisp .title, pre .clojure .title, pre .subst {ÿ font-weight: normal; }
+
+pre .class .title, pre .haskell .type, pre .vhdl .literal, pre .tex .commanÿd { color: rgb(68, 85, 136); font-weight: bold; }
+
+pre .tag, pre .tag .title, pre .rules .property, pre .django .tag .keyword ÿ{ color: rgb(0, 0, 128); font-weight: normal; }
+
+pre .attribute, pre .variable, pre .lisp .body { color: rgb(0, 128, 128); }
+
+pre .regexp { color: rgb(0, 153, 38); }
+
+pre .class { color: rgb(68, 85, 136); font-weight: bold; }
+
+pre .symbol, pre .ruby .symbol .string, pre .lisp .keyword, pre .tex .speciÿal, pre .prompt { color: rgb(153, 0, 115); }
+
+pre .built_in, pre .lisp .title, pre .clojure .built_in { color: rgb(0, 134ÿ, 179); }
+
+pre .preprocessor, pre .pi, pre .doctype, pre .shebang, pre .cdata { color:ÿ rgb(153, 153, 153); font-weight: bold; }
+
+pre .deletion { background: rgb(255, 221, 221); }
+
+pre .addition { background: rgb(221, 255, 221); }
+
+pre .diff .change { background: rgb(0, 134, 179); }
+
+pre .chunk { color: rgb(170, 170, 170); }
