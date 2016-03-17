@@ -1,0 +1,75 @@
+; File written on Thu Mar 17 20:49:57 2016
+; dnssec_signzone version 9.10.3-P2
+dnssec-failed.net.	1800	IN SOA	ns1.dnsprovi.de. dnssec.dnssec-failed.net. (
+					1          ; serial
+					1800       ; refresh (30 minutes)
+					900        ; retry (15 minutes)
+					1814400    ; expire (3 weeks)
+					1800       ; minimum (30 minutes)
+					)
+			60	RRSIG	SOA 13 2 1800 (
+					20160317185057 20160317184957 1485 dnssec-failed.net.
+					eiT8MxK9vTgybHPcx+5FUzD4NRQe32KlTs24
+					ZOGgbMOPK04OljQm7Yl3xYQzaVV3lUP2mcty
+					t5suW/JyVyQ8WA== )
+			1800	NS	ns1.dnsprovi.de.
+			1800	NS	ns2.dnsprovi.de.
+			60	RRSIG	NS 13 2 1800 (
+					20160317185057 20160317184957 1485 dnssec-failed.net.
+					njw7Pdzfi3XFfLEKGyww0cqHaxhV6jx0If47
+					pzS4z2QZyxv4MgbwXoXDqXJcBt09zb4fy4vD
+					3fu0K8D7bRXxKQ== )
+			1800	A	10.20.4.23
+			60	RRSIG	A 13 2 1800 (
+					20160317185057 20160317184957 1485 dnssec-failed.net.
+					Q08xfjTJ9OTj5bR1pcTzdsMcLhoP415krMs8
+					7dqkn5I5cNvM/tnjfoyU8HMj8K8bdOgd28dd
+					zRUivXNJICKCcw== )
+			600	DNSKEY	256 3 13 (
+					4RpdfTTuR9p2IYOWM6Po0NGbDiV+NMIa3AIi
+					9TgUalBz6AzrG2hyN5iSn0irPY4vwz8ileOm
+					sYjUFtYEIYioYg==
+					) ; ZSK; alg = ECDSAP256SHA256; key id = 1485
+			600	DNSKEY	257 3 13 (
+					WZmopp6HhlFK2RixEo9V6Elb01/9Coqygwob
+					MFEb53e/E2bYOg3uHARgrT0w17MFJvWlcvoK
+					kBH1Ca333Tsy6g==
+					) ; KSK; alg = ECDSAP256SHA256; key id = 24492
+			60	RRSIG	DNSKEY 13 2 600 (
+					20160317185057 20160317184957 1485 dnssec-failed.net.
+					MuPqDFe2RC1V6r3Evtmj+aMDPOIVDkm7MsRt
+					bCPDQRxmTJeUFaMcfbNX9CW3QymUwQ/po9Hi
+					SGyC+UvVRxEYiw== )
+			60	RRSIG	DNSKEY 13 2 600 (
+					20160317185057 20160317184957 24492 dnssec-failed.net.
+					hFFLN+cxeMVwDYGpFPQt50jyw53NKevX4X6V
+					D3wy+7DGl9Nu38eiFviSWCOMuCTQGnoYaPUi
+					Jc99GxMDCcVqfA== )
+			0	NSEC3PARAM 1 0 10 01234567
+			0	RRSIG	NSEC3PARAM 13 2 0 (
+					20160317185057 20160317184957 1485 dnssec-failed.net.
+					VkhnM7VXmjSvMY19goRmwuKtJgr6I9+AWnEd
+					FKiKrwdkKdjzys9qE979MJebszXY9l/am2Ci
+					FuY3mmRV7OsXKQ== )
+www.dnssec-failed.net.	1800	IN CNAME www.dnsprovi.de.
+			60	RRSIG	CNAME 13 3 1800 (
+					20160317185057 20160317184957 1485 dnssec-failed.net.
+					WljFk9PvPK+1hcpTOFQ7uI3/Tw0PFsL6l2oG
+					h4mOO9/A1gNnpCF0F0kLA5r5laDBLX+wAHne
+					XN80LZyxEW8U4w== )
+F0287O7V2DUI86BPTB01A520T4VCGBOG.dnssec-failed.net. 1800 IN NSEC3 1 0 10 01234567 (
+					FKUUIFU3F7FVF0COHFAIAOSHEMSJKEOR
+					A NS SOA RRSIG DNSKEY NSEC3PARAM )
+			60	RRSIG	NSEC3 13 3 1800 (
+					20160317185057 20160317184957 1485 dnssec-failed.net.
+					Wl758Ymf+OA9MPVCNSf0uWRpfAFZ8ER6dS+q
+					2t4ocENQ+FdOhobeV9JeIkXIQZeFyHQP+Y58
+					3LcX/fshoLr+nw== )
+FKUUIFU3F7FVF0COHFAIAOSHEMSJKEOR.dnssec-failed.net. 1800 IN NSEC3 1 0 10 01234567 (
+					F0287O7V2DUI86BPTB01A520T4VCGBOG
+					CNAME RRSIG )
+			60	RRSIG	NSEC3 13 3 1800 (
+					20160317185057 20160317184957 1485 dnssec-failed.net.
+					IHNhr7hW7ZuxgZDKVqDkMdBl08rOi1S0KMjq
+					g9pwqQ9AD+0NW+nKSzo2jlPAawJUGb5Jictd
+					Pdv7fVs+Dylt/A== )

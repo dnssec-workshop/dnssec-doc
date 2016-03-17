@@ -1,0 +1,8 @@
+$TTL 1800
+dnssec-failed.net.		SOA	ns1.dnsprovi.de. dnssec.dnssec-failed.net. ( 1 1800 900 1814400 1800 )
+
+dnssec-failed.net.		NS	ns1.dnsprovi.de.
+dnssec-failed.net.		NS	ns2.dnsprovi.de.
+
+dnssec-failed.net.		A	10.20.4.23
+www.dnssec-failed.net.		CNAME	www.dnsprovi.de.
