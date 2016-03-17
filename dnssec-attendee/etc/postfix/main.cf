@@ -23,7 +23,6 @@ readme_directory = no
 smtpd_relay_restrictions = permit_mynetworks permit_sasl_authenticated defer_unauth_destination
 alias_maps = hash:/etc/aliases
 alias_database = hash:/etc/aliases
-mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128
 mailbox_size_limit = 0
 recipient_delimiter = +
 inet_interfaces = all
@@ -34,6 +33,8 @@ inet_interfaces = all
 myhostname = mail.DOMAIN.TLD
 mydestination = DOMAIN.TLD
 relayhost = 
+mynetworks = 127.0.0.0/8 [::ffff:127.0.0.0]/104 [::1]/128 10.20.0.0/16
+smtpd_sender_restrictions = permit_mynetworks,reject
 
 # Opportunistic TLS und DANE Settings
 tls_random_source = dev:/dev/urandom

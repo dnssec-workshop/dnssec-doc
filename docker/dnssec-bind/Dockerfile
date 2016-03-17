@@ -11,7 +11,7 @@ RUN     apt-get purge -y exim4 rpcbind portmap at avahi-daemon
 RUN     apt-get upgrade -y
 RUN     echo "postfix postfix/mailname string dnssec-bind" | debconf-set-selections
 RUN     echo "postfix postfix/main_mailer_type string 'Internet Site'" | debconf-set-selections
-RUN     apt-get install -y --no-install-recommends openssh-server tcpdump traceroute curl git less screen vim nano ntp ntpdate bind9 dnsutils libnet-dns-sec-perl supervisor whois openssl ldnsutils man postfix nginx telnet mailutils syslog-ng
+RUN     apt-get install -y --no-install-recommends openssh-server tcpdump traceroute curl git less screen vim nano ntp ntpdate bind9 dnsutils libnet-dns-sec-perl supervisor whois openssl ldnsutils man postfix nginx telnet mailutils syslog-ng zip unzip
 RUN     rm -rf /var/lib/apt/lists/*
 RUN     apt-get clean
 
