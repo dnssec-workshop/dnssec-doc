@@ -25,7 +25,7 @@ test -f /etc/default/bind9.nocache && . /etc/default/bind9.nocache
 test -x /usr/sbin/rndc || exit 0
 
 . /lib/lsb/init-functions
-PIDFILE=/var/run/named/named.pid
+PIDFILE=/var/run/named/named.nocache.pid
 
 check_network() {
     if [ -x /usr/bin/uname ] && [ "X$(/usr/bin/uname -o)" = XSolaris ]; then
