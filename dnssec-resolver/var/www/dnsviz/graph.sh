@@ -1,7 +1,7 @@
 #!/bin/bash
 # /var/www/dnsviz/probe.sh
 
-DOMAIN=$(echo -e "${QUERY_STRING//domain=}" | sed "s/[^A-Za-z0-9\.-]//g")
+DOMAIN=$(echo -e "${QUERY_STRING//domain=}" | sed "s/[^A-Za-z0-9\.-_]//g")
 
 BIN_DNSVIZ=/usr/local/bin/dnsviz
 
@@ -16,4 +16,4 @@ then
 	exit 1
 fi
 
-$BIN_DNSVIZ probe -4 -d 2 -t 8 -E $DOMAIN | $BIN_DNSVIZ graph -t $TRUSTED_KEY_FILE -T html | sed "s@file:///usr/local@@"
+$BIN_DNSVIZ probe -4 -d 2 -t 8 -E -s 127.0.0.2 $DOMAIN | $BIN_DNSVIZ graph -t $TRUSTED_KEY_FILE -T html | sed "s@file:///usr/local@@"
