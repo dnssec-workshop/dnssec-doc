@@ -1,0 +1,9 @@
+$TTL 1800
+babiel.com.		SOA	ns1.dnsprovi.de. dnssec.babiel.com. ( 1 1800 900 1814400 1800 )
+
+babiel.com.		NS	ns1.dnsprovi.de.
+babiel.com.		NS	ns2.dnsprovi.de.
+
+babiel.com.		A	10.20.4.23
+www.babiel.com.		CNAME	www.dnsprovi.de.
+armin.babiel.com.	CNAME	www.arminpech.de.
