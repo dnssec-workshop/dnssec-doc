@@ -16,14 +16,10 @@
   * Webserver:    10.20.8.23/16
 
 * Verfügbare TLDs:
-  * at, com, de, it, net, nl, org, pl, se, test
-  * test: Domain für interne Workshop-Services
-  * it: keine Signierung mit DNSSEC
-  * org: DS-Records nicht in Root-Servern eingetragen
-
-* Mitmachen:
-  * Docker VM
-  * Eigenes Gerät
+  * `at.`, `com.`, `de.`, `it.`, `net.`, `nl.`, `org.`, `pl.`, `se.`, `test.`
+  * `test.`: Domain für interne Workshop-Services
+  * `it.`: keine Signierung mit DNSSEC
+  * `org.`: DS-Records nicht in Root-Servern eingetragen
 
 * Netzwerkumgebung
   * Netz: 10.20.0.0/16
@@ -35,25 +31,35 @@
     route add -net default gw 10.20.0.1
     ```
 
-  * Konfiguriere Deinen Resolver für die Workshop Umgebung
-    * **Nicht in Docker VMs notwendig**
+  * DHCP-Client ausgeschaltet?
+
+  * Konfiguriere Deinen lokalen Resolver für die Nutzung der Workshop Umgebung:
     ```
     echo 'nameserver 10.20.8.1' >/etc/resolv.conf
     ```
 
-  * Auf Deinem eigenen Rechner brauchst Du ggf. Host-Einträge, wenn die Resolver-Konfiguration nicht angepasst ist
-    ```
-    cp -aH /etc/hosts /etc/hosts.$(date +%Y%m%d_%H%M)
+      * Auf Deinem eigenen Rechner brauchst Du ggf. Host-Einträge, wenn die Resolver-Konfiguration nicht angepasst ist
+        ```
+        cp -aH /etc/hosts /etc/hosts.$(date +%Y%m%d_%H%M)
 
-    cat <<EOF >>/etc/hosts
+        cat <<EOF >>/etc/hosts
 
-    # DNSSEC Workshop CLT2016
-    10.20.2.1 whois.test nic.test
-    10.20.8.1 dnsviz.test resolver.test gitweb.test doc.test
-    EOF
-    ```
+        # DNSSEC Workshop CLT2016
+        10.20.2.1 whois.test nic.test
+        10.20.8.1 dnsviz.test resolver.test gitweb.test doc.test
+        EOF
+        ```
 
 * Verfügbare Services:
+
+  * DNS-Resolver mit DNSSEC-Support:
+
+    `resolver.test` / `10.20.8.1`
+    ```
+    dig -t ANY test. @10.20.8.1
+    ```
+
+  * Workshop Anleitungen: http://doc.test/
 
   * Default Router / ggf. Gateway ins Internet
 
@@ -61,18 +67,13 @@
 
   * Whois Service über Domains
 
-  * DNS-Resolver mit DNSSEC-Support:
-  
-    `resolver.test` / `10.20.8.1`
-    ```
-    dig -t ANY test. @10.20.8.1
-    ```
-
-  * GitWeb mit relevanten Daten zum Workshop: http://gitweb.test/
-
-  * Workshop Anleitungen: http://doc.test/
-
   * DNSViz Debugging
+
+  * GitWeb mit relevanten Daten zum Workshop
+
+* Mitmachen:
+  * Docker VM -- **Wer will?**
+  * Eigenes Gerät
 
 
 ## Umgebung erkunden
@@ -145,6 +146,12 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
 ## Eigene Domain anlegen
 
+1. Funktioniert der Bind Restart? -- Fix für Docker VMs
+    ```
+    rndc reload
+    /etc/init.d/bind9 restart
+    ```
+
 1. Wähle einen Domainnamen für die weiteren Schritte
     ```
     export DOMAIN_TLD=meindomainname.de
@@ -205,11 +212,12 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     sed -i "s/domain.tld./$DOMAIN_TLD./g" \
     /etc/bind/zones/$DOMAIN_TLD.zone
-
-    vi /etc/bind/zones/$DOMAIN_TLD.zone
     ```
 
-    * Zone-File von `$DOMAIN_TLD`
+    * Zone-File von `$DOMAIN_TLD` editieren
+
+      `/etc/bind/zones/$DOMAIN_TLD.zone`
+
        * Domain-Namen anpassen
        * NS Glue Records eintragen
        * A-Records für Glue Nameserver zeigen auf eigene IP
@@ -322,6 +330,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     * Konfiguration laden
     ```
+    named-checkconf -z
     rndc reload
     ```
 
@@ -336,7 +345,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     dig -t DNSKEY $DOMAIN_TLD. @localhost
 
-    dig +dnssec -t DNSKEY test.$DOMAIN_TLD. @localhost
+    dig +dnssec -t DNSKEY test-notfound.$DOMAIN_TLD. @localhost
     ```
 
 1. NSEC3 für die Zone einrichten
@@ -346,7 +355,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     ```
 
     ```
-    dig +dnssec -t DNSKEY test.$DOMAIN_TLD. @localhost
+    dig +dnssec -t DNSKEY test-notfound.$DOMAIN_TLD. @localhost
     ```
 
 1. Zustand der signierten Zonen prüfen
@@ -361,7 +370,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     ```
 
     * Visualisierung
-    
+
       http://dnsviz.test/graph.sh?domain=$DOMAIN_TLD
 
 1. Publikation des KSK im Parent via SLD Registrar Webinterface
@@ -374,6 +383,16 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
       * DNSSEC Key 1 flags: 257
       * DNSSEC Key 1 algorithm_id: 8
       * DNSSEC Key 1 key_data: Key Material in Base64
+
+    * whois Eintrag bzgl. DNSKEY korrekt?
+      ```
+      whois -h whois.test $DOMAIN_TLD.
+      ```
+
+    * DS-Record in TLD publiziert?
+      ```
+      dig +trace -t DS $DOMAIN_TLD.
+      ```
 
 1. Chain of Trust prüfen
     * http://dnsviz.test/
@@ -712,6 +731,8 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     * Slave Zone analog zu DNSSEC Master Zone konfigurieren
 
 1. Slave Nameserver für Zonen einrichten (TSIG)
+
+1. Rollover eines DNSSEC Signatur Algorithmus
 
 
 
