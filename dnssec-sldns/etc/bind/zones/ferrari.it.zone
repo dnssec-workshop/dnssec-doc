@@ -1,0 +1,9 @@
+$TTL 1800
+ferrari.it.		SOA	ns1.dnsprovi.de. dnssec.ferrari.it. ( 1 1800 900 1814400 1800 )
+
+ferrari.it.		NS	ns1.ferrari.it.
+ferrari.it.		NS	ns2.dnsprovi.de.
+ns1.ferrari.it.		A	10.20.4.1
+
+ferrari.it.		A	10.20.4.23
+www.ferrari.it.		CNAME	www.dnsprovi.de.

@@ -1,0 +1,8 @@
+$TTL 1800
+test.org.		SOA	ns1.dnsprovi.de. dnssec.test.org. ( 1 1800 900 1814400 1800 )
+
+test.org.		NS	ns1.test.org.
+test.org.		NS	ns2.test.org.
+
+test.org.		A	10.20.4.23
+www.test.org.		CNAME	www.dnsprovi.de.
