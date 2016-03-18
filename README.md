@@ -32,11 +32,12 @@ Hier kann jeder Teilnehmer ein /24 Subnetz erhalten und ggf. mehrere IPs für se
 * Internet-Zugang ist ggf. über WLAN des Dozenten möglich.
 
 ## Referenzen
-* https://talk.babiel.com/dnssec-workshop
+* https://talk.babiel.com/clt2016/dnssec
 * https://ftp.isc.org/isc/bind9/cur/9.9/doc/arm/Bv9ARM.html
 * http://www.internetsociety.org/deploy360/dnssec/
 * http://www.internetsociety.org/deploy360/resources/dane/
 * http://dnsviz.net/demo/dnsviz-demo-v2.zip
+* https://blog.cloudflare.com/tag/dnssec/
 
 ## Tools
 * http://dnsviz.net/
