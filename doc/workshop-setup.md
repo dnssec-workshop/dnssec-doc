@@ -154,6 +154,18 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
         python setup.py install
         ```
 
+     * Elliptic Curve Verification Support einbauen
+        ```
+        apt-get install swig libssl-dev gcc python-dev
+
+        git clone https://gitlab.com/m2crypto/m2crypto.git
+        cd m2crypto
+        git chekout 0.23.0
+        patch -p1 < /opt/dnsviz/contrib/m2crypto-0.23.patch
+        python setup.py build
+        python setup.py install
+        ```
+
       * Auslieferung von DNSViz per Apache und mod_cgi
         ```
         a2enmod cgid
