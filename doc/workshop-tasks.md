@@ -72,13 +72,21 @@
   * GitWeb mit relevanten Daten zum Workshop
 
 * Mitmachen:
-  * Docker VM -- **Wer will?**
+  * **Empfohlen: Docker VM -- Wer will?**
   * Eigenes Gerät
 
+* **Hinweis: Was wir hier machen ist NICHT sicher und sind KEINE BEst Practise!**
 
 ## Umgebung erkunden
 
 Nachdem Du nun im Workshop-Netz bist, können wir einige Tests vornehmen und die Umgebung erkunden.
+
+1. Login auf die Docker VM
+    ```
+    ssh root@10.20.44.X
+
+    # Passwort: root
+    ```
 
 1. Nameserver der Root-Zone anzeigen
     ```
