@@ -33,8 +33,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 
    * dnssec-resolver: DNSSEC debugging Service
         ```
-        apt-get install make python-pydot python-dnspython python-pygraphviz python-m2crypto
-        apt-get install apache2 libapache2-mod-wsgi python-django postgresql-9.4 python-psycopg2
+        apt-get install make python-dnspython python-pygraphviz apache2
         ```
 
 
@@ -158,6 +157,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
         ```
         apt-get install swig libssl-dev gcc python-dev
 
+        cd /opt
         git clone https://gitlab.com/m2crypto/m2crypto.git
         cd m2crypto
         git chekout 0.23.0
