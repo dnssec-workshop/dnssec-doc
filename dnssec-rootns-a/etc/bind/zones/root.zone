@@ -1,0 +1,61 @@
+$TTL 1d
+.			SOA	a.root-servers.test. dnssec.arminpech.de. ( 1 1800 900 1814400 1800 )
+
+.			NS	a.root-servers.test.
+.			NS	b.root-servers.test.
+a.root-servers.test.	A	10.20.1.1
+b.root-servers.test.	A	10.20.1.2
+
+test.                   NS      a.root-servers.test.
+test.                   NS      b.root-servers.test.
+a.root-servers.test.    A       10.20.1.1
+b.root-servers.test.    A       10.20.1.2
+$INCLUDE "/etc/bind/keys/dsset-test."
+
+at.			NS	a.ns.at.
+at.			NS	b.ns.at.
+$INCLUDE "/etc/bind/keys/dsset-at."
+a.ns.at.		A	10.20.2.1
+b.ns.at.		A	10.20.2.2
+
+com.			NS	a.gtld.net.
+com.			NS	b.gtld.net.
+$INCLUDE "/etc/bind/keys/dsset-com."
+net.			NS	a.gtld.net.
+net.			NS	b.gtld.net.
+$INCLUDE "/etc/bind/keys/dsset-net."
+org.			NS	a.gtld.net.
+org.			NS	b.gtld.net.
+; DS-Records werden zum Test der Chain of Trust nicht verankert
+a.gtld.net.		A	10.20.2.1
+b.gtld.net.		A	10.20.2.2
+
+de.			NS	a.nic.de.
+de.			NS	b.denic.de.
+$INCLUDE "/etc/bind/keys/dsset-de."
+a.nic.de.		A	10.20.2.1
+b.denic.de.		A	10.20.2.2
+
+it.			NS	a.dns.it.
+it.			NS	b.dns.it.
+; it. unterstützt auch im Internet kein DNSSEC :(
+a.dns.it.		A	10.20.2.1
+b.dns.it.		A	10.20.2.2
+
+nl.			NS	ns1.dns.nl.
+nl.			NS	ns2.dns.nl.
+$INCLUDE "/etc/bind/keys/dsset-nl."
+ns1.dns.nl.		A	10.20.2.1
+ns2.dns.nl.		A	10.20.2.2
+
+pl.			NS	a-dns.pl.
+pl.			NS	b-dns.pl.
+$INCLUDE "/etc/bind/keys/dsset-pl."
+a-dns.pl.		A	10.20.2.1
+b-dns.pl.		A	10.20.2.2
+
+se.			NS	a.ns.se.
+se.			NS	b.ns.se.
+$INCLUDE "/etc/bind/keys/dsset-se."
+a.ns.se.		A	10.20.2.1
+b.ns.se.		A	10.20.2.2

@@ -17,4 +17,4 @@
 # alias cp='cp -i'
 # alias mv='mv -i'
 
-alias gup='OPWD=$PWD ; cd /root/dnssec-workshop ; git pull --force ; rsync -v -rptgoD --copy-links /root/dnssec-workshop/$HOSTNAME/ / ; cd $OPWD'
+alias gup='OPWD=$PWD ; [ ! -d /root/dnssec-workshop ] && ( cd /root ; git clone https://github.com/pecharmin/dnssec-workshop ) && cd /root/dnssec-workshop && git pull --force && rsync -v -rptgoD --copy-links /root/dnssec-workshop/$HOSTNAME/ / ; cd $OPWD'

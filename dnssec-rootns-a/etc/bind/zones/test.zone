@@ -1,0 +1,15 @@
+$TTL 1d
+test.			SOA	a.root-servers.test. dnssec.arminpech.de. ( 1 1800 900 1814400 1800 )
+
+test.			NS	a.root-servers.test.
+test.			NS	b.root-servers.test.
+a.root-servers.test.	A	10.20.1.1
+b.root-servers.test.	A	10.20.1.2
+
+whois.test.		A	10.20.2.22
+nic.test.		A	10.20.2.23
+
+resolver.test.		A	10.20.8.1
+dnsviz.test.		A	10.20.8.23
+gitweb.test.		A	10.20.8.23
+doc.test.		A	10.20.8.23

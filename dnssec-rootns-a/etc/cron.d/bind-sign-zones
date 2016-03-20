@@ -1,0 +1,2 @@
+@reboot 	root	( /etc/bind/scripts/sign-zone.sh . ; /etc/bind/scripts/sign-zone.sh test. ) >> /var/log/named/sign-zone.log 2>&1 ; while ! dig . @localhost ; do sleep 10 ; done ; /usr/sbin/rndc reload >> /var/log/named/sign-zone.log 2>&1
+*/15 * * * * 	root	( /etc/bind/scripts/sign-zone.sh . ; /etc/bind/scripts/sign-zone.sh test. ) >> /var/log/named/sign-zone.log 2>&1 ; /usr/sbin/rndc reload >> /var/log/named/sign-zone.log 2>&1
