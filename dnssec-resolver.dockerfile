@@ -1,18 +1,28 @@
 # Image: dnssec-resolver
-# Startup a docker container as BIND master for DNS root zone
+# Startup a docker container as resolver using BIND
 
 FROM dape16/dnssec-bind
 
 MAINTAINER dape16 "dockerhub@arminpech.de"
 
+# Set timezone
+ENV     TZ=Europe/Berlin
+RUN     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Deploy DNSSEC workshop material
+COPY    dnssec-resolver/ /
+
 # Install software
 RUN     apt-get update
+RUN     apt-get upgrade -y
 ## Install tools for DNSViz
 RUN     apt-get install -y --no-install-recommends make python-dnspython python-pygraphviz
 ## Install libs and tools for m2crypto patch + compile
 RUN     apt-get install -y --no-install-recommends swig libssl-dev gcc python-dev patch
+
 ## Install further tools
 RUN     apt-get install -y --no-install-recommends gitweb
+
 ## Setup apache webderver
 RUN     apt-get install -y --no-install-recommends apache
 RUN     a2enmod cgid
@@ -32,16 +42,8 @@ RUN     cd /opt && git clone https://gitlab.com/m2crypto/m2crypto.git \
           patch -p1 < /opt/dnsviz/contrib/m2crypto-0.23.patch \
           python setup.py build && python setup.py install
 
-# Deploy DNSSEC workshop material
-COPY    dnssec-resolver/ /
-
-# Set timezone
-ENV     TZ=Europe/Berlin
-RUN     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
 # Start services using supervisor
 RUN     mkdir -p /var/log/supervisor
-COPY    dnssec-resolver/etc/supervisor/conf.d/dnssec-resolver.conf /etc/supervisor/conf.d/dnssec-resolver.conf
 
 EXPOSE  22 53
 CMD     [ "/usr/bin/supervisord -c /etc/supervisor/conf.d/dnssec-resolver.conf" ]
