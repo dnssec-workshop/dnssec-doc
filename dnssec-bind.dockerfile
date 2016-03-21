@@ -5,9 +5,11 @@ FROM ubuntu:wily
 
 MAINTAINER dape16 "dockerhub@arminpech.de"
 
-# Install software
+# Configure non-standard repo for BIND 9.10
 RUN     echo "deb http://ppa.launchpad.net/mgrocock/bind9/ubuntu wily main" > /etc/apt/sources.list.d/wily-bind9.list
-RUN     apt-key adv --keyserver pgp.mit.edu --recv-keys DC682B55
+RUN     apt-key adv --keyserver keyserver.ubuntu.com --recv-keys DC682B55
+
+# Install software
 RUN     apt-get update
 RUN     apt-get purge -y exim4 rpcbind portmap at avahi-daemon
 RUN     apt-get upgrade -y
@@ -24,6 +26,8 @@ RUN     echo 'root:root' | chpasswd
 RUN     rm /etc/ssh/ssh_host_*
 RUN     ssh-keygen -A
 RUN     chmod 600 /etc/ssh/ssh_host_*
+RUN     sed -i "s/PermitRootLogin.*/PermitRootLogin yes/" /etc/ssh/sshd_config
+RUN     echo "UseDNS no" >> /etc/ssh/sshd_config
 
 RUN     mkdir -p /var/run/sshd
 
