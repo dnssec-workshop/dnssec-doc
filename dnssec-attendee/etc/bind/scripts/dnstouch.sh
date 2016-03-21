@@ -1,0 +1,1 @@
+../../../../shared/etc/bind/scripts/dnstouch.sh
