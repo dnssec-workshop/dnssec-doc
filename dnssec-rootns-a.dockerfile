@@ -12,11 +12,13 @@ COPY    dnssec-rootns-a/ /
 ENV     TZ=Europe/Berlin
 RUN     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
+# Deploy DNSSEC workshop material
+
+
 # Start services using supervisor
 RUN     mkdir -p /var/log/supervisor
-COPY    shared/etc/supervisor/conf.d/dnssec-bind.conf /etc/supervisor/conf.d/dnssec-bind.conf
 
 EXPOSE  22 53
-CMD     [ "/usr/bin/supervisord -c /etc/supervisor/conf.d/dnssec-bind.conf" ]
+CMD     [ "/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/dnssec-bind.conf" ]
 
 # vim: set syntax=docker tabstop=2 expandtab:

@@ -12,7 +12,10 @@ COPY    dnssec-rootns-b/ /
 ENV     TZ=Europe/Berlin
 RUN     ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# Restart bind to load overwritten settings
-RUN     /etc/init.d/bind9 restart
+# Start services using supervisor
+RUN     mkdir -p /var/log/supervisor
+
+EXPOSE  22 53
+CMD     [ "/usr/bin/supervisord", "-c", "/etc/supervisor/conf.d/dnssec-bind.conf" ]
 
 # vim: set syntax=docker tabstop=2 expandtab:
