@@ -1,0 +1,4 @@
+GOPATH="/root/gocode"
+WHOISD_CONFIG="/etc/whoisd/dnssec-workshop.conf"
+WHOISD_MAPPING="/etc/whoisd/dnssec-workshop-sld.json"
+WHOISD_EXTRAOPTS=""

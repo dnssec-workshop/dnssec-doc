@@ -1,0 +1,1 @@
+../../../../shared/etc/bind/scripts/dnskey2ds.pl

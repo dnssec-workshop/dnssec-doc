@@ -1,0 +1,11 @@
+[Unit]
+Description=whoisd server
+Documentation=https://github.com/openprovider/whoisd/blob/master/README.md
+After=mysql.service
+
+[Service]
+EnvironmentFile=/etc/default/whoisd
+ExecStart=/root/gocode/bin/whoisd -config=${WHOISD_CONFIG} -mapping=${WHOISD_MAPPING} ${WHOISD_EXTRAOPTS}
+
+[Install]
+WantedBy=multi-user.target

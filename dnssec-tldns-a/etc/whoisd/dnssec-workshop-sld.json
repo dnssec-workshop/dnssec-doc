@@ -1,0 +1,123 @@
+[
+  {
+    "TLDs": ["test"],
+    "Fields": {
+      "01": {
+        "key": "Domain Name: ",
+        "value": ["root-servers.test."]
+      },
+      "02": {
+        "key": "",
+        "value": ["\nThe TLD test. contains only the root server's SLD root-servers.test. and is not available to registration.\n"]
+      }
+    }
+  },
+  {
+    "TLDs": ["at", "com", "de", "it", "net", "nl", "org", "pl", "se"],
+    "Fields" : {
+      "01": {
+        "key": "Domain: ",
+        "name": ["name"],
+        "related": "name"
+      },
+      "02": {
+        "key": "Created: ",
+        "name": ["created"],
+        "format": "{date}",
+        "related": "name"
+      },
+      "03": {
+        "key": "Updated: ",
+        "name": ["updated"],
+        "format": "{date}",
+        "related": "name"
+      },
+      "04": {
+        "key": "",
+        "value": [""]
+      },
+      "05": {
+        "key": "Registrar: ",
+        "value": ["DNSSEC Workshop GmbH"]
+      },
+      "06": {
+        "key": "Registrar WHOIS Server: ",
+        "value": ["whois.test"]
+      },
+      "07": {
+        "key": "Registrar URL: ",
+        "value": ["http://whois.test"]
+      },
+      "08": {
+        "key": "",
+        "value": [""]
+      },
+      "09": {
+        "key": "OwnerC Handle: ",
+        "name": ["ownerc_fk"],
+        "related": "name"
+      },
+      "10": {
+        "key": "AdminC Handle: ",
+        "name": ["adminc_fk"],
+        "related": "name"
+      },
+      "11": {
+        "key": "ZoneC Handle: ",
+        "name": ["zonec_fk"],
+        "related": "name"
+      },
+      "12": {
+        "key": "TechC Handle: ",
+        "name": ["techc_fk"],
+        "related": "name"
+      },
+      "13": {
+        "key": "",
+        "value": [""]
+      },
+      "14": {
+        "key": "",
+        "value": ["Nameserver:"]
+      },
+      "15": {
+        "key": "Nserver1: ",
+        "name": ["nserver1_name", "nserver1_ip"],
+        "related": "name",
+        "format": "{string} {string}"
+      },
+      "16": {
+        "key": "Nserver2: ",
+        "name": ["nserver2_name", "nserver2_ip"],
+        "related": "name",
+        "format": "{string} {string}"
+      },
+      "17": {
+        "key": "Nserver3: ",
+        "name": ["nserver3_name", "nserver3_ip"],
+        "related": "name",
+        "format": "{string} {string}"
+      },
+      "18": {
+        "key": "",
+        "value": [""]
+      },
+      "19": {
+        "key": "",
+        "value": ["DNSSEC:"]
+      },
+      "20": {
+        "key": "Key 1: ",
+        "name": ["dnskey1_flags", "dnskey1_algo", "dnskey1_key"],
+        "related": "name",
+        "format": "flags:{string}, algorithm_id:{string}, key_data:{string}"
+      },
+      "21": {
+        "key": "Key 2: ",
+        "name": ["dnskey2_flags", "dnskey2_algo", "dnskey2_key"],
+        "related": "name",
+        "format": "flags:{string}, algorithm_id:{string}, key_data:{string}"
+      }
+    }
+  }
+]
