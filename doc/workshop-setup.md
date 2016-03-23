@@ -204,20 +204,65 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
     ```
 
 
-### Startup der DNS-Infrastruktur
+### Setup der DNS-Infrastruktur
 
-Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Workshop-Infrastruktur konfiguriert und die VMs bereitgestellt. Die VMs wurden zuvor installiert.
-
-1. Interface Konfiguration KVM Host mit Infrastruktur Systemen - `/etc/conf.d/net`
+1. Virtuelle Maschine mit Debian 8 installieren
     ```
-    config_br0="null"
-    brctl_br0="setfd 0
-    sethello 10
-    stp off"
-    bridge_br0="eth0"
+    apt-get purge exim4 rpcbind portmap at avahi-daemon
+
+    apt-get install dnsutils nmap tcpdump traceroute chkconfig curl git less screen bsd-mailx vim ntp ntpdate
+
+    apt-get install apt-transport-https ca-certificates
+    apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+    echo "deb https://apt.dockerproject.org/repo debian-jessie main" > /etc/apt/sources.list.d/docker.list
+    apt-get update
+    apt-get install docker-engine arping bridge-utils
+
+    apt-get autoremove
+    apt-get clean
+
+    systemctl enable docker
     ```
 
-. Netzwerk des KVM Hosts initialisieren
+    `/etc/systemd/logind.conf`
+    ```
+    HandleLidSwitch=ignore
+    HandleLidSwitchDocked=ignore
+    ```
+
+    `/etc/ssh/sshd_config`
+    ```
+    UseDNS no
+    PermitRootLogin yes
+    ```
+
+
+1. Interface Konfiguration KVM Host mit Infrastruktur Systemen
+
+    `/etc/network/interfaces`
+    ```
+    source /etc/network/interfaces.d/*
+    
+    auto lo br0
+    
+    allow-hotplug th0
+    iface eth0 inet manual
+    
+    iface br0 inet static
+            bridge_ports eth0
+            bridge_stp off     # disable Spanning Tree Protocol
+            bridge_waitport 0  # no delay before a port becomes available
+            bridge_fd 0
+    
+            address 10.20.0.X
+            netmask 255.255.0.0
+            network 10.20.0.0
+            broadcast 10.20.255.255
+            gateway 10.20.0.1
+            dns-nameservers 8.8.8.8
+    ```
+
+1. Netzwerk des KVM Hosts initialisieren
     ```
     bash scripts/kvm-init-net.sh
     ```
@@ -227,12 +272,14 @@ Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Wo
     bash scripts/kvm-startup-vms.sh
     ```
 
-1. Konfiguration des Docker Deamon -- `/etc/conf.d/docker`
+1. Konfiguration des Docker Deamon
+
+    `/etc/default/docker`
     ```
     DOCKER_OPTS=" \
       --log-level=info \
       --iptables=false --ip-forward=true \
-      -b=br0 --fixed-cidr=10.20.44.0/24 \
+      -b=br0 --fixed-cidr=10.20.44.1/24 \
     "
     ```
 
@@ -241,33 +288,90 @@ Mit den folgenden Schritten wird der KVM-Wirt mit den virtuellen Systemen der Wo
     * Default Bridge für Netzwerk der Docker VMs
     * IP-Range für Docker Netzwerk
 
+    `/etc/systemd/system/docker.service`
+    ```
+    [Service]
+    EnvironmentFile=-/etc/default/docker
+    ExecStart=/usr/bin/docker daemon -p /run/docker.pid $DOCKER_OPTS
+    ```
 
-1. Startup der Docker Deamon für Teilnehmer VMs
+1. Setup der Docker Umgebung
+    ```
+    cd /root 
+    wget https://raw.githubusercontent.com/jpetazzo/pipework/master/pipework 
+    chmod 755 pipework
+    ```
+
+    `/root/.bashrc`
+    ```
+    alias d=docker
+
+    ds() {
+        CID=ns$1
+        docker run --detach --net=bridge --dns=127.0.0.1 --hostname=$CID --name=$CID dnssec-bind || echo $CID failed
+        echo -n "$CID: " ; docker inspect $(docker ps | grep $CID | cut -d' ' -f1) | grep '"IPAddress' | awk '{print $2}' | tr -d [\",] | uniq
+    }
+
+    dl() {
+        docker ps -a | grep -v CONTAINER | awk '{print $1,$NF}' | while read cid name ; do echo -n "$name: " ; docker inspect $cid | grep '"IPAddress' | awk '{print $2}' | tr -d [\",] | uniq ; done | sort
+    }
+    ```
+
+1. Startup der Docker Umgebung
     ```
     /etc/init.d/docker start
     ```
 
-1. Docker Image vorbereiten
+1. Docker VMs vorbereiten
     ```
-    cd ~/git/dnssec-workshop/docker/dnssec-bind
-    mkdir -p shared dnssec-attendee ext
-    sudo mount -o bind ../../shared shared
-    sudo mount -o bind ../../dnssec-attendee dnssec-attendee
-    sudo mount -o bind ../../ext ext
+    docker pull dnssecworkshop/dnssec-bind
+    docker pull dnssecworkshop/dnssec-rootns-a
+    docker pull dnssecworkshop/dnssec-rootns-b
+    docker pull dnssecworkshop/dnssec-tldns-a
+    docker pull dnssecworkshop/dnssec-tldns-b
+    docker pull dnssecworkshop/dnssec-sldns-a
+    docker pull dnssecworkshop/dnssec-sldns-b
+    docker pull dnssecworkshop/dnssec-resolver
+    docker pull dnssecworkshop/dnssec-attendee
 
-    docker build -t dnssec-bind .
+    cat <<EOF > /root/dnssec-hosts
+    dnssec-rootns-a 10.20.1.1
+    dnssec-rootns-b 10.20.1.2
+    dnssec-tldns-a 10.20.2.1
+    dnssec-tldns-b 10.20.2.2
+    dnssec-sldns-a 10.20.4.1
+    dnssec-sldns-b 10.20.4.2
+    dnssec-resolver 10.20.8.1
+    EOF
+
+    cat /root/dnssec-hosts | while read name ip
+    do
+      CID=$(docker run --detach --net=bridge --dns=127.0.0.1 \
+            --hostname=$name --name=$name \
+            dnssecworkshop/$name) || continue
+
+      /root/pipework br0 $CID $ip/16
+    done
+
+    ```
+
+1. Startup der Docker VMs für die Umgebung
+    ```
+    cat /root/dnssec-hosts | while read name ip
+    do
+      CID=$(docker start $name) || continue
+      /root/pipework br0 $CID $ip/16
+    done
     ```
 
 1. Startup von Docker VMs für die Teilnehmer
     ```
-    CID=ns50
-    docker run --detach --net=bridge --dns=127.0.0.1 --hostname=$CID --name=$CID dnssec-bind
-    echo -n "$CID: " ; docker inspect $(docker ps | grep $CID | cut -d' ' -f1) | grep '"IPAddress' | awk '{print $2}' | tr -d [\",] | uniq
+    ds ns<id>
     ```
 
 1. Anzeigen aller Docker Container und deren IPs
     ```
-    docker ps -a | grep -v CONTAINER | awk '{print $1,$NF}' | while read cid name ; do echo -n "$name: " ; docker inspect $cid | grep '"IPAddress' | awk '{print $2}' | tr -d [\",] | uniq ; done | sort
+    dl
     ```
 
 
