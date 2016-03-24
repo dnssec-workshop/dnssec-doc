@@ -306,14 +306,35 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
     ```
     alias d=docker
 
-    ds() {
-        CID=ns$1
-        docker run --detach --net=bridge --dns=127.0.0.1 --hostname=$CID --name=$CID dnssec-bind || echo $CID failed
-        echo -n "$CID: " ; docker inspect $(docker ps | grep $CID | cut -d' ' -f1) | grep '"IPAddress' | awk '{print $2}' | tr -d [\",] | uniq
+    dls() {
+        docker ps --format "{{.ID}}" | while read id; do docker inspect --format "{{.Id}} {{.Name}} {{.NetworkSettings.IPAddress}} {{.State.Status}}" $id; done
     }
 
-    dl() {
-        docker ps -a | grep -v CONTAINER | awk '{print $1,$NF}' | while read cid name ; do echo -n "$name: " ; docker inspect $cid | grep '"IPAddress' | awk '{print $2}' | tr -d [\",] | uniq ; done | sort
+    dps() {
+        docker ps
+    }
+
+    drun() {
+        CN=$1
+        IP=$2
+
+        docker run --detach --net=bridge --dns=127.0.0.1 \
+          --hostname=$CN --name=$CN dnssecworkshop/dnssec-attendee || ( echo $CN: docker run failed: $? ; return 1 )
+
+        /root/pipework br0 $(docker inspect --format "{{.Id}}" $CN) $IP || ( echo $CN: pipework failed: $? ; return 2 )
+
+        echo $CN: $(docker inspect --formet "{{.NetworkSettings.IPAddress}}" $CN)
+    }
+
+    dstart() {
+        CN=$1
+        IP=$2
+
+        docker start $CN || ( echo $CN: docker start failed: $? ; return 1 )
+
+        /root/pipework br0 $(docker inspect --format "{{.Id}}" $CN) $IP || ( echo $CN: pipework failed: $? ; return 2 )
+
+        echo $CN: $(docker inspect --formet "{{.NetworkSettings.IPAddress}}" $CN)
     }
     ```
 
@@ -335,13 +356,13 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
     docker pull dnssecworkshop/dnssec-attendee
 
     cat <<EOF > /root/dnssec-hosts
-    dnssec-rootns-a 10.20.1.1
-    dnssec-rootns-b 10.20.1.2
-    dnssec-tldns-a 10.20.2.1
-    dnssec-tldns-b 10.20.2.2
-    dnssec-sldns-a 10.20.4.1
-    dnssec-sldns-b 10.20.4.2
-    dnssec-resolver 10.20.8.1
+    dnssec-rootns-a 10.20.1.1/16
+    dnssec-rootns-b 10.20.1.2/16
+    dnssec-tldns-a 10.20.2.1/16
+    dnssec-tldns-b 10.20.2.2/16
+    dnssec-sldns-a 10.20.4.1/16
+    dnssec-sldns-b 10.20.4.2/16
+    dnssec-resolver 10.20.8.1/16
     EOF
 
     cat /root/dnssec-hosts | while read name ip
@@ -349,10 +370,10 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
       CID=$(docker run --detach --net=bridge --dns=127.0.0.1 \
             --hostname=$name --name=$name \
             dnssecworkshop/$name) || continue
+      echo $name: $CID - $ip
 
-      /root/pipework br0 $CID $ip/16
+      /root/pipework br0 $CID $ip
     done
-
     ```
 
 1. Startup der Docker VMs für die Umgebung
@@ -360,7 +381,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
     cat /root/dnssec-hosts | while read name ip
     do
       CID=$(docker start $name) || continue
-      /root/pipework br0 $CID $ip/16
+      /root/pipework br0 $CID $ip
     done
     ```
 
