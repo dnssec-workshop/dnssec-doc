@@ -1,35 +1,44 @@
 # DNSSEC Workshop
-In diesem Repository werden die Informationen, Guidelines, Konfigurationen und Scripte für einen DNSSEC Workshop mit BIND9 verwaltet.
+In diesem Repository werden die Einrichtung, Informationen und Aufgaben für einen DNSSEC Workshop mit BIND 9 verwaltet.
 Innerhalb des Workshops wird eine DNS-Infrastruktur bereitgestellt - angelehnt an das aktuelle Setup im Internet.
-Die Teilnehmer des Workshops sollen sich mit einem eigenen Nameserver in die Umgebung integrieren und anschließend DNSSEC für ihre DNS-Zonen einrichten.
+Die Teilnehmer des Workshops sollen sich mit einem eigenen Nameserver oder aus einem Docker Container in die Umgebung integrieren und anschließend DNSSEC für ihre DNS-Zonen einrichten.
 
 ## Umgebung
 Die Workshop-Umgebung besteht aus folgenden Systemen:
-* dnssec-rootns
-  * Root-Nameserver root-servers.test.
-  * BIND Master- und Slave-Instanz
-* dnssec-tldns
-  * Nameserver für einen Teil der TLDs
-  * BIND Master- und Slave-Instanz
+
+* dnssec-rootns-a
+  * Master Root-Nameserver a.root-servers.test.
+
+* dnssec-rootns-b
+  * Slave Root-Nameserver b.root-servers.test.
+
+* dnssec-tldns-a
+  * Master Nameserver für einen Teil der TLDs
   * whois Service
   * Domain Registrar Interface
-* dnssec-sldns
-  * Nameserver für das beispielhafte Setup von DNSSEC Zonen
-  * BIND Master- und Slave-Instanz
+
+* dnssec-tldns-b
+  * Slave Nameserver für einen Teil der TLDs
+
+* dnssec-sldns-a
+  * Master Nameserver für SLDs mit DNSSEC-Beispielen
+
+* dnssec-sldns-b
+  * Slave Nameserver für SLDs
+
 * dnssec-resolver
-  * BIND Nameserver als Resolver für Workshop-Umgebung
-  * dnsviz Analyse-Tool
+  * Nameserver als Resolver für Workshop-Umgebung
+  * dnsviz Analyse-Tool + Non-Caching Nameserver
   * Git-Repository mit den Workshop-Informationen und Dateien
-  * Webserver mit Files und Informationen
+  * Webserver mit Files und Informationen inkl. Wiki
 
 Als Netzwerk-Umgebung wird das Class B Net 10.20.0.0/16 verwenden.
 Hier kann jeder Teilnehmer ein /24 Subnetz erhalten und ggf. mehrere IPs für seine Services konfigurieren.
 
 ## Rahmenbedingungen
 * Jeder Teilnehmer bringt sein eigenes Notebook inkl. installiertem BIND Nameserver mit.
-* Alternativ werden VMs mit den relevanten Services als Docker Container bereitgestellt.
+* Alternativ werden Docker Container mit den relevanten Services bereitgestellt.
 * Teilnehmer verbinden sich per LAN zum oben beschriebenen fiktiven Internet.
-* Internet-Zugang ist ggf. über WLAN des Dozenten möglich.
 
 ## Referenzen
 * https://talk.babiel.com/clt2016/dnssec
