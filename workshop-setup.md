@@ -317,11 +317,12 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
     drun() {
         CN=$1
         IP=$2
+        TYPE=$3
 
         docker run --detach --net=bridge --dns=127.0.0.1 \
-          --hostname=$CN --name=$CN dnssecworkshop/dnssec-attendee || ( echo $CN: docker run failed: $? ; return 1 )
+          --hostname=$CN --name=$CN dnssecworkshop/${TYPE:-dnssec-attendee} || ( echo $CN: docker run failed: $? ; return 1 )
 
-        /root/pipework br0 $(docker inspect --format "{{.Id}}" $CN) $IP || ( echo $CN: pipework failed: $? ; return 2 )
+        [ "$IP" ] && ( /root/pipework br0 $(docker inspect --format "{{.Id}}" $CN) $IP || ( echo $CN: pipework failed: $? ; return 2 ) )
 
         echo $CN: $(docker inspect --formet "{{.NetworkSettings.IPAddress}}" $CN)
     }
@@ -332,7 +333,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 
         docker start $CN || ( echo $CN: docker start failed: $? ; return 1 )
 
-        /root/pipework br0 $(docker inspect --format "{{.Id}}" $CN) $IP || ( echo $CN: pipework failed: $? ; return 2 )
+        [ "$IP" ] && ( /root/pipework br0 $(docker inspect --format "{{.Id}}" $CN) $IP || ( echo $CN: pipework failed: $? ; return 2 ) )
 
         echo $CN: $(docker inspect --formet "{{.NetworkSettings.IPAddress}}" $CN)
     }
@@ -367,12 +368,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 
     cat /root/dnssec-hosts | while read name ip
     do
-      CID=$(docker run --detach --net=bridge --dns=127.0.0.1 \
-            --hostname=$name --name=$name \
-            dnssecworkshop/$name) || continue
-      echo $name: $CID - $ip
-
-      /root/pipework br0 $CID $ip
+        drun $name $ip $name
     done
     ```
 
@@ -380,20 +376,25 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
     ```
     cat /root/dnssec-hosts | while read name ip
     do
-      CID=$(docker start $name) || continue
-      /root/pipework br0 $CID $ip
+        dstart $name $ip
     done
     ```
 
 1. Startup von Docker VMs für die Teilnehmer
     ```
-    ds ns<id>
+    dstart ns<id>
     ```
 
 1. Anzeigen aller Docker Container und deren IPs
     ```
-    dl
+    dls
     ```
+
+1. Anzeigen von laufenden Containern
+    ```
+    dps
+    ```
+
 
 
 /* vim: set syntax=markdown tabstop=2 expandtab: */
