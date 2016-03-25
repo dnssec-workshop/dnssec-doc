@@ -1,19 +1,39 @@
 ## Informationen und Setup des Workshop
 
-* dnssec-rootns
-  * DNS Master:   10.20.1.1/16
-  * DNS Slave:    10.20.1.2/16
-* dnssec-tldns
-  * DNS Master:   10.20.2.1/16
-  * DNS Slave:    10.20.2.2/16
-  * whois:        10.20.2.22/16
-  * Webserver:    10.20.2.23/16
-* dnssec-sldns
-  * DNS Master:   10.20.4.1/16
-  * DNS Slave:    10.20.4.2/16
+Die Workshop-Umgebung besteht aus folgenden Systemen:
+
+* dnssec-rootns-a
+  * `10.20.1.1/16`
+  * Master Root-Nameserver a.root-servers.test.
+
+* dnssec-rootns-b
+  * `10.20.1.2/16`
+  * Slave Root-Nameserver b.root-servers.test.
+
+* dnssec-tldns-a
+  * `10.20.2.1/16`
+  * Master Nameserver für einen Teil der TLDs
+  * whois Service
+  * Domain Registrar Interface
+
+* dnssec-tldns-b
+  * `10.20.2.2/16`
+  * Slave Nameserver für einen Teil der TLDs
+
+* dnssec-sldns-a
+  * `10.20.4.1/16`
+  * Master Nameserver für SLDs mit DNSSEC-Beispielen
+
+* dnssec-sldns-b
+  * `10.20.4.2/16`
+  * Slave Nameserver für SLDs
+
 * dnssec-resolver
-  * DNS Resolver: 10.20.8.1/16
-  * Webserver:    10.20.8.23/16
+  * `10.20.8.1/16`
+  * Nameserver als Resolver für Workshop-Umgebung
+  * dnsviz Analyse-Tool + Non-Caching Nameserver
+  * Git-Repository mit den Workshop-Informationen und Dateien
+  * Webserver mit Files und Informationen inkl. Wiki
 
 * Verfügbare TLDs:
   * `at.`, `com.`, `de.`, `it.`, `net.`, `nl.`, `org.`, `pl.`, `se.`, `test.`
@@ -27,7 +47,7 @@
   * Du bekommst Dein eigenes /24 Subnetz.
   * Subnetz von 50 bis 255 -- 10.20.${NETID}.1/16
     ```
-    ifconfig eth0 10.20.X.1/16
+    ifconfig eth0 10.20.${NETID}.1/16
     route add -net default gw 10.20.0.1
     ```
 
@@ -59,7 +79,7 @@
     dig -t ANY test. @10.20.8.1
     ```
 
-  * Workshop Anleitungen: http://doc.test/
+  * Workshop Anleitungen: http://doc.test/workshop-tasks.html
 
   * Default Router / ggf. Gateway ins Internet
 
