@@ -174,12 +174,6 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
 ## Eigene Domain anlegen
 
-1. Funktioniert der Bind Restart? -- Fix für Docker VMs
-    ```
-    rndc reload
-    /etc/init.d/bind9 restart
-    ```
-
 1. Wähle einen Domainnamen für die weiteren Schritte
     ```
     export DOMAIN_TLD=meindomainname.de
