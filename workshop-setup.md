@@ -324,7 +324,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 
         [ "$IP" ] && ( /root/pipework br0 $(docker inspect --format "{{.Id}}" $CN) $IP || ( echo $CN: pipework failed: $? ; return 2 ) )
 
-        echo $CN: $(docker inspect --format "{{.NetworkSettings.IPAddress}}" $CN)
+        echo $CN: $(docker inspect --format "{{.NetworkSettings.IPAddress}}" $CN) - $IP
     }
 
     dstart() {
@@ -335,7 +335,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 
         [ "$IP" ] && ( /root/pipework br0 $(docker inspect --format "{{.Id}}" $CN) $IP || ( echo $CN: pipework failed: $? ; return 2 ) )
 
-        echo $CN: $(docker inspect --format "{{.NetworkSettings.IPAddress}}" $CN)
+        echo $CN: $(docker inspect --format "{{.NetworkSettings.IPAddress}}" $CN) - $IP
     }
     ```
 
