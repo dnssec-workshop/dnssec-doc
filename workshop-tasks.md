@@ -95,7 +95,7 @@ Die Workshop-Umgebung besteht aus folgenden Systemen:
   * **Empfohlen: Docker VM -- Wer will?**
   * Eigenes Gerät
 
-* **Hinweis: Was wir hier machen ist NICHT sicher und sind KEINE BEst Practise!**
+* **ACHTUNG: Was wir hier machen ist NICHT sicher und sind KEINE Best Practise!**
 
 ## Umgebung erkunden
 
