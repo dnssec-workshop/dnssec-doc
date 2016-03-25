@@ -1,0 +1,715 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252"><link rel="stylesheet" id="theme" href="Github.css"></head><body><h2 id="informationen-und-setup-des-workshop">Informationen und Setup des Workshop</h2>
+<p>Die Workshop-Umgebung besteht aus folgenden Systemen:</p>
+<ul>
+<li><p>dnssec-rootns-a</p>
+<ul>
+<li><code>10.20.1.1/16</code></li>
+<li>Master Root-Nameserver a.root-servers.test.</li>
+</ul>
+</li>
+<li><p>dnssec-rootns-b</p>
+<ul>
+<li><code>10.20.1.2/16</code></li>
+<li>Slave Root-Nameserver b.root-servers.test.</li>
+</ul>
+</li>
+<li><p>dnssec-tldns-a</p>
+<ul>
+<li><code>10.20.2.1/16</code></li>
+<li>Master Nameserver für einen Teil der TLDs</li>
+<li>whois Service</li>
+<li>Domain Registrar Interface</li>
+</ul>
+</li>
+<li><p>dnssec-tldns-b</p>
+<ul>
+<li><code>10.20.2.2/16</code></li>
+<li>Slave Nameserver für einen Teil der TLDs</li>
+</ul>
+</li>
+<li><p>dnssec-sldns-a</p>
+<ul>
+<li><code>10.20.4.1/16</code></li>
+<li>Master Nameserver für SLDs mit DNSSEC-Beispielen</li>
+</ul>
+</li>
+<li><p>dnssec-sldns-b</p>
+<ul>
+<li><code>10.20.4.2/16</code></li>
+<li>Slave Nameserver für SLDs</li>
+</ul>
+</li>
+<li><p>dnssec-resolver</p>
+<ul>
+<li><code>10.20.8.1/16</code></li>
+<li>Nameserver als Resolver für Workshop-Umgebung</li>
+<li>dnsviz Analyse-Tool + Non-Caching Nameserver</li>
+<li>Git-Repository mit den Workshop-Informationen und Dateien</li>
+<li>Webserver mit Files und Informationen inkl. Wiki</li>
+</ul>
+</li>
+<li><p>Verfügbare TLDs:</p>
+<ul>
+<li><code>at.</code>, <code>com.</code>, <code>de.</code>, <code>it.</code>, <code>net.</code>, <code>nl.</code>, <code>org.</code>, <code>pl.</code>, <code>se.</code>, <code>test.</code></li>
+<li><code>test.</code>: Domain für interne Workshop-Services</li>
+<li><code>it.</code>: keine Signierung mit DNSSEC</li>
+<li><code>org.</code>: DS-Records nicht in Root-Servern eingetragen</li>
+</ul>
+</li>
+<li><p>Netzwerkumgebung</p>
+<ul>
+<li>Netz: 10.20.0.0/16</li>
+<li>Gateway: 10.20.0.1</li>
+<li>Du bekommst Dein eigenes /24 Subnetz.</li>
+<li><p>Subnetz von 50 bis 255 -- 10.20.${NETID}.1/16</p>
+<pre><code><span class="title">ifconfig</span> eth0 <span class="number">10</span>.<span class="number">20</span>.<span class="variable">${NETID}</span>.<span class="number">1</span>/<span class="number">16</span>
+route add -net default gw <span class="number">10.20.0.1</span>
+</code></pre></li>
+<li><p>DHCP-Client ausgeschaltet?</p>
+</li>
+<li><p>Konfiguriere Deinen lokalen Resolver für die Nutzung der Workshop Umgebung:</p>
+<pre><code><span class="title">echo</span> <span class="string">'nameserver 10.20.8.1'</span> &gt;/etc/resolv.conf
+</code></pre><ul>
+<li><p>Auf Deinem eigenen Rechner brauchst Du ggf. Host-Einträge, wenn die Resolver-Konfiguration nicht angepasst ist</p>
+<pre><code><span class="title">cp</span> -aH /etc/hosts /etc/hosts.$(date +%Y%m%d_%H%M)
+
+cat &lt;&lt;EOF &gt;&gt;/etc/hosts
+
+<span class="comment"># DNSSEC Workshop CLT2016</span>
+<span class="number">10.20.2.1</span> whois.test nic.test
+<span class="number">10.20.8.1</span> dnsviz.test resolver.test gitweb.test doc.test
+EOF
+</code></pre></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Verfügbare Services:</p>
+<ul>
+<li><p>DNS-Resolver mit DNSSEC-Support:</p>
+<p><code>resolver.test</code> / <code>10.20.8.1</code></p>
+<pre><code><span class="title">dig</span> -t ANY test. @<span class="number">10.20.8.1</span>
+</code></pre></li>
+<li><p>Workshop Anleitungen: <a href="http://doc.test/workshop-tasks.html">http://doc.test/workshop-tasks.html</a></p>
+</li>
+<li><p>Default Router / ggf. Gateway ins Internet</p>
+</li>
+<li><p>Registrierung von Domains</p>
+</li>
+<li><p>Whois Service über Domains</p>
+</li>
+<li><p>DNSViz Debugging</p>
+</li>
+<li><p>GitWeb mit relevanten Daten zum Workshop</p>
+</li>
+</ul>
+</li>
+<li><p>Mitmachen:</p>
+<ul>
+<li><strong>Empfohlen: Docker VM -- Wer will?</strong></li>
+<li>Eigenes Gerät</li>
+</ul>
+</li>
+<li><p><strong>Hinweis: Was wir hier machen ist NICHT sicher und sind KEINE BEst Practise!</strong></p>
+</li>
+</ul>
+<h2 id="umgebung-erkunden">Umgebung erkunden</h2>
+<p>Nachdem Du nun im Workshop-Netz bist, können wir einige Tests vornehmen und die Umgebung erkunden.</p>
+<ol>
+<li><p>Login auf die Docker VM</p>
+<pre><code> <span class="title">ssh</span> root@<span class="number">10</span>.<span class="number">20</span>.<span class="number">44</span>.X
+
+ <span class="comment"># Passwort: root</span>
+</code></pre></li>
+<li><p>Nameserver der Root-Zone anzeigen</p>
+<pre><code> <span class="title">dig</span> -t NS .
+</code></pre></li>
+<li><p>Rekursive Anfragen ab den Root-Servern herunter bis Domain <code>task-trace.de.</code> ausführen</p>
+<pre><code> <span class="title">dig</span> +trace +nodnssec task-trace.de.
+</code></pre></li>
+<li><p>Whois Informationen der Doamin <code>task-whois.de.</code> abfragen</p>
+<pre><code> <span class="title">whois</span> -h whois.test task-whois.de
+</code></pre></li>
+</ol>
+<h2 id="dnssec-informationen-abfragen">DNSSEC Informationen abfragen</h2>
+<p>Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.</p>
+<ol>
+<li><p>Zeige die DNSSEC Records der TLD <code>de.</code> an.</p>
+<pre><code> <span class="title">dig</span> +dnssec +multiline -t DNSKEY de.
+</code></pre><ul>
+<li>Unterschiede KSK (257) und ZSK (256)</li>
+<li>Key Typ: 3 (DNSSEC)</li>
+<li>Algorithmus: 8 (RSA SHA-256)</li>
+<li>Key ID: Eindeutige Identifikation möglich</li>
+<li>Wo finden wir die DNSSEC Key IDs wieder?</li>
+<li>Sind die Signaturen aktuell und vollständig?</li>
+</ul>
+</li>
+<li><p>Wie wird die TLD <code>de.</code> durch die Root-Zone authentifiziert?</p>
+<pre><code> <span class="title">dig</span> -t DS de.
+</code></pre><ul>
+<li>Welchen DNSKEY Typ referenziert der DS-Records für <code>de.</code>?</li>
+</ul>
+</li>
+<li><p>Ist die Domain <code>task-sigchase.de.</code> mit DNSSEC signiert?</p>
+<pre><code> <span class="title">dig</span> -t DNSKEY task-sigchase.de.
+</code></pre></li>
+<li><p>Richte den DNSKEY KSK der Root-Nameserver für die Authentifizierung der Records ein:</p>
+<ul>
+<li><p><strong>Nicht in Docker VMs notwendig</strong></p>
+<pre><code>cp -aH /etc/trusted-key.key \
+     /etc/trusted-key.key.<span class="variable">$(</span>date +%<span class="constant">Y</span>%m%d<span class="number">_</span>%<span class="constant">H</span>%<span class="constant">M</span>)
+
+dig +noall +answer +multi -t <span class="constant">DNSKEY</span> . <span class="variable">@10</span>.<span class="number">20.1</span>.<span class="number">1</span> | \
+awk <span class="string">'/DNSKEY 257/,/; KSK;/ {print}'</span> &gt; <span class="regexp">/etc/trusted</span>-key.key
+</code></pre></li>
+</ul>
+</li>
+<li><p>Prüfe die Chain of Trust für die Domain <code>task-sigchase.de.</code></p>
+<pre><code> <span class="title">drill</span> -S -k /etc/trusted-key.key task-sigchase.de
+ <span class="comment"># dig +sigchase +topdown task-sigchase.de.</span>
+</code></pre></li>
+<li><p>Die visualisierte Prüfung kann auch per DNSViz erfolgen:</p>
+<ul>
+<li><a href="http://dnsviz.test/graph.sh?domain=task-sigchase.de">http://dnsviz.test/graph.sh?domain=task-sigchase.de</a></li>
+</ul>
+</li>
+</ol>
+<h2 id="eigene-domain-anlegen">Eigene Domain anlegen</h2>
+<ol>
+<li><p>Funktioniert der Bind Restart? -- Fix für Docker VMs</p>
+<pre><code> rndc re<span class="operator"><span class="keyword">load</span>
+ /etc/init.d/bind9 restart
+</span></code></pre></li>
+<li><p>Wähle einen Domainnamen für die weiteren Schritte</p>
+<pre><code> <span class="title">export</span> DOMAIN_TLD=meindomainname.de
+</code></pre></li>
+<li><p>Lass Dir die aktuell registierten Domains anzeigen:</p>
+<ul>
+<li>Registar-Interface <a href="http://whois.test/">http://whois.test/</a> aufrufen</li>
+</ul>
+</li>
+<li><p>Lege Dir über das Registrar-Interface eine Domain an:</p>
+<ul>
+<li><a href="http://whois.test/edit">http://whois.test/edit</a></li>
+<li><code>$DOMAIN_TLD</code><ul>
+<li>Verwaltung Deiner Nameserver-Umgebung.</li>
+<li>Hier müssen Glue-Records eingetragen werden!<ul>
+<li><code>ns1.$DOMAIN_TLD</code> -- <code>10.20.44.X</code></li>
+<li><code>ns2.$DOMAIN_TLD</code> -- <code>10.20.44.X</code></li>
+</ul>
+</li>
+<li>Die Nameserver von <code>$DOMAIN_TLD</code> können als NS-Records für weitere Domains (ohne Glues) verwendet werden.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Prüfe die Registrierung per whois.</p>
+<pre><code> <span class="title">whois</span> -h whois.test <span class="variable">$DOMAIN_TLD</span>
+</code></pre></li>
+<li><p>Lege Deine Konfiguration für BIND an:</p>
+<ul>
+<li><strong>Nicht in Docker VMs notwendig</strong></li>
+<li><p>Umgebung einrichten</p>
+<pre><code>cp -aH /etc/bind /etc/bind.$(date +%Y%m%d_%H%M)
+cp -aH /<span class="keyword">var</span>/cache/bind /<span class="keyword">var</span>/cache/bind.$(date +%Y%m%d_%H%M)
+cp -aH /<span class="keyword">var</span>/log/named /<span class="keyword">var</span>/log/named.$(date +%Y%m%d_%H%M)
+
+rm -rI /etc/bind
+
+mkdir -p /etc/bind/zones /<span class="keyword">var</span>/cache/bind /<span class="keyword">var</span>/log/named
+chown bind: <span class="regexp">/var/</span>cache/bind /<span class="keyword">var</span>/log/named || \
+chown named: <span class="regexp">/var/</span>cache/bind /<span class="keyword">var</span>/log/named
+</code></pre></li>
+<li><p>Config Files aus <code>dnssec-attendee/</code> kopieren</p>
+<ul>
+<li><p><code>/etc/bind/named.conf</code></p>
+<pre><code>curl <span class="string">'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=dnssec-attendee/etc/bind/named.conf'</span> &gt;<span class="regexp">/etc/bind</span><span class="regexp">/named.conf
+</span></code></pre></li>
+<li><p><code>/etc/bind/zones/hint.zone</code></p>
+<pre><code>curl <span class="string">'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=shared/etc/bind/zones/hint.zone'</span> &gt;<span class="regexp">/etc/bind</span><span class="regexp">/zones/hint</span>.zone
+</code></pre></li>
+<li><p><code>/etc/bind/zones/hint.zone</code></p>
+<pre><code>curl <span class="string">'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=dnssec-attendee/etc/bind/zones/template.zone'</span> &gt; <span class="regexp">/etc/bind</span><span class="regexp">/zones/template</span>.zone
+</code></pre></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Erstelle Deine Zonen-Konfiguration:</p>
+<pre><code> <span class="title">cp</span> /etc/bind/zones/template.zone \
+ /etc/bind/zones/<span class="variable">$DOMAIN_TLD</span>.zone
+
+ sed -i <span class="string">"s/domain.tld./<span class="variable">$DOMAIN_TLD</span>./g"</span> \
+ /etc/bind/zones/<span class="variable">$DOMAIN_TLD</span>.zone
+</code></pre><ul>
+<li><p>Zone-File von <code>$DOMAIN_TLD</code> editieren</p>
+<p><code>/etc/bind/zones/$DOMAIN_TLD.zone</code></p>
+<ul>
+<li>Domain-Namen anpassen</li>
+<li>NS Glue Records eintragen</li>
+<li>A-Records für Glue Nameserver zeigen auf eigene IP</li>
+<li>A-Record auf beliebige IP</li>
+<li>CNAME auf andere Zone</li>
+</ul>
+</li>
+<li><p>Nameserver Konfiguration</p>
+<p><code>/etc/bind/named.conf</code></p>
+<pre><code>zone "$DOMAIN_TLD." {
+       type master;
+       file "/etc/bind/zones/$DOMAIN_TLD.zone";
+};
+</code></pre></li>
+</ul>
+</li>
+<li><p>Nameserver starten und prüfen</p>
+<pre><code> named-checkconf -z
+
+ rndc re<span class="operator"><span class="keyword">load</span>
+
+ less /var/log/named/<span class="keyword">default</span>.log
+</span></code></pre></li>
+<li><p>Setup prüfen</p>
+<pre><code> <span class="title">dig</span> -t SOA <span class="variable">$DOMAIN_TLD</span>. <span class="variable">@localhost</span>
+ dig -t NS <span class="variable">$DOMAIN_TLD</span>. <span class="variable">@localhost</span>
+</code></pre></li>
+<li><p>Ist Deine Domain im TLD Nameserver eingetragen?</p>
+<pre><code> <span class="title">dig</span> +trace +nodnssec -t NS <span class="variable">$DOMAIN_TLD</span>.
+</code></pre></li>
+<li><p>Delegation visualisieren:</p>
+<ul>
+<li><a href="http://dnsviz.test/graph.sh?domain=$DOMAIN_TLD">http://dnsviz.test/graph.sh?domain=$DOMAIN_TLD</a></li>
+</ul>
+</li>
+</ol>
+<h2 id="dnssec-f-r-domain-einrichten">DNSSEC für Domain einrichten</h2>
+<ol>
+<li><p>Basis-Konfiguration im BIND vornehmen</p>
+<ul>
+<li><p><code>/etc/bind/named.conf</code></p>
+<pre><code>server {
+  edns yes; <span class="comment"># default</span>
+  edns-udp-size 4096; <span class="comment"># default</span>
+};
+
+<span class="keyword">options</span> {
+  dnssec-enable yes;
+  key-directory <span class="string">"/etc/bind/dnssec"</span>;
+  random-device <span class="string">"/dev/urandom"</span>;
+  dnssec-update-mode maintain; <span class="comment"># default</span>
+  dnssec-loadkeys-interval 10; <span class="comment"># 10 minutes</span>
+  sig-validity-interval 7 4;
+  <span class="comment"># 7 Tage Signatur-Zeitrraum</span>
+  <span class="comment"># Resigning 4 Tage vor Expiration</span>
+  <span class="comment"># -&gt; Signatur-Zeitfenster: 3 Tage</span>
+};
+</code></pre></li>
+<li><p>Konfiguration laden</p>
+<pre><code>named-checkconf -z
+rndc re<span class="operator"><span class="keyword">load</span>
+</span></code></pre></li>
+</ul>
+</li>
+<li><p>DNSSEC Keys für Zonen anlegen</p>
+<pre><code> KEY_DIR=<span class="regexp">/etc/</span>bind/keys
+ mkdir $KEY_DIR
+
+ dnssec-keygen -K $KEY_DIR -n ZONE -<span class="number">3</span> -f KSK \
+ -a RSASHA256 -b <span class="number">2048</span> -r /dev/urandom -L <span class="number">300</span> \
+ -P now -A now $DOMAIN_TLD
+
+ dnssec-keygen -K $KEY_DIR -n ZONE -<span class="number">3</span> \
+ -a RSASHA256 -b <span class="number">1024</span> -r /dev/urandom -L <span class="number">300</span> \
+ -P now -A now $DOMAIN_TLD
+
+ chown -R bind /etc/bind/keys
+</code></pre></li>
+<li><p>DNSKEY Files untersuchen</p>
+<ul>
+<li><p>Dateiname</p>
+<pre><code><span class="title">ls</span> -l /etc/bind/keys/
+</code></pre></li>
+<li><p>private File</p>
+</li>
+<li><p>key File</p>
+<pre><code><span class="title">cat</span> /etc/bind/keys/K<span class="regexp">*.key</span>
+</code></pre></li>
+</ul>
+</li>
+<li><p>Zonen-Konfiguration anpassen</p>
+<ul>
+<li><p><code>/etc/bind/named.conf</code></p>
+<pre><code>zone <span class="string">"$DOMAIN_TLD."</span> IN {
+  type master;
+  file <span class="string">"/etc/bind/zones/$DOMAIN_TLD.zone"</span>;
+  <span class="keyword">auto</span>-dnssec maintain;
+  <span class="keyword">inline</span>-signing yes;
+};
+</code></pre></li>
+<li><p>Konfiguration laden</p>
+<pre><code>named-checkconf -z
+rndc re<span class="operator"><span class="keyword">load</span>
+</span></code></pre></li>
+<li><p>Zone schon automatisch signiert?</p>
+<pre><code>less /<span class="keyword">var</span>/log/named/<span class="keyword">default</span>.log
+</code></pre></li>
+</ul>
+</li>
+<li><p>Zustand der signierten Zonen prüfen</p>
+<pre><code> <span class="title">ls</span> -l /etc/bind/zones
+
+ dig -t DNSKEY <span class="variable">$DOMAIN_TLD</span>. <span class="variable">@localhost</span>
+
+ dig +dnssec -t DNSKEY test-notfound.<span class="variable">$DOMAIN_TLD</span>. <span class="variable">@localhost</span>
+</code></pre></li>
+<li><p>NSEC3 für die Zone einrichten</p>
+<pre><code> <span class="title">rndc</span> signing -nsec3param <span class="number">1</span> <span class="number">0</span> <span class="number">20</span> \
+ $(openssl rand <span class="number">4</span> -hex) <span class="variable">$DOMAIN_TLD</span>
+</code></pre><pre><code> <span class="title">dig</span> +dnssec -t DNSKEY test-notfound.<span class="variable">$DOMAIN_TLD</span>. <span class="variable">@localhost</span>
+</code></pre></li>
+<li><p>Zustand der signierten Zonen prüfen</p>
+<ul>
+<li><p>Keys anzeigen lassen</p>
+<pre><code><span class="title">rndc</span> signing -list <span class="variable">$DOMAIN_TLD</span>.
+</code></pre></li>
+<li><p>Manuelle Prüfung</p>
+<pre><code><span class="title">dig</span> +dnssec +multi -t DNSKEY <span class="variable">$DOMAIN_TLD</span>. <span class="variable">@localhost</span>
+</code></pre></li>
+<li><p>Visualisierung</p>
+<p><a href="http://dnsviz.test/graph.sh?domain=$DOMAIN_TLD">http://dnsviz.test/graph.sh?domain=$DOMAIN_TLD</a></p>
+</li>
+</ul>
+</li>
+<li><p>Publikation des KSK im Parent via SLD Registrar Webinterface</p>
+<ul>
+<li><p>KSK anzeigen (Key mit ID 257 finden)</p>
+<pre><code><span class="title">cat</span> /etc/bind/keys/K<span class="variable">$DOMAIN_TLD</span>.<span class="regexp">*.key</span>
+</code></pre></li>
+<li><p>Whois Update der Domain -- <a href="http://whois.test/">http://whois.test/</a></p>
+<ul>
+<li>DNSSEC Key 1 flags: 257</li>
+<li>DNSSEC Key 1 algorithm_id: 8</li>
+<li>DNSSEC Key 1 key_data: Key Material in Base64</li>
+</ul>
+</li>
+<li><p>whois Eintrag bzgl. DNSKEY korrekt?</p>
+<pre><code><span class="title">whois</span> -h whois.test <span class="variable">$DOMAIN_TLD</span>.
+</code></pre></li>
+<li><p>DS-Record in TLD publiziert?</p>
+<pre><code><span class="title">dig</span> +trace -t DS <span class="variable">$DOMAIN_TLD</span>.
+</code></pre></li>
+</ul>
+</li>
+<li><p>Chain of Trust prüfen</p>
+<ul>
+<li><a href="http://dnsviz.test/">http://dnsviz.test/</a></li>
+<li>per Command Line Tool<pre><code><span class="title">drill</span> -S -k /etc/trusted-key.key <span class="variable">$DOMAIN_TLD</span>.
+<span class="comment"># dig +sigchase +topdown $DOMAIN_TLD.</span>
+</code></pre></li>
+</ul>
+</li>
+</ol>
+<h2 id="dnssec-nutzen">DNSSEC nutzen</h2>
+<h3 id="ssh">SSH</h3>
+<ol>
+<li><p>Neue Host Keys generieren</p>
+<pre><code> <span class="title">rm</span> /etc/ssh/ssh_host_*
+ ssh-keygen -A
+</code></pre></li>
+<li><p>SSH Fingerprints</p>
+<pre><code> ssh-keygen -r ssh.<span class="variable">$DOMAIN_TLD</span>.
+</code></pre></li>
+<li><p>Generierte DNS-Records in Zone veröffentlichen</p>
+<ul>
+<li>Unsigniertes Zone-File anpassen<ul>
+<li>A-Record zu <code>ssh.$DOMAIN_TLD.</code> mit eigener IP eintragen</li>
+<li>SSHFP Records eintragen</li>
+</ul>
+</li>
+<li>Serial der Zone erhöht?</li>
+<li>Zone laden<pre><code><span class="title">rndc</span> reload
+dig -t ANY ssh.<span class="variable">$DOMAIN_TLD</span>. <span class="variable">@localhost</span>
+</code></pre></li>
+</ul>
+</li>
+<li><p>DNS-Verifikation im SSH-Client aktivieren</p>
+<ul>
+<li><p><code>/etc/ssh/ssh_config</code></p>
+<pre><code><span class="title">VerifyHostKeyDNS</span> <span class="built_in">yes</span>
+</code></pre></li>
+<li><p>Zum Nachbarn verbinden</p>
+<pre><code>host ssh.fellow.<span class="keyword">next</span>
+
+ssh &lt;ip_von_ssh.fellow.<span class="keyword">next</span>&gt;
+
+ssh ssh.fellow.<span class="keyword">next</span>
+</code></pre></li>
+</ul>
+</li>
+</ol>
+<h3 id="dane-f-r-mailing">DANE für Mailing</h3>
+<ol>
+<li><p>SSL-Zertifikate für Postfix generieren</p>
+<pre><code> <span class="title">cd</span> /etc/postfix
+
+ openssl req -new -x509 -nodes \
+ -out server.pem -keyout server.pem \
+ -subj <span class="string">"/C=DE/ST=Sachsen/L=Chemnitz/O=Linux Tage/OU=2016/CN=mail.<span class="variable">$DOMAIN_TLD</span>"</span>
+
+ openssl gendh <span class="number">512</span> &gt;&gt; server.pem
+</code></pre></li>
+<li><p>DNS-Verifikation im Postfix aktivieren</p>
+<ul>
+<li><p><code>/etc/postfix/main.cf</code></p>
+<pre><code><span class="setting">smtpd_use_tls = <span class="value"><span class="keyword">yes</span></span></span>
+<span class="setting">smtp_tls_security_level = <span class="value">dane</span></span>
+<span class="setting">smtp_dns_support_level = <span class="value">dnssec</span></span>
+</code></pre></li>
+<li><p><code>myhostname</code> und <code>mydestination</code> anpassen</p>
+</li>
+<li><p>Konfiguration laden</p>
+<pre><code>postfix check &amp;&amp; postfix re<span class="operator"><span class="keyword">load</span>
+</span></code></pre></li>
+</ul>
+</li>
+<li><p>TLSA Records der Key Fingerprints generieren</p>
+<pre><code> <span class="title">openssl</span> x509 -in /etc/postfix/server.pem \
+ -outform DER | sha256sum
+</code></pre></li>
+<li><p>Daten im DNS veröffentlichen</p>
+<ul>
+<li><p>DNS Settings für Mailing definieren</p>
+<pre><code>mail.DOMAIN.TLD. A <span class="tag">&lt;<span class="title">ip</span>&gt;</span>
+DOMAIN.TLD. MX 10 mail.DOMAIN.TLD.
+</code></pre></li>
+<li><p>TLSA-Record eintragen</p>
+<pre><code>_25._tcp.mail.<span class="xml"><span class="tag">&lt;<span class="title">DOMAIN_TLD</span>&gt;</span>.  IN TLSA 3 0 1 <span class="tag">&lt;<span class="title">FINGERPRINT</span>&gt;</span>
+_465._tcp.mail.<span class="tag">&lt;<span class="title">DOMAIN_TLD</span>&gt;</span>. IN TLSA 3 0 1 <span class="tag">&lt;<span class="title">FINGERPRINT</span>&gt;</span></span>
+</code></pre></li>
+<li><p>Serial erhöht?</p>
+</li>
+<li><p>Zone laden</p>
+<pre><code>named-checkconf -z
+rndc re<span class="operator"><span class="keyword">load</span>
+</span></code></pre></li>
+</ul>
+</li>
+<li><p>Verifikation des DANE Setup</p>
+<pre><code> <span class="title">openssl</span> s_client -connect mail.<span class="variable">$DOMAIN_TLD</span>:<span class="number">465</span>
+</code></pre><pre><code> ldns-dane verify -k /etc/trusted-key.key \
+ -d mail.<span class="variable">$DOMAIN_TLD</span> <span class="number">465</span>
+</code></pre></li>
+</ol>
+<h2 id="key-management">Key Management</h2>
+<ol>
+<li><p>Führe einen ZSK Rollover (per Pre-Publish) ohne Interaktion mit der Parent TLD aus</p>
+<pre><code> KEY_DIR=<span class="regexp">/etc/</span>bind/keys
+
+ # Neuen ZSK generieren und <span class="keyword">in</span> Zone publizieren
+ dnssec-keygen -K $KEY_DIR -n ZONE -<span class="number">3</span> \
+ -a RSASHA256 -b <span class="number">1024</span> \
+ -r /dev/urandom -L <span class="number">300</span> \
+ -P now -A +<span class="number">1</span>h $DOMAIN_TLD
+
+ chown -R bind: $KEY_DIR
+
+ rndc sign $DOMAIN_TLD
+
+ rndc signing -list $DOMAIN_TLD
+
+ # Warten bis Key öffentlich verfügbar ist 
+ #  (DNSKEY TTL auslaufen lassen)
+
+ # TESTEN
+
+ # Neuen ZSK für das Signieren aktivieren
+ dnssec-settime -A now \
+ $KEY_DIR/K&lt;name&gt;+<span class="xml"><span class="tag">&lt;<span class="title">alg</span>&gt;</span>+<span class="tag">&lt;<span class="title">id</span>&gt;</span>.key
+
+ # Alten ZSK nach DNSKEY TTL
+ #  nicht mehr zum Signieren nehmen
+ dnssec-settime -I +330 \
+ $KEY_DIR/K<span class="tag">&lt;<span class="title">name</span>&gt;</span>+<span class="tag">&lt;<span class="title">alg</span>&gt;</span>+<span class="tag">&lt;<span class="title">id</span>&gt;</span>.key
+
+ rndc sign $DOMAIN_TLD
+
+ rndc signing -list $DOMAIN_TLD
+
+ # TESTEN
+
+ # Keys und Signaturen prüfen
+ # Maximum Zone TTL abwarten
+
+ # TESTEN
+
+ # Alten ZSK raus nehmen
+ dnssec-settime -I now -D now \
+ $KEY_DIR/K<span class="tag">&lt;<span class="title">name</span>&gt;</span>+<span class="tag">&lt;<span class="title">alg</span>&gt;</span>+<span class="tag">&lt;<span class="title">id</span>&gt;</span>.key
+
+ rndc sign $DOMAIN_TLD
+
+ rndc signing -list $DOMAIN_TLD
+
+ # TESTEN</span>
+</code></pre></li>
+<li><p>Führe einen KSK Rollover (per Double Signature) inkl. Interaktion mit dem Parent aus</p>
+<pre><code> KEY_DIR=/etc/bind/keys
+
+ <span class="comment"># Neuen KSK generieren und in Zone publizieren</span>
+ <span class="comment"># Neuer Key soll ZSKs direkt signieren</span>
+ dnssec-keygen -K $KEY_DIR -n ZONE -f KSK \
+ -3 -a RSASHA256 -b 2048 \
+ -r /dev/urandom -L 300 \
+ -P now -A now $DOMAIN_TLD
+
+ chown -R bind: $KEY_DIR
+
+ rndc sign $DOMAIN_TLD
+
+ <span class="comment"># TESTEN</span>
+
+ <span class="comment"># Warten bis Key öffentlich verfügbar ist</span>
+ <span class="comment">#  (DNSKEY TTL auslaufen lassen)</span>
+
+ <span class="comment"># Neuen DNSKEY der Domain in der TLD eintragen</span>
+ <span class="comment">#  http://whois.test/</span>
+
+ <span class="comment"># TESTEN</span>
+
+ <span class="comment"># Größere TTL abwarten:</span>
+ <span class="comment"># * DS des Parent ODER</span>
+ <span class="comment"># * DNSKEY der eigenen Zone</span>
+
+ <span class="comment"># TESTEN</span>
+
+ <span class="comment"># Alten KSK rausnehmen und Zone</span>
+ dnssec-settime -D now \
+ $KEY_DIR/K<span class="tag">&lt;name&gt;</span>+<span class="tag">&lt;alg&gt;</span>+<span class="tag">&lt;id&gt;</span>.key
+
+ rndc sign $DOMAIN_TLD
+
+ <span class="comment"># TESTEN</span>
+
+ <span class="comment"># Alten KSK im whois rausnehmen</span>
+</code></pre></li>
+<li><p>Rollover zu einem CSK Schema</p>
+<pre><code> zone [...] {
+     <span class="operator"><span class="keyword">update</span>-<span class="keyword">check</span>-ksk <span class="keyword">no</span>;</span>
+ };
+</code></pre><pre><code> rndc re<span class="operator"><span class="keyword">load</span>
+</span></code></pre><pre><code> KEY_DIR=/etc/bind/keys
+
+ rndc sign $DOMAIN_TLD
+
+ # TESTEN
+
+ # Maximum Zone TTL abwarten
+
+ # TESTEN
+
+ # Überflüssigen ZSK raus nehmen
+ dnssec-settime -D now \
+ $KEY_DIR/K<span class="tag">&lt;<span class="title">name</span>&gt;</span>+<span class="tag">&lt;<span class="title">alg</span>&gt;</span>+<span class="tag">&lt;<span class="title">id</span>&gt;</span>.key
+
+ rndc sign $DOMAIN_TLD
+
+ # TESTEN
+</code></pre></li>
+</ol>
+<h2 id="dnssec-validierung-im-nameserver-einrichten">DNSSEC Validierung im Nameserver einrichten</h2>
+<ol>
+<li><p>DNSSEC Validierung über lokalen Nameserver versuchen</p>
+<pre><code> <span class="title">dig</span> +dnssec task-sigchase.de <span class="variable">@localhost</span>
+ dig +dnssec dnssec-failed.net <span class="variable">@localhost</span>
+</code></pre><ul>
+<li>AD-Flag gesetzt?</li>
+<li>Welche Section liefert DNSSEC-Records?</li>
+</ul>
+</li>
+<li><p>DNSKEY der Root-Server als Trust Anchor einrichten:</p>
+<ul>
+<li><p><strong>Nicht in Docker VM notwendig</strong></p>
+<ul>
+<li><p>Option A</p>
+<pre><code>cat &lt;<span class="xml"><span class="tag">&lt;<span class="title">EOF</span> &gt;</span> /etc/bind/managed.keys
+managed-keys {
+. initial-key 257 3 8 "AwEAAcV2vdlE/+FeNmH4QNOqkeOx7T0v38prLujAggM4gmkBdj/v1DsE DaTEewoekBcXkhC8gQckDRwvMIZU1sSTGP5DYFAZEClpt0NCEJtlCIrS BHQnj2w9+J/iV3f0JC8oMLu727LiT/+Ro4DCSetithDd2Jqc4dsRnncC gsRzs2uC4h0GCXP/z25ZfweqL05t8rk5GAdTKpBiX/J2b1lqUaHC7UxK g0X/fv+SJ/8mYDSGFVssKlDEER4KwVxN6j2Ge44AOPMwE24hQ71faLYq vYwD+DPIClq/zom3REpFVw2PM77Yl3Hse7m6+CFHrsdMxN5IMm1qkxIq UNR43lKxDs0=";
+};
+EOF</span>
+</code></pre></li>
+<li><p>Option B</p>
+<pre><code>curl <span class="string">'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=shared/etc/bind/managed.keys'</span> &gt;<span class="regexp">/etc/bind</span><span class="regexp">/managed.keys
+</span></code></pre></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>DNSSEC im Nameserver aktivieren
+ /etc/bind/named.conf</p>
+<pre><code> <span class="keyword">include</span> <span class="string">"/etc/bind/managed.keys"</span>;
+
+ <span class="keyword">options</span> {
+     dnssec-validation yes;
+ };
+</code></pre><pre><code> named-checkconf
+
+ rndc re<span class="operator"><span class="keyword">load</span>
+</span></code></pre></li>
+<li><p>DNSSEC Validierung prüfen</p>
+<pre><code> <span class="title">dig</span> +dnssec task-sigchase.de <span class="variable">@localhost</span>
+
+ dig +dnssec dnssec-failed.net <span class="variable">@localhost</span>
+ less /var/log/named/default.log
+
+ drill -S -k /etc/trusted-key.key dnssec-failed.net
+</code></pre></li>
+</ol>
+<h2 id="weitere-dnssec-informationen-pr-fen">Weitere DNSSEC Informationen prüfen</h2>
+<ol>
+<li><p>Signing Schemata vergleichen</p>
+<ul>
+<li>task-sigchase.de -- KSK &amp; ZSK</li>
+<li>dnsprovi.de -- CSK</li>
+<li>task-rollover.de -- Backup KSK</li>
+</ul>
+</li>
+<li><p>Zone Expire VS. Signatur-Zeitraum</p>
+</li>
+<li><p>Zone Expire &amp; NSEC Signatur-Zeitraum</p>
+</li>
+<li><p>NSEC(3) Zone Walking</p>
+<ul>
+<li><a href="https://josefsson.org/walker/">https://josefsson.org/walker/</a></li>
+<li><a href="http://doc.test/nsec-walker/">http://doc.test/nsec-walker/</a></li>
+<li><code>walker -x task-walker.de</code></li>
+</ul>
+</li>
+</ol>
+<h2 id="fehler-provozieren-und-beheben">Fehler provozieren und beheben</h2>
+<ol>
+<li>TCP-Anfragen unterbinden</li>
+<li>Signaturen auslaufen lassen<ul>
+<li><code>task-failed.net</code></li>
+</ul>
+</li>
+<li>Falschen DS im Parent publizieren</li>
+<li>KSK oder ZSK löschen/deaktivieren</li>
+<li>Time Drift &amp; Signatur-Validierung</li>
+<li>TTL=0 für Records verwenden - Validierung noch möglich?</li>
+<li>TTLs auf geringen Wert setzen</li>
+</ol>
+<h2 id="erweiterung-des-setups">Erweiterung des Setups</h2>
+<ol>
+<li><p>Bump on Wire Signing mit anderen Teilnehmern einrichten</p>
+<ul>
+<li>Master Zone soll nicht mit DNSSEC signiert sein (neue Zone anlegen)</li>
+<li>Slave Zone analog zu DNSSEC Master Zone konfigurieren</li>
+</ul>
+</li>
+<li><p>Slave Nameserver für Zonen einrichten (TSIG)</p>
+</li>
+<li><p>Rollover eines DNSSEC Signatur Algorithmus</p>
+</li>
+</ol>
+<p>/<em> vim: set syntax=markdown tabstop=2 expandtab: </em>/</p>
+</body></html>
