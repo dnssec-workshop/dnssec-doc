@@ -307,7 +307,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
     alias d=docker
 
     dls() {
-        docker ps -a --format "{{.ID}}" | while read id; do docker inspect --format "{{.Id}} {{.Name}} {{.NetworkSettings.IPAddress}} {{.State.Status}}" $id; done
+        docker ps -a --format "{{.ID}}" | while read id; do docker inspect --format "{{.Id}} {{.Name}} {{.NetworkSettings.IPAddress}} {{.State.Status}}" $id; done | tr -d /
     }
 
     dps() {
