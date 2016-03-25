@@ -312,16 +312,17 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 1. DNSSEC Keys für Zonen anlegen
     ```
     KEY_DIR=/etc/bind/keys
-    mkdir $KEY_DIR
+    mkdir -p $KEY_DIR
 
     dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK \
-    -a RSASHA256 -b 2048 -r /dev/urandom -L 300 \
+    -a ECDSAP384SHA384 -b 2048 -r /dev/urandom -L 300 \
     -P now -A now $DOMAIN_TLD
 
     dnssec-keygen -K $KEY_DIR -n ZONE -3 \
-    -a RSASHA256 -b 1024 -r /dev/urandom -L 300 \
+    -a ECDSAP256SHA256 -b 1024 -r /dev/urandom -L 300 \
     -P now -A now $DOMAIN_TLD
 
+    # BIND muss Private Keys lesen
     chown -R bind /etc/bind/keys
     ```
 
@@ -403,7 +404,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     * Whois Update der Domain -- http://whois.test/
       * DNSSEC Key 1 flags: 257
-      * DNSSEC Key 1 algorithm_id: 8
+      * DNSSEC Key 1 algorithm_id: 14
       * DNSSEC Key 1 key_data: Key Material in Base64
 
     * whois Eintrag bzgl. DNSKEY korrekt?
@@ -543,7 +544,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     # Neuen ZSK generieren und in Zone publizieren
     dnssec-keygen -K $KEY_DIR -n ZONE -3 \
-    -a RSASHA256 -b 1024 \
+    -a ECDSAP256SHA256 \
     -r /dev/urandom -L 300 \
     -P now -A +1h $DOMAIN_TLD
 
@@ -596,7 +597,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     # Neuen KSK generieren und in Zone publizieren
     # Neuer Key soll ZSKs direkt signieren
     dnssec-keygen -K $KEY_DIR -n ZONE -f KSK \
-    -3 -a RSASHA256 -b 2048 \
+    -3 -a ECDSAP384SHA384 \
     -r /dev/urandom -L 300 \
     -P now -A now $DOMAIN_TLD
 
