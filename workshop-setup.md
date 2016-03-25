@@ -346,7 +346,6 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 
 1. Docker VMs vorbereiten
     ```
-    docker pull dnssecworkshop/dnssec-bind
     docker pull dnssecworkshop/dnssec-rootns-a
     docker pull dnssecworkshop/dnssec-rootns-b
     docker pull dnssecworkshop/dnssec-tldns-a
