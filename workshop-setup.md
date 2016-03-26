@@ -316,11 +316,11 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 
     drun() {
         CN=$1
-        IP=$2
+        IP=${2:-"10.20.33.${CN/ns}/16"}
         TYPE=$3
 
         docker run --detach --net=bridge --dns=127.0.0.1 \
-          --hostname=$CN --name=$CN dnssecworkshop/${TYPE:-dnssec-attendee} || ( echo $CN: docker run failed: $? ; return 1 )
+          --hostname=$CN --name=$CN dnssecworkshop/${TYPE:-"dnssec-attendee"} || ( echo $CN: docker run failed: $? ; return 1 )
 
         [ "$IP" ] && ( /root/pipework br0 $(docker inspect --format "{{.Id}}" $CN) $IP || ( echo $CN: pipework failed: $? ; return 2 ) )
 
@@ -329,7 +329,7 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
 
     dstart() {
         CN=$1
-        IP=$2
+        IP=${2:-"10.20.33.${CN/ns}/16"}
 
         docker start $CN || ( echo $CN: docker start failed: $? ; return 1 )
 
