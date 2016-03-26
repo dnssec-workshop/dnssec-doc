@@ -262,6 +262,18 @@ Es werden VMs mit verschiedenen Funktionen/Rollen für die Bereitstellung einer 
             dns-nameservers 8.8.8.8
     ```
 
+    `/etc/hosts`
+    ```
+    # DNSSEC Workshop
+    10.20.1.1 dnssec-rootns-a
+    10.20.1.2 dnssec-rootns-a
+    10.20.2.1 dnssec-tldns-a
+    10.20.2.2 dnssec-tldns-b
+    10.20.4.1 dnssec-sldns-a
+    10.20.4.2 dnssec-sldns-b
+    10.20.8.1 dnssec-resolver
+    ```
+
 1. Netzwerk des KVM Hosts initialisieren
     ```
     bash scripts/kvm-init-net.sh
