@@ -41,13 +41,14 @@ Die Workshop-Umgebung besteht aus folgenden Systemen:
   * `it.`: keine Signierung mit DNSSEC
   * `org.`: DS-Records nicht in Root-Servern eingetragen
 
-* Netzwerkumgebung
-  * Netz: 10.20.0.0/16
-  * Gateway: 10.20.0.1
-  * Du bekommst Dein eigenes /24 Subnetz.
-  * Subnetz von 50 bis 255 -- 10.20.${NETID}.1/16
+* Netzwerkumgebung einrichten
+  * Per Ethernet am Switch anschließen
+    * **Port-Nummer merken** => `${NSID}`
+  * Netz: `10.20.0.0/16`
+  * Gateway: `10.20.0.1`
+  * Teilnehmer-Netz: `10.20.42.0/16`
     ```
-    ifconfig eth0 10.20.${NETID}.1/16
+    ifconfig eth0 10.20.42.${NSID}/16
     route add -net default gw 10.20.0.1
     ```
 
@@ -95,7 +96,7 @@ Die Workshop-Umgebung besteht aus folgenden Systemen:
   * **Empfohlen: Docker VM -- Wer will?**
   * Eigenes Gerät
 
-* **ACHTUNG: Was wir hier machen ist NICHT sicher und sind KEINE Best Practise!**
+* **ACHTUNG: Was wir hier machen ist NICHT sicher und sind KEIN Best Practise!**
 
 ## Umgebung erkunden
 
@@ -103,7 +104,7 @@ Nachdem Du nun im Workshop-Netz bist, können wir einige Tests vornehmen und die
 
 1. Login auf die Docker VM
     ```
-    ssh root@10.20.44.X
+    ssh root@10.20.33.${NSID}
 
     # Passwort: root
     ```
@@ -156,10 +157,12 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     * **Nicht in Docker VMs notwendig**
     ```
     cp -aH /etc/trusted-key.key \
-           /etc/trusted-key.key.$(date +%Y%m%d_%H%M)
+        /etc/trusted-key.key.$(date +%Y%m%d_%H%M)
 
-    dig +noall +answer +multi -t DNSKEY . @10.20.1.1 | \
-      awk '/DNSKEY 257/,/; KSK;/ {print}' > /etc/trusted-key.key
+    dig +noall +answer +multi \
+        -t DNSKEY . @10.20.1.1 | \
+        awk '/DNSKEY 257/,/; KSK;/ {print}' \
+        > /etc/trusted-key.key
     ```
 
 1. Prüfe die Chain of Trust für die Domain `task-sigchase.de.`
@@ -186,10 +189,10 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     * http://whois.test/edit
     * `$DOMAIN_TLD`
         * Verwaltung Deiner Nameserver-Umgebung.
-        * Hier müssen Glue-Records eingetragen werden!
-            * `ns1.$DOMAIN_TLD` -- `10.20.44.X`
-            * `ns2.$DOMAIN_TLD` -- `10.20.44.X`
-        * Die Nameserver von `$DOMAIN_TLD` können als NS-Records für weitere Domains (ohne Glues) verwendet werden.
+        * Hier müssen Glue-Records mit der IP Deines Systems oder Containers eingetragen werden!
+            * `ns1.$DOMAIN_TLD` -- `10.20.33.X`
+            * `ns2.$DOMAIN_TLD` -- `10.20.33.X`
+        * Die Nameserver von `$DOMAIN_TLD` können später als NS-Records für weitere Domains (ohne Glues) verwendet werden.
 
 1. Prüfe die Registrierung per whois.
     ```
