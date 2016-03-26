@@ -34,7 +34,6 @@ Die Workshop-Umgebung besteht aus folgenden Systemen:
   * Webserver mit Files und Informationen inkl. Wiki
 
 Als Netzwerk-Umgebung wird das Class B Net 10.20.0.0/16 verwenden.
-Hier kann jeder Teilnehmer ein /24 Subnetz erhalten und ggf. mehrere IPs für seine Services konfigurieren.
 
 
 ## Rahmenbedingungen
@@ -47,10 +46,28 @@ Hier kann jeder Teilnehmer ein /24 Subnetz erhalten und ggf. mehrere IPs für se
 * https://talk.babiel.com/eh16/dnssec
 
 * https://ftp.isc.org/isc/bind9/cur/9.9/doc/arm/Bv9ARM.html
+
+* https://www.isc.org/blogs/dnssec-readiness/
+
 * http://www.internetsociety.org/deploy360/dnssec/
+
 * http://www.internetsociety.org/deploy360/resources/dane/
-* http://dnsviz.net/demo/dnsviz-demo-v2.zip
+
 * https://blog.cloudflare.com/tag/dnssec/
+
+* https://rick.eng.br/dnssecstat/
+
+* http://dnsviz.net/demo/dnsviz-demo-v2.zip
+
+* https://www.dnssec-deployment.org/
+
+* https://www.denic.de/wissen/dnssec/
+
+* https://users.isc.org/~jreed/dnssec-guide/dnssec-guide.html
+
+* https://www.dns-oarc.net/
+
+* https://www.iana.org/assignments/dns-parameters
 
 * https://tools.ietf.org/html/rfc3225
 
@@ -91,10 +108,18 @@ Hier kann jeder Teilnehmer ein /24 Subnetz erhalten und ggf. mehrere IPs für se
 
 ## Tools
 * http://dnsviz.net/
+
 * http://dnssec-debugger.verisignlabs.com/
+
 * https://www.dnssec-validator.cz/
+
 * https://josefsson.org/walker/
+
 * https://www.opendnssec.org/
+
+* https://www.dnssec-tools.org/
+
+* https://wiki.icinga.org/display/howtos/DNS+Monitoring
 
 
 
