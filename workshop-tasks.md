@@ -318,12 +318,12 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     mkdir -p $KEY_DIR
 
     dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK \
-    -a ECDSAP384SHA384 -b 2048 -r /dev/urandom -L 300 \
-    -P now -A now $DOMAIN_TLD
+      -a ECDSAP384SHA384 -r /dev/urandom \
+      -L 86400 -P now -A now $DOMAIN_TLD
 
     dnssec-keygen -K $KEY_DIR -n ZONE -3 \
-    -a ECDSAP256SHA256 -b 1024 -r /dev/urandom -L 300 \
-    -P now -A now $DOMAIN_TLD
+      -a ECDSAP256SHA256 -r /dev/urandom \
+      -L 86400 -P now -A now $DOMAIN_TLD
 
     # BIND muss Private Keys lesen
     chown -R bind /etc/bind/keys
@@ -371,17 +371,19 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     dig -t DNSKEY $DOMAIN_TLD. @localhost
 
-    dig +dnssec -t DNSKEY test-notfound.$DOMAIN_TLD. @localhost
+    dig +dnssec -t DNSKEY \
+      test-notfound.$DOMAIN_TLD. @localhost
     ```
 
 1. NSEC3 für die Zone einrichten
     ```
     rndc signing -nsec3param 1 0 20 \
-    $(openssl rand 4 -hex) $DOMAIN_TLD
+      $(openssl rand 4 -hex) $DOMAIN_TLD
     ```
 
     ```
-    dig +dnssec -t DNSKEY test-notfound.$DOMAIN_TLD. @localhost
+    dig +dnssec -t DNSKEY \
+      test-notfound.$DOMAIN_TLD. @localhost
     ```
 
 1. Zustand der signierten Zonen prüfen
@@ -392,7 +394,8 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     * Manuelle Prüfung
     ```
-    dig +dnssec +multi -t DNSKEY $DOMAIN_TLD. @localhost
+    dig +dnssec +multi -t DNSKEY \
+        $DOMAIN_TLD. @localhost
     ```
 
     * Visualisierung
@@ -479,10 +482,10 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     cd /etc/postfix
 
     openssl req -new -x509 -nodes \
-    -out server.pem -keyout server.pem \
-    -subj "/C=DE/ST=Sachsen/L=Chemnitz/O=Linux Tage/OU=2016/CN=mail.$DOMAIN_TLD"
+      -out server.pem -keyout server.pem \
+      -subj "/C=DE/ST=Country/L=City/O=DNSSEC/OU=Workshop/CN=mail.$DOMAIN_TLD"
 
-    openssl gendh 512 >> server.pem
+    openssl gendh 1024 >> server.pem
     ```
 
 1. DNS-Verifikation im Postfix aktivieren
@@ -504,7 +507,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 1. TLSA Records der Key Fingerprints generieren
     ```
     openssl x509 -in /etc/postfix/server.pem \
-    -outform DER | sha256sum
+      -outform DER | sha256sum
     ```
 
 1. Daten im DNS veröffentlichen
@@ -535,7 +538,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     ```
     ldns-dane verify -k /etc/trusted-key.key \
-    -d mail.$DOMAIN_TLD 465
+      -d mail.$DOMAIN_TLD 465
     ```
 
 
@@ -547,9 +550,8 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     # Neuen ZSK generieren und in Zone publizieren
     dnssec-keygen -K $KEY_DIR -n ZONE -3 \
-    -a ECDSAP256SHA256 \
-    -r /dev/urandom -L 300 \
-    -P now -A +1h $DOMAIN_TLD
+      -a ECDSAP256SHA256 -r /dev/urandom \
+      -L 86400 -P now -A +1h $DOMAIN_TLD
 
     chown -R bind: $KEY_DIR
 
@@ -564,12 +566,12 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     # Neuen ZSK für das Signieren aktivieren
     dnssec-settime -A now \
-    $KEY_DIR/K<name>+<alg>+<id>.key
+      $KEY_DIR/K<name>+<alg>+<id>.key
 
     # Alten ZSK nach DNSKEY TTL
     #  nicht mehr zum Signieren nehmen
     dnssec-settime -I +330 \
-    $KEY_DIR/K<name>+<alg>+<id>.key
+      $KEY_DIR/K<name>+<alg>+<id>.key
 
     rndc sign $DOMAIN_TLD
 
@@ -584,7 +586,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     # Alten ZSK raus nehmen
     dnssec-settime -I now -D now \
-    $KEY_DIR/K<name>+<alg>+<id>.key
+      $KEY_DIR/K<name>+<alg>+<id>.key
 
     rndc sign $DOMAIN_TLD
 
@@ -599,10 +601,9 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     # Neuen KSK generieren und in Zone publizieren
     # Neuer Key soll ZSKs direkt signieren
-    dnssec-keygen -K $KEY_DIR -n ZONE -f KSK \
-    -3 -a ECDSAP384SHA384 \
-    -r /dev/urandom -L 300 \
-    -P now -A now $DOMAIN_TLD
+    dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK \
+      -a ECDSAP384SHA384 -r /dev/urandom \
+      -L 86400 -P now -A now $DOMAIN_TLD
 
     chown -R bind: $KEY_DIR
 
@@ -626,7 +627,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     # Alten KSK rausnehmen und Zone
     dnssec-settime -D now \
-    $KEY_DIR/K<name>+<alg>+<id>.key
+      $KEY_DIR/K<name>+<alg>+<id>.key
 
     rndc sign $DOMAIN_TLD
 
@@ -659,7 +660,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     # Überflüssigen ZSK raus nehmen
     dnssec-settime -D now \
-    $KEY_DIR/K<name>+<alg>+<id>.key
+      $KEY_DIR/K<name>+<alg>+<id>.key
 
     rndc sign $DOMAIN_TLD
 
@@ -671,8 +672,8 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
 1. DNSSEC Validierung über lokalen Nameserver versuchen
     ```
-    dig +dnssec task-sigchase.de @localhost
-    dig +dnssec dnssec-failed.net @localhost
+    dig +dnssec task-sigchase.de. @localhost
+    dig +dnssec dnssec-failed.net. @localhost
     ```
 
     * AD-Flag gesetzt?
@@ -712,12 +713,13 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
 1. DNSSEC Validierung prüfen
     ```
-    dig +dnssec task-sigchase.de @localhost
+    dig +dnssec task-sigchase.de. @localhost
 
-    dig +dnssec dnssec-failed.net @localhost
+    dig +dnssec dnssec-failed.net. @localhost
     less /var/log/named/default.log
 
-    drill -S -k /etc/trusted-key.key dnssec-failed.net
+    drill -S -k /etc/trusted-key.key \
+      dnssec-failed.net.
     ```
 
 
