@@ -411,11 +411,11 @@ rndc re<span class="operator"><span class="keyword">load</span>
  mkdir -p $KEY_DIR
 
  dnssec-keygen -K $KEY_DIR -n ZONE -<span class="number">3</span> -f KSK \
-   -a ECDSAP384SHA384 -r /dev/urandom \
+   -a RSASHA256 -b <span class="number">2048</span> -r /dev/urandom \
    -L <span class="number">86400</span> -P now -A now $DOMAIN_TLD
 
  dnssec-keygen -K $KEY_DIR -n ZONE -<span class="number">3</span> \
-   -a ECDSAP256SHA256 -r /dev/urandom \
+   -a RSASHA256 -b <span class="number">1024</span> -r /dev/urandom \
    -L <span class="number">86400</span> -P now -A now $DOMAIN_TLD
 
  # BIND muss Private Keys lesen
@@ -607,7 +607,7 @@ rndc re<span class="operator"><span class="keyword">load</span>
 
  # Neuen ZSK generieren und <span class="keyword">in</span> Zone publizieren
  dnssec-keygen -K $KEY_DIR -n ZONE -<span class="number">3</span> \
-   -a ECDSAP256SHA256 -r /dev/urandom \
+   -a RSASHA256 -b <span class="number">1024</span> -r /dev/urandom \
    -L <span class="number">86400</span> -P now -A +<span class="number">1</span>h $DOMAIN_TLD
 
  chown -R bind: $KEY_DIR
@@ -657,7 +657,7 @@ rndc re<span class="operator"><span class="keyword">load</span>
  <span class="comment"># Neuen KSK generieren und in Zone publizieren</span>
  <span class="comment"># Neuer Key soll ZSKs direkt signieren</span>
  dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK \
-   -a ECDSAP384SHA384 -r /dev/urandom \
+   -a RSASHA256 -b 2048 -r /dev/urandom \
    -L 86400 -P now -A now $DOMAIN_TLD
 
  chown -R bind: $KEY_DIR
