@@ -550,7 +550,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     # Neuen ZSK generieren und in Zone publizieren
     dnssec-keygen -K $KEY_DIR -n ZONE -3 \
-      -a RSASHA256 -b 1024-r /dev/urandom \
+      -a RSASHA256 -b 1024 -r /dev/urandom \
       -L 86400 -P now -A +1h $DOMAIN_TLD
 
     chown -R bind: $KEY_DIR
