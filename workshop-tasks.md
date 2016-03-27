@@ -410,7 +410,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     * Whois Update der Domain -- http://whois.test/
       * DNSSEC Key 1 flags: 257
-      * DNSSEC Key 1 algorithm_id: 14
+      * DNSSEC Key 1 algorithm_id: 8
       * DNSSEC Key 1 key_data: Key Material in Base64
 
     * whois Eintrag bzgl. DNSKEY korrekt?
