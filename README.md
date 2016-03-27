@@ -42,8 +42,17 @@ Als Netzwerk-Umgebung wird das Class B Net 10.20.0.0/16 verwenden.
 * Teilnehmer verbinden sich per LAN zum oben beschriebenen fiktiven Internet.
 
 
-## Referenzen
+## Ablauf des Workshops
+
+Vorstellung und Besprechung von DNSSEC:
+
 * https://talk.babiel.com/eh16/dnssec
+
+Tasks zu Hands-On DNSSEC:
+* https://github.com/dnssec-workshop/dnssec-doc/blob/master/workshop-tasks.md
+
+
+## Referenzen
 
 * https://ftp.isc.org/isc/bind9/cur/9.9/doc/arm/Bv9ARM.html
 
