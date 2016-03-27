@@ -66,7 +66,7 @@ Tasks zu Hands-On DNSSEC:
 
 * https://rick.eng.br/dnssecstat/
 
-* http://stats.labs.apnic.net/dnssec
+* http://dnssec.vs.uni-due.de/
 
 * http://dnsviz.net/demo/dnsviz-demo-v2.zip
 
