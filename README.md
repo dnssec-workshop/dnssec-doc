@@ -98,6 +98,10 @@ Tasks zu Hands-On DNSSEC:
 
   DNS Security (DNSSEC) Hashed Authenticated Denial of Existence
 
+* https://tools.ietf.org/html/rfc6781
+
+  DNSSEC Operational Practices, Version 2
+
 * https://tools.ietf.org/html/rfc6944
 
   Clarifications and Implementation Notes for DNS Security (DNSSEC)
