@@ -210,24 +210,24 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     rm -rI /etc/bind
 
     mkdir -p /etc/bind/zones /var/cache/bind /var/log/named
-    chown bind: /var/cache/bind /var/log/named || \
-    chown named: /var/cache/bind /var/log/named
+    chown bind: /etc/bind/zones /var/cache/bind /var/log/named || \
+    chown named: /etc/bind/zones /var/cache/bind /var/log/named
     ```
 
     * Config Files aus `dnssec-attendee/` kopieren
        * `/etc/bind/named.conf`
        ```
-       curl 'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=dnssec-attendee/etc/bind/named.conf' >/etc/bind/named.conf
+       curl 'http://gitweb.test/gitweb.cgi?p=dnssec-data/.git;a=blob_plain;f=dnssec-attendee/etc/bind/named.conf' >/etc/bind/named.conf
        ```
 
        * `/etc/bind/zones/hint.zone`
        ```
-       curl 'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=shared/etc/bind/zones/hint.zone' >/etc/bind/zones/hint.zone
+       curl 'http://gitweb.test/gitweb.cgi?p=dnssec-data/.git;a=blob_plain;f=shared/etc/bind/zones/hint.zone' >/etc/bind/zones/hint.zone
        ```
 
        * `/etc/bind/zones/hint.zone`
        ```
-       curl 'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=dnssec-attendee/etc/bind/zones/template.zone' > /etc/bind/zones/template.zone
+       curl 'http://gitweb.test/gitweb.cgi?p=dnssec-data/.git;a=blob_plain;f=dnssec-attendee/etc/bind/zones/template.zone' > /etc/bind/zones/template.zone
        ```
 
 1. Erstelle Deine Zonen-Konfiguration:
@@ -295,7 +295,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     options {
         dnssec-enable yes;
-        key-directory "/etc/bind/dnssec";
+        key-directory "/etc/bind/keys";
         random-device "/dev/urandom";
         dnssec-update-mode maintain; # default
         dnssec-loadkeys-interval 10; # 10 minutes
@@ -692,7 +692,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
        * Option B
        ```
-       curl 'http://gitweb.test/gitweb.cgi?p=dnssec-workshop/.git;a=blob_plain;f=shared/etc/bind/managed.keys' >/etc/bind/managed.keys
+       curl 'http://gitweb.test/gitweb.cgi?p=dnssec-data/.git;a=blob_plain;f=shared/etc/bind/managed.keys' >/etc/bind/managed.keys
        ```
 
 1. DNSSEC im Nameserver aktivieren
