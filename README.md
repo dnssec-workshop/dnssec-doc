@@ -36,9 +36,9 @@ Die Workshop-Umgebung besteht aus folgenden Systemen:
 Als Netzwerk-Umgebung wird das Class B Net 10.20.0.0/16 verwenden.
 Die Systeme der DNS-Infrastruktur laufen in dem Netzbereich 10.20.1.0 - 10.20.9.0.
 Wenn Docker Container für die DNS-Infrastruktur oder Teilnehmer gestartet werden, erhalten diese Container eine IP-Adresse aus dem Management-Netz 10.20.44.0/24.
-Den Teilnehmer-Container wird auf Basis des Container-Namens (ns<id>) eine IP-Adresse aus dem Netz 10.20.33.0/24 zugewiesen (ns3 -> 10.20.33.3).
+Den Teilnehmer-Container wird auf Basis des Container-Namens (`ns<id>`) eine IP-Adresse aus dem Netz 10.20.33.0/24 zugewiesen (ns3 -> 10.20.33.3).
 
-Das Setup der Infrastruktur ist in https://github.com/dnssec-workshop/dnssec-doc/blob/master/workshop-tasks.md beschrieben.
+Das Setup der Infrastruktur ist in https://github.com/dnssec-workshop/dnssec-doc/blob/master/workshop-setup.md beschrieben.
 
 
 ## Rahmenbedingungen

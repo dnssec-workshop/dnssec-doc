@@ -1,6 +1,6 @@
 # Workshop Setup
 
-Für Informationen zur Workshop-Umgebung siehe (/README.md)
+Für Informationen zur Workshop-Umgebung siehe https://github.com/dnssec-workshop/dnssec-doc/README.md
 
 Die für die Workshop Umgebung benötigten Systeme laufen als Docker Container in einer virtuellen Maschine.
 Nachfolgend wird die Einrichtung der VM und der Docker Container beschrieben.
