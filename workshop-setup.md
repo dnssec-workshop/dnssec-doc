@@ -11,15 +11,13 @@ Alle im folgenden verwendeten Commands werden zur Vereinfachung unter dem User r
 
 ### Setup der Workshop Infrastruktur
 
-1. Virtuelle Maschine mit Debian 8 als Docker Host installieren
+1. Virtuelle Maschine mit Debian als Docker Host installieren
     ```
-    apt-get purge exim4 rpcbind portmap at avahi-daemon
+    apt-get install -y dnsutils nmap tcpdump traceroute curl git less screen bsd-mailx vim ntp ntpdate dirmngr
 
-    apt-get install dnsutils nmap tcpdump traceroute chkconfig curl git less screen bsd-mailx vim ntp ntpdate
-
-    apt-get install apt-transport-https ca-certificates
+    apt-get install -y apt-transport-https ca-certificates
     apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-    echo "deb https://apt.dockerproject.org/repo debian-jessie main" > /etc/apt/sources.list.d/docker.list
+    echo "deb https://apt.dockerproject.org/repo debian-$(lsb_release -c -s) main" > /etc/apt/sources.list.d/docker.list
     apt-get update
     apt-get install docker-engine arping bridge-utils
 
@@ -43,17 +41,14 @@ Alle im folgenden verwendeten Commands werden zur Vereinfachung unter dem User r
 
 1. Interface Konfiguration für Docker Infrastruktur
 
-    `/etc/network/interfaces`
     ```
-    source /etc/network/interfaces.d/*
+    default_iface=$(ip route show to 0.0.0.0/0 | cut -d' ' -f5)
+    default_iface=${default_iface:-eth0}
+    cat <<EOF >/etc/network/interfaces.d/br0
     
-    auto lo br0
-    
-    allow-hotplug th0
-    iface eth0 inet manual
-    
+    auto br0
     iface br0 inet static
-            bridge_ports eth0
+            bridge_ports ${default_iface}
             bridge_stp off     # disable Spanning Tree Protocol
             bridge_waitport 0  # no delay before a port becomes available
             bridge_fd 0
@@ -64,10 +59,10 @@ Alle im folgenden verwendeten Commands werden zur Vereinfachung unter dem User r
             broadcast 10.20.255.255
             #gateway 10.20.0.1
             dns-nameservers 8.8.8.8
-    ```
+    EOF
 
-    `/etc/hosts`
-    ```
+    cat <<EOF >> /etc/hosts
+
     # DNSSEC Workshop
     10.20.1.1 dnssec-rootns-a
     10.20.1.2 dnssec-rootns-a
@@ -76,6 +71,7 @@ Alle im folgenden verwendeten Commands werden zur Vereinfachung unter dem User r
     10.20.4.1 dnssec-sldns-a
     10.20.4.2 dnssec-sldns-b
     10.20.8.1 dnssec-resolver
+    EOF
     ```
 
 1. Konfiguration des Docker Deamon
@@ -106,10 +102,9 @@ Alle im folgenden verwendeten Commands werden zur Vereinfachung unter dem User r
     cd /root 
     wget https://raw.githubusercontent.com/jpetazzo/pipework/master/pipework 
     chmod 755 pipework
-    ```
 
-    `/root/.bashrc`
-    ```
+    cat <<"EOF" >> /root/.bashrc
+
     alias d=docker
 
     dls() {
@@ -143,6 +138,9 @@ Alle im folgenden verwendeten Commands werden zur Vereinfachung unter dem User r
 
         echo $CN: $(docker inspect --format "{{.NetworkSettings.IPAddress}}" $CN) - $IP
     }
+    EOF
+
+    source /root/.bashrc
     ```
 
 1. Startup der Docker Umgebung
