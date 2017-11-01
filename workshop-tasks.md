@@ -92,11 +92,7 @@ Die Workshop-Umgebung besteht aus folgenden Systemen:
 
   * GitWeb mit relevanten Daten zum Workshop
 
-* Mitmachen:
-  * **Empfohlen: Docker VM -- Wer will?**
-  * Eigenes Gerät
-
-* **ACHTUNG: Was wir hier machen ist NICHT sicher und sind KEIN Best Practise!**
+* Mitmachen per Docker VM
 
 ## Umgebung erkunden
 
@@ -317,12 +313,12 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     KEY_DIR=/etc/bind/keys
     mkdir -p $KEY_DIR
 
-    dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK \
-      -a RSASHA256 -b 2048 -r /dev/urandom \
+    dnssec-keygen -K $KEY_DIR -n ZONE -f KSK \
+      -a ECDSAP256SHA256 -r /dev/urandom \
       -L 86400 -P now -A now $DOMAIN_TLD
 
-    dnssec-keygen -K $KEY_DIR -n ZONE -3 \
-      -a RSASHA256 -b 1024 -r /dev/urandom \
+    dnssec-keygen -K $KEY_DIR -n ZONE \
+      -a ECDSAP256SHA256 -r /dev/urandom \
       -L 86400 -P now -A now $DOMAIN_TLD
 
     # BIND muss Private Keys lesen
@@ -410,7 +406,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     * Whois Update der Domain -- http://whois.test/
       * DNSSEC Key 1 flags: 257
-      * DNSSEC Key 1 algorithm_id: 8
+      * DNSSEC Key 1 algorithm_id: 13
       * DNSSEC Key 1 key_data: Key Material in Base64
 
     * whois Eintrag bzgl. DNSKEY korrekt?
@@ -428,7 +424,6 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     * per Command Line Tool
     ```
     drill -S -k /etc/trusted-key.key $DOMAIN_TLD.
-    # dig +sigchase +topdown $DOMAIN_TLD.
     ```
 
 
@@ -460,18 +455,12 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
 1. DNS-Verifikation im SSH-Client aktivieren
 
-    * `/etc/ssh/ssh_config`
-      ```
-      VerifyHostKeyDNS yes
-      ```
-
     * Zum Nachbarn verbinden
       ```
       host ssh.fellow.next
 
-      ssh <ip_von_ssh.fellow.next>
-
-      ssh ssh.fellow.next
+      ssh -o UserKnownHostsFile=/dev/null root@ssh.fellow.next
+      ssh -o UserKnownHostsFile=/dev/null -o VerifyHostKeyDNS=Yes -v ssh.fellow.next
       ```
 
 
@@ -533,12 +522,12 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
 1. Verifikation des DANE Setup
     ```
-    openssl s_client -connect mail.$DOMAIN_TLD:465
+    echo | openssl s_client -showcerts -connect mail.$DOMAIN_TLD:465
     ```
 
     ```
-    ldns-dane verify -k /etc/trusted-key.key \
-      -d mail.$DOMAIN_TLD 465
+    ldns-dane verify -S -k /etc/trusted-key.key \
+      mail.$DOMAIN_TLD 465
     ```
 
 
@@ -549,8 +538,8 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     KEY_DIR=/etc/bind/keys
 
     # Neuen ZSK generieren und in Zone publizieren
-    dnssec-keygen -K $KEY_DIR -n ZONE -3 \
-      -a RSASHA256 -b 1024 -r /dev/urandom \
+    dnssec-keygen -K $KEY_DIR -n ZONE \
+      -a ECDSAP256SHA256 -r /dev/urandom \
       -L 86400 -P now -A +1h $DOMAIN_TLD
 
     chown -R bind: $KEY_DIR
@@ -601,8 +590,8 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     # Neuen KSK generieren und in Zone publizieren
     # Neuer Key soll ZSKs direkt signieren
-    dnssec-keygen -K $KEY_DIR -n ZONE -3 -f KSK \
-      -a RSASHA256 -b 2048 -r /dev/urandom \
+    dnssec-keygen -K $KEY_DIR -n ZONE -f KSK \
+      -a ECDSAP256SHA256 -r /dev/urandom \
       -L 86400 -P now -A now $DOMAIN_TLD
 
     chown -R bind: $KEY_DIR
@@ -727,7 +716,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
 1. Signing Schemata vergleichen
     * task-sigchase.de -- KSK & ZSK
-    * dnsprovi.de -- CSK
+    * dnsprovi.de -- Combined Signing Key
     * task-rollover.de -- Backup KSK
 
 1. Zone Expire VS. Signatur-Zeitraum
@@ -742,14 +731,12 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
 ## Fehler provozieren und beheben
 
-1. TCP-Anfragen unterbinden
-1. Signaturen auslaufen lassen
-    * `task-failed.net`
 1. Falschen DS im Parent publizieren
 1. KSK oder ZSK löschen/deaktivieren
 1. Time Drift & Signatur-Validierung
-1. TTL=0 für Records verwenden - Validierung noch möglich?
-1. TTLs auf geringen Wert setzen
+1. TCP-Anfragen unterbinden
+1. Signaturen auslaufen lassen
+    * `dnssec-failed.net`
 
 
 ## Erweiterung des Setups
@@ -758,7 +745,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     * Master Zone soll nicht mit DNSSEC signiert sein (neue Zone anlegen)
     * Slave Zone analog zu DNSSEC Master Zone konfigurieren
 
-1. Slave Nameserver für Zonen einrichten (TSIG)
+1. TSIG zwischen Master und Slave Nameservern für Zonen einrichten
 
 1. Rollover eines DNSSEC Signatur Algorithmus
 
