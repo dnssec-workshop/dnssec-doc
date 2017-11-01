@@ -746,6 +746,51 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     * Slave Zone analog zu DNSSEC Master Zone konfigurieren
 
 1. TSIG zwischen Master und Slave Nameservern für Zonen einrichten
+    1. Master
+
+      ```
+      dnssec-keygen -n HOST -a HMAC-SHA512 -b 512 tsig
+      grep Key: Ktsig.+*.private
+      ```
+  
+      `/etc/bind/named.conf`
+      ```
+      key "tsig" {
+                algorithm hmac-sha512;
+                secret "<private_key>";
+      };
+  
+      server <slave> {
+              keys { tsig; };
+      };
+  
+      zone "<zone>" {
+        ...
+        allow-transfer { key tsig; };
+      };
+      ```
+
+      ```
+      rndc reload
+      ```
+
+    1. Slave
+
+      `/etc/bind/named.conf`
+      ```
+      key "tsig" {
+                algorithm hmac-sha512;
+                secret "<private_key>";
+      };
+  
+      server <master {
+              keys { tsig; };
+      };
+      ```
+
+      ```
+      rndc reload
+      ```
 
 1. Rollover eines DNSSEC Signatur Algorithmus
 
