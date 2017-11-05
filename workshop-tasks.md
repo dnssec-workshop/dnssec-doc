@@ -65,7 +65,7 @@ Die Workshop-Umgebung besteht aus folgenden Systemen:
 
         cat <<EOF >>/etc/hosts
 
-        # DNSSEC Workshop CLT2016
+        # DNSSEC Workshop
         10.20.2.1 whois.test nic.test
         10.20.8.1 dnsviz.test resolver.test gitweb.test doc.test
         EOF
@@ -193,7 +193,7 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     ```
 
 1. Lege Deine Konfiguration für BIND an:
-    * **Nicht in Docker VMs notwendig**
+    * **Nicht in Docker Nameservern notwendig**
     * Umgebung einrichten
     ```
     cp -aH /etc/bind /etc/bind.$(date +%Y%m%d_%H%M)
