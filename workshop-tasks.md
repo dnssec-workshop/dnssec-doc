@@ -454,8 +454,8 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
       ```
       host ssh.fellow.next
 
-      ssh -o UserKnownHostsFile=/dev/null root@ssh.fellow.next
-      ssh -o UserKnownHostsFile=/dev/null -o VerifyHostKeyDNS=Yes -v ssh.fellow.next
+      ssh -o UserKnownHostsFile=/dev/null root@ssh.fellow.next # ohne DNS-Quelle
+      ssh -o UserKnownHostsFile=/dev/null -o VerifyHostKeyDNS=Yes -v ssh.fellow.next # mit DNS-Quelle
       ```
 
 
@@ -476,8 +476,14 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 
     * `/etc/postfix/main.cf`
     ```
+    # Opportunistic TLS: announce STARTTLS support to remote SMTP clients, but do not require that clients use TLS encryption.
     smtpd_use_tls = yes
+    # The default SMTP TLS security level for the Postfix SMTP client.
+    # Opportunistic DANE TLS. At this security level, the TLS policy for the destination is obtained via DNSSEC.
+    # When DNSSEC-validated TLSA records are not found the effective tls security level is "may". When TLSA records are found, but are all unusable the effective security level is "encrypt".
+    # For purposes of protocol and cipher selection, the "dane" security level is treated like a "mandatory" TLS security level, and weak ciphers and protocols are disabled.
     smtp_tls_security_level = dane
+    # Any MX lookups will set RES_USE_DNSSEC and RES_USE_EDNS0 to request DNSSEC-validated responses. If the MX response is DNSSEC-validated the corresponding hostnames are considered validated. The address lookups of validated hostnames are also validated
     smtp_dns_support_level = dnssec
     ```
 
