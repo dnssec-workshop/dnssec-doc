@@ -150,15 +150,12 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
     ```
 
 1. Richte den DNSKEY KSK der Root-Nameserver für die Authentifizierung der Records ein:
-    * **Nicht in Docker VMs notwendig**
+    * **Nicht in Docker Nameservern notwendig**
     ```
     cp -aH /etc/trusted-key.key \
         /etc/trusted-key.key.$(date +%Y%m%d_%H%M)
 
-    dig +noall +answer +multi \
-        -t DNSKEY . @10.20.1.1 | \
-        awk '/DNSKEY 257/,/; KSK;/ {print}' \
-        > /etc/trusted-key.key
+    wget -O /etc/trusted-key.key http://doc.test/trusted-key.key
     ```
 
 1. Prüfe die Chain of Trust für die Domain `task-sigchase.de.`
