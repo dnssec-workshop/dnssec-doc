@@ -284,12 +284,10 @@ Jetzt können wir die Umgebung nach DNSSEC Informationen durchsuchen.
 1. Basis-Konfiguration im BIND vornehmen
     * `/etc/bind/named.conf`
     ```
-    server {
+    options {
         edns yes; # default
         edns-udp-size 4096; # default
-    };
 
-    options {
         dnssec-enable yes;
         key-directory "/etc/bind/keys";
         random-device "/dev/urandom";
